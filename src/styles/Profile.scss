@@ -1,0 +1,329 @@
+@use 'variables' as *;
+
+.page {
+  padding-bottom: 40px;
+  background: $light-bg;
+  min-height: 100vh;
+
+  body.dark & {
+    background: $dark-bg;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid $light-border;
+  position: sticky;
+  top: 0;
+  background: $light-bg;
+  z-index: 10;
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.backBtn {
+  font-size: $font-sm;
+  color: $light-text-secondary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.headerTitle {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.section {
+  padding: 16px;
+  border-bottom: 1px solid $light-border;
+
+  body.dark & {
+    border-color: $dark-border;
+  }
+}
+
+.sectionTitle {
+  font-size: $font-xs;
+  font-weight: 700;
+  color: $light-text-tertiary;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ PLAYER INFO ============
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatarLg {
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-full;
+  background: $info-light-bg;
+  color: $info-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xl;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  body.dark & {
+    background: $color-grape;
+    color: $color-tea;
+  }
+}
+
+.playerName {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.memberSince {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+  margin-top: 2px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ METRICS ============
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.metricCard {
+  background: $light-bg-secondary;
+  border-radius: $radius-md;
+  padding: 12px;
+  text-align: center;
+
+  body.dark & {
+    background: $dark-bg-secondary;
+  }
+}
+
+.metricVal {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  &.pos { color: $success-light; }
+  &.neg { color: $danger-light; }
+
+  body.dark & {
+    color: $dark-text-primary;
+
+    &.pos { color: $success-dark; }
+    &.neg { color: $danger-dark; }
+  }
+}
+
+.metricLabel {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+  margin-top: 4px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ RIVALS ============
+.rivalRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid $light-border-secondary;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  body.dark & {
+    border-color: $dark-border-secondary;
+  }
+}
+
+.avatarSm {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  background: $success-light-bg;
+  color: $success-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xs;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  body.dark & {
+    background: $color-dusty;
+    color: $color-tea;
+  }
+}
+
+.rivalName {
+  font-size: $font-sm;
+  color: $light-text-primary;
+  flex: 1;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.rivalBar {
+  width: 70px;
+  height: 5px;
+  background: $light-border;
+  border-radius: $radius-full;
+  overflow: hidden;
+
+  body.dark & {
+    background: $dark-border;
+  }
+}
+
+.rivalBarFill {
+  height: 100%;
+  background: $success-light;
+  border-radius: $radius-full;
+
+  body.dark & {
+    background: $color-celadon;
+  }
+}
+
+.rivalScore {
+  font-size: $font-xs;
+  color: $light-text-secondary;
+  min-width: 30px;
+  text-align: left;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ HISTORY ============
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid $light-border-secondary;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  body.dark & {
+    border-color: $dark-border-secondary;
+  }
+}
+
+.resultBadge {
+  font-size: $font-xs;
+  padding: 3px 8px;
+  border-radius: $radius-full;
+  font-weight: 700;
+  min-width: 44px;
+  text-align: center;
+
+  &.win {
+    background: $success-light-bg;
+    color: $success-light;
+  }
+
+  &.lose {
+    background: $danger-light-bg;
+    color: $danger-light;
+  }
+
+  body.dark &.win {
+    background: rgba(168, 198, 159, 0.15);
+    color: $success-dark;
+  }
+
+  body.dark &.lose {
+    background: rgba(224, 112, 112, 0.15);
+    color: $danger-dark;
+  }
+}
+
+.historyOpponent {
+  font-size: $font-sm;
+  color: $light-text-primary;
+  flex: 1;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.historyDate {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.h2hBtn {
+  width: calc(100% - 32px);
+  margin: 16px;
+  padding: 12px;
+  border-radius: $radius-md;
+  font-size: $font-md;
+  font-weight: 700;
+  border: 1px solid $light-border;
+  color: $light-text-primary;
+  background: transparent;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $light-bg-secondary;
+  }
+
+  body.dark & {
+    border-color: $dark-border;
+    color: $dark-text-primary;
+
+    &:hover {
+      background: $dark-bg-secondary;
+    }
+  }
+}

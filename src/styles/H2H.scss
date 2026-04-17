@@ -1,0 +1,364 @@
+@use 'variables' as *;
+
+.page {
+  padding-bottom: 40px;
+  background: $light-bg;
+  min-height: 100vh;
+
+  body.dark & {
+    background: $dark-bg;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid $light-border;
+  position: sticky;
+  top: 0;
+  background: $light-bg;
+  z-index: 10;
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.backBtn {
+  font-size: $font-sm;
+  color: $light-text-secondary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.headerTitle {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.section {
+  padding: 16px;
+  border-bottom: 1px solid $light-border;
+
+  body.dark & {
+    border-color: $dark-border;
+  }
+}
+
+.sectionTitle {
+  font-size: $font-xs;
+  font-weight: 700;
+  color: $light-text-tertiary;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ SELECTOR ============
+.selectorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.select {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid $light-border;
+  border-radius: $radius-md;
+  font-size: $font-md;
+  color: $light-text-primary;
+  background: $light-bg;
+
+  body.dark & {
+    background: $dark-bg-secondary;
+    border-color: $dark-border;
+    color: $dark-text-primary;
+  }
+}
+
+.vsLabel {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ SCORE ============
+.scoreSection {
+  padding: 20px 16px;
+  border-bottom: 1px solid $light-border;
+
+  body.dark & {
+    border-color: $dark-border;
+  }
+}
+
+.scoreRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.playerSide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.avatarLg {
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-full;
+  background: $info-light-bg;
+  color: $info-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-lg;
+  font-weight: 700;
+
+  &.green {
+    background: $success-light-bg;
+    color: $success-light;
+  }
+
+  body.dark & {
+    background: $color-grape;
+    color: $color-tea;
+
+    &.green {
+      background: $color-dusty;
+      color: $color-tea;
+    }
+  }
+}
+
+.playerName {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.playerScore {
+  font-size: 28px;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.playerScoreLabel {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.vsCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.vsCenterLabel {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.totalGames {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ BAR ============
+.barWrap {
+  margin-top: 8px;
+}
+
+.barLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.barLabel {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: $info-light;
+
+  &.right {
+    color: $success-light;
+  }
+
+  body.dark & {
+    color: $color-dusty;
+
+    &.right {
+      color: $color-celadon;
+    }
+  }
+}
+
+.barTrack {
+  height: 8px;
+  background: $light-border;
+  border-radius: $radius-full;
+  overflow: hidden;
+  display: flex;
+
+  body.dark & {
+    background: $dark-border;
+  }
+}
+
+.barFillLeft {
+  height: 100%;
+  background: $info-light;
+  border-radius: $radius-full 0 0 $radius-full;
+
+  body.dark & {
+    background: $color-dusty;
+  }
+}
+
+.barFillRight {
+  height: 100%;
+  background: $success-light;
+  border-radius: 0 $radius-full $radius-full 0;
+
+  body.dark & {
+    background: $color-celadon;
+  }
+}
+
+// ============ WINNER BANNER ============
+.winnerBanner {
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: $success-light-bg;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  body.dark & {
+    background: rgba(168, 198, 159, 0.1);
+  }
+}
+
+.winnerText {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: $success-light;
+
+  body.dark & {
+    color: $color-celadon;
+  }
+}
+
+// ============ HISTORY ============
+.historyRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid $light-border-secondary;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  body.dark & {
+    border-color: $dark-border-secondary;
+  }
+}
+
+.resultBadge {
+  font-size: $font-xs;
+  padding: 3px 8px;
+  border-radius: $radius-full;
+  font-weight: 700;
+  min-width: 70px;
+  text-align: center;
+
+  &.win {
+    background: $success-light-bg;
+    color: $success-light;
+  }
+
+  &.lose {
+    background: $danger-light-bg;
+    color: $danger-light;
+  }
+
+  body.dark &.win {
+    background: rgba(168, 198, 159, 0.15);
+    color: $success-dark;
+  }
+
+  body.dark &.lose {
+    background: rgba(224, 112, 112, 0.15);
+    color: $danger-dark;
+  }
+}
+
+.historyDate {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+  margin-right: auto;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.emptyText {
+  font-size: $font-sm;
+  color: $light-text-tertiary;
+  text-align: center;
+  padding: 20px 0;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}

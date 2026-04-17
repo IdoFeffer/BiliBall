@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../styles/Login.scss'
 
 function Login() {
   const navigate = useNavigate()
@@ -10,7 +11,7 @@ function Login() {
   const handleSubmit = () => {
     if (isRegister) {
       console.log('נרשם:', username, password)
-      navigate('/create-league')
+      navigate('/home')
     } else {
       console.log('התחבר:', username, password)
       navigate('/home')
@@ -18,42 +19,47 @@ function Login() {
   }
 
   return (
-    <div>
-      <h1>BiliBall 🎱</h1>
+    <div className="page">
+      <h1 className="logo">BiliBall 🎱</h1>
+      <p className="subtitle">עקוב אחר הניצחונות שלך</p>
 
-      <h2>{isRegister ? 'הרשמה' : 'התחברות'}</h2>
+      <div className="card">
+        <h2 className="title">{isRegister ? 'הרשמה' : 'התחברות'}</h2>
 
-      <input
-        type="text"
-        placeholder="שם משתמש"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
+        <div className="inputGroup">
+          <input
+            className="input"
+            type="text"
+            placeholder="שם משתמש"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            className="input"
+            type="password"
+            placeholder="סיסמה"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {isRegister && (
+            <input className="input" type="text" placeholder="שם מלא" />
+          )}
+        </div>
 
-      <input
-        type="password"
-        placeholder="סיסמה"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      {isRegister && (
-        <input
-          type="text"
-          placeholder="שם מלא"
-        />
-      )}
-
-      <button onClick={handleSubmit}>
-        {isRegister ? 'הירשם' : 'התחבר'}
-      </button>
-
-      <p>
-        {isRegister ? 'כבר יש לך חשבון?' : 'אין לך חשבון?'}
-        <button onClick={() => setIsRegister(!isRegister)}>
-          {isRegister ? 'התחבר' : 'הירשם'}
+        <button className="submitBtn" onClick={handleSubmit}>
+          {isRegister ? 'הירשם' : 'התחבר'}
         </button>
-      </p>
+
+        <p className="switchText">
+          {isRegister ? 'כבר יש לך חשבון?' : 'אין לך חשבון?'}
+          <button
+            className="switchBtn"
+            onClick={() => setIsRegister(!isRegister)}
+          >
+            {isRegister ? 'התחבר' : 'הירשם'}
+          </button>
+        </p>
+      </div>
     </div>
   )
 }

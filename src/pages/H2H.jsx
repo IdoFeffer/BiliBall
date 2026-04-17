@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../styles/H2H.scss'
 
 const mockPlayers = ['יוסי', 'דני', 'מור', 'רון']
 
@@ -24,67 +25,94 @@ function H2H() {
   const player1Wins = filteredGames.filter(g => g.winner === player1).length
   const player2Wins = filteredGames.filter(g => g.winner === player2).length
   const total = filteredGames.length
+  const player1Pct = total > 0 ? Math.round((player1Wins / total) * 100) : 50
+  const player2Pct = total > 0 ? Math.round((player2Wins / total) * 100) : 50
+  const leader = player1Wins > player2Wins ? player1 : player2Wins > player1Wins ? player2 : null
 
   return (
-    <div>
-      <button onClick={() => navigate('/home')}>← חזרה</button>
-      <h2>ראש בראש</h2>
+    <div className="page">
+      <header className="header">
+        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
+        <h2 className="headerTitle">ראש בראש</h2>
+        <div style={{ width: 60 }} />
+      </header>
 
-      <div>
-        <select
-          value={player1}
-          onChange={(e) => setPlayer1(e.target.value)}
-        >
-          {mockPlayers.map(p => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
-
-        <span>VS</span>
-
-        <select
-          value={player2}
-          onChange={(e) => setPlayer2(e.target.value)}
-        >
-          {mockPlayers.map(p => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <div>
-          <p>{player1}</p>
-          <p>{player1Wins}</p>
-          <p>נצחונות</p>
-        </div>
-        <div>
-          <p>VS</p>
-          <p>{total} משחקים</p>
-        </div>
-        <div>
-          <p>{player2}</p>
-          <p>{player2Wins}</p>
-          <p>נצחונות</p>
+      <div className="section">
+        <div className="selectorRow">
+          <select
+            className="select"
+            value={player1}
+            onChange={(e) => setPlayer1(e.target.value)}
+          >
+            {mockPlayers.map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+          <span className="vsLabel">VS</span>
+          <select
+            className="select"
+            value={player2}
+            onChange={(e) => setPlayer2(e.target.value)}
+          >
+            {mockPlayers.map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {total > 0 && (
-        <div>
-          <p>
-            {player1Wins > player2Wins ? player1 : player2} מוביל בסדרה
-          </p>
+      <div className="scoreSection">
+        <div className="scoreRow">
+          <div className="playerSide">
+            <div className="avatarLg">{player1[0]}</div>
+            <span className="playerName">{player1}</span>
+            <span className="playerScore">{player1Wins}</span>
+            <span className="playerScoreLabel">נצחונות</span>
+          </div>
+          <div className="vsCenter">
+            <span className="vsCenterLabel">VS</span>
+            <span className="totalGames">{total} משחקים</span>
+          </div>
+          <div className="playerSide">
+            <div className="avatarLg green">{player2[0]}</div>
+            <span className="playerName">{player2}</span>
+            <span className="playerScore">{player2Wins}</span>
+            <span className="playerScoreLabel">נצחונות</span>
+          </div>
         </div>
-      )}
 
-      <h3>היסטוריה ביניהם</h3>
-      {filteredGames.length === 0 && <p>אין משחקים ביניהם</p>}
-      {filteredGames.map(game => (
-        <div key={game.id}>
-          <span>{game.winner === player1 ? `${player1} ניצח` : `${player2} ניצח`}</span>
-          <span>{game.date}</span>
+        <div className="barWrap">
+          <div className="barLabels">
+            <span className="barLabel">{player1Pct}%</span>
+            <span className="barLabel right">{player2Pct}%</span>
+          </div>
+          <div className="barTrack">
+            <div className="barFillLeft" style={{ width: `${player1Pct}%` }} />
+            <div className="barFillRight" style={{ width: `${player2Pct}%` }} />
+          </div>
         </div>
-      ))}
+
+        {leader && (
+          <div className="winnerBanner">
+            <span className="winnerText">{leader} מוביל בסדרה</span>
+          </div>
+        )}
+      </div>
+
+      <div className="section">
+        <p className="sectionTitle">היסטוריה ביניהם</p>
+        {filteredGames.length === 0 && (
+          <p className="emptyText">אין משחקים ביניהם עדיין</p>
+        )}
+        {filteredGames.map(game => (
+          <div key={game.id} className="historyRow">
+            <span className={`resultBadge ${game.winner === player1 ? 'win' : 'lose'}`}>
+              {game.winner === player1 ? `${player1} ניצח` : `${player2} ניצח`}
+            </span>
+            <span className="historyDate">{game.date}</span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

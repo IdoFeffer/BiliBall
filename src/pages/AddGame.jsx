@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import '../styles/AddGame.scss'
 
 const mockPlayers = [
   { id: 1, name: 'דני' },
@@ -26,47 +27,64 @@ function AddGame() {
   }
 
   return (
-    <div>
-      <button onClick={() => navigate('/home')}>← חזרה</button>
-      <h2>הוספת משחק</h2>
+    <div className="page">
+      <header className="header">
+        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
+        <h2 className="headerTitle">הוספת משחק</h2>
+        <div style={{ width: 60 }} />
+      </header>
 
-      <p>תוצאה</p>
-      <button
-        onClick={() => setResult('win')}
-        style={{ fontWeight: result === 'win' ? 'bold' : 'normal' }}
-      >
-        אני ניצחתי
+      <div className="section">
+        <p className="label">תוצאה</p>
+        <div className="toggleGroup">
+          <button
+            className={`toggleBtn ${result === 'win' ? 'active' : ''}`}
+            onClick={() => setResult('win')}
+          >
+            אני ניצחתי
+          </button>
+          <button
+            className={`toggleBtn ${result === 'lose' ? 'active' : ''}`}
+            onClick={() => setResult('lose')}
+          >
+            אני הפסדתי
+          </button>
+        </div>
+      </div>
+
+      <div className="section">
+        <p className="label">נגד מי?</p>
+        <select
+          className="select"
+          value={opponent}
+          onChange={(e) => setOpponent(e.target.value)}
+        >
+          {mockPlayers.map(player => (
+            <option key={player.id} value={player.name}>
+              {player.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="section">
+        <p className="label">הערה (אופציונלי)</p>
+        <input
+          className="input"
+          type="text"
+          placeholder="משחק מטורף..."
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+        />
+      </div>
+
+      <p className="notice">
+        ⓘ רק משחקים שבהם אתה שחקן יכולים להירשם
+      </p>
+
+      <button className="submitBtn" onClick={handleSubmit}>
+        שמור תוצאה
       </button>
-      <button
-        onClick={() => setResult('lose')}
-        style={{ fontWeight: result === 'lose' ? 'bold' : 'normal' }}
-      >
-        אני הפסדתי
-      </button>
-
-      <p>נגד מי?</p>
-      <select
-        value={opponent}
-        onChange={(e) => setOpponent(e.target.value)}
-      >
-        {mockPlayers.map(player => (
-          <option key={player.id} value={player.name}>
-            {player.name}
-          </option>
-        ))}
-      </select>
-
-      <p>הערה (אופציונלי)</p>
-      <input
-        type="text"
-        placeholder="משחק מטורף..."
-        value={note}
-        onChange={(e) => setNote(e.target.value)}
-      />
-
-      <p>רק משחקים שבהם אתה שחקן יכולים להירשם</p>
-
-      <button onClick={handleSubmit}>שמור תוצאה</button>
     </div>
   )
 }

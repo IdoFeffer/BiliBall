@@ -1,0 +1,440 @@
+
+@use 'variables' as *;
+
+.page {
+  padding-bottom: $bottom-nav-height;
+}
+
+// ============ NAV ============
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid $light-border;
+  background: $light-bg;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.navLogo {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $color-tea;
+  }
+}
+
+.navLeague {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+  margin-top: 2px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.navAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  background: $info-light-bg;
+  color: $info-light;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-sm;
+  font-weight: 700;
+
+  body.dark & {
+    background: $color-grape;
+    color: $color-tea;
+  }
+}
+
+.loginBtn {
+  font-size: $font-sm;
+  padding: 6px 14px;
+  border-radius: $radius-md;
+  border: 1px solid $light-border;
+  color: $light-text-primary;
+  background: transparent;
+
+  body.dark & {
+    border-color: $color-dusty;
+    color: $color-tea;
+  }
+
+  &:hover {
+    background: $light-bg-secondary;
+
+    body.dark & {
+      background: $dark-bg-secondary;
+    }
+  }
+}
+
+// ============ SECTION ============
+.section {
+  padding: 20px 20px;
+  border-bottom: 1px solid $light-border;
+
+  body.dark & {
+    border-color: $dark-border;
+  }
+}
+
+.sectionTitle {
+  font-size: $font-xs;
+  font-weight: 700;
+  color: $light-text-tertiary;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ LEADERBOARD ============
+.playerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid $light-border-secondary;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  body.dark & {
+    border-color: $dark-border-secondary;
+  }
+}
+
+.rank {
+  font-size: $font-xs;
+  color: $light-text-tertiary;
+  width: 16px;
+  font-weight: 600;
+
+  &.first {
+    color: #f59e0b;
+  }
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xs;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &.blue { background: $info-light-bg; color: $info-light; }
+  &.green { background: $success-light-bg; color: $success-light; }
+  &.amber { background: $warning-light-bg; color: $warning-light; }
+  &.steel { background: #f0f0f0; color: #666; }
+
+  body.dark &.blue { background: $color-grape; color: $color-tea; }
+  body.dark &.green { background: $color-dusty; color: $color-tea; }
+  body.dark &.amber { background: $color-celadon; color: $dark-bg; }
+  body.dark &.steel { background: $dark-border; color: $color-steel; }
+}
+
+.playerName {
+  font-size: $font-sm;
+  color: $light-text-primary;
+  flex: 1;
+  font-weight: 500;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.youBadge {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: $radius-full;
+  background: $info-light-bg;
+  color: $info-light;
+  font-weight: 700;
+  margin-right: 4px;
+
+  body.dark & {
+    background: $color-celadon;
+    color: $dark-bg;
+  }
+}
+
+.stats {
+  display: flex;
+  gap: 10px;
+}
+
+.stat {
+  text-align: center;
+  min-width: 24px;
+}
+
+.statVal {
+  font-size: $font-sm;
+  font-weight: 700;
+
+  &.pos { color: $success-light; }
+  &.neg { color: $danger-light; }
+  &.neutral { color: $light-text-primary; }
+
+  body.dark &.pos { color: $success-dark; }
+  body.dark &.neg { color: $danger-dark; }
+  body.dark &.neutral { color: $color-tea; }
+}
+
+.statLabel {
+  font-size: 9px;
+  color: $light-text-tertiary;
+  margin-top: 1px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+// ============ LOCKED ============
+.lockedSection {
+  position: relative;
+  min-height: 160px;
+}
+
+.lockedOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80%;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.97));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  gap: 8px;
+
+  body.dark & {
+    background: linear-gradient(to bottom, transparent, rgba(45,38,64,0.97));
+  }
+}
+
+.lockedTitle {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $color-tea;
+  }
+}
+
+// ============ RECENT GAMES ============
+.recentRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid $light-border-secondary;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  body.dark & {
+    border-color: $dark-border-secondary;
+  }
+}
+
+.recentText {
+  font-size: $font-xs;
+  color: $light-text-secondary;
+  flex: 1;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.recentDate {
+  font-size: 9px;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-dusty;
+  }
+}
+
+// ============ BOTTOM NAV ============
+.bottomNav {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: $max-width-mobile;
+  border-top: 1px solid $light-border;
+  background: $light-bg;
+  height: $bottom-nav-height;
+  z-index: 10;
+
+  @media (min-width: 768px) {
+    max-width: $max-width-tablet;
+  }
+
+  @media (min-width: 1024px) {
+    max-width: $max-width-desktop;
+  }
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.navTab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 9px;
+  color: $light-text-tertiary;
+  padding: 8px 0;
+
+  &.active {
+    color: $light-text-primary;
+    font-weight: 700;
+  }
+
+  body.dark & {
+    color: $color-steel;
+
+    &.active {
+      color: $color-tea;
+    }
+  }
+}
+
+.navTabIcon {
+  font-size: 18px;
+}
+
+.navCenter {
+  flex: 1.4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 9px;
+  font-weight: 700;
+  color: $light-bg;
+  background: $info-light;
+  border-right: 1px solid $light-border;
+  border-left: 1px solid $light-border;
+
+  body.dark & {
+    background: $color-celadon;
+    color: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.navCenterIcon {
+  font-size: 20px;
+}
+
+.noLeague {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.noLeagueIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.noLeagueTitle {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: $light-text-primary;
+  margin-bottom: 8px;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.noLeagueSub {
+  font-size: $font-sm;
+  color: $light-text-tertiary;
+  margin-bottom: 28px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.noLeagueBtn {
+  width: 100%;
+  padding: 13px;
+  border-radius: $radius-md;
+  font-size: $font-md;
+  font-weight: 700;
+  background: $info-light;
+  color: #fff;
+  border: none;
+  margin-bottom: 10px;
+
+  body.dark & {
+    background: $color-celadon;
+    color: $dark-bg;
+  }
+}
+
+.noLeagueBtnSecondary {
+  width: 100%;
+  padding: 13px;
+  border-radius: $radius-md;
+  font-size: $font-md;
+  font-weight: 700;
+  background: transparent;
+  color: $light-text-primary;
+  border: 1px solid $light-border;
+
+  body.dark & {
+    color: $dark-text-primary;
+    border-color: $dark-border;
+  }
+}

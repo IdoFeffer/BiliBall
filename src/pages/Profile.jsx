@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import '../styles/Profile.scss'
 
 const currentUser = {
   name: 'יוסי',
@@ -25,46 +26,88 @@ function Profile() {
   const score = currentUser.wins - currentUser.losses
 
   return (
-    <div>
-      <button onClick={() => navigate('/home')}>← חזרה</button>
-      <h2>פרופיל</h2>
+    <div className="page">
+      <header className="header">
+        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
+        <h2 className="headerTitle">פרופיל</h2>
+        <div style={{ width: 60 }} />
+      </header>
 
-      <div>
-        <span>{currentUser.name[0]}</span>
-        <div>
-          <p>{currentUser.name}</p>
-          <p>חבר מאז {currentUser.memberSince}</p>
+      <div className="section">
+        <div className="playerInfo">
+          <div className="avatarLg">{currentUser.name[0]}</div>
+          <div>
+            <p className="playerName">{currentUser.name}</p>
+            <p className="memberSince">חבר מאז {currentUser.memberSince}</p>
+          </div>
         </div>
       </div>
 
-      <h3>סטטיסטיקות</h3>
-      <div>
-        <div><span>{currentUser.wins}</span><span>נצחונות</span></div>
-        <div><span>{currentUser.losses}</span><span>הפסדים</span></div>
-        <div><span>{winRate}%</span><span>אחוז נצחון</span></div>
-        <div><span>{currentUser.wins + currentUser.losses}</span><span>סה"כ משחקים</span></div>
-        <div><span>{score > 0 ? '+' : ''}{score}</span><span>מדד</span></div>
-        <div><span>4</span><span>רצף נצחונות</span></div>
+      <div className="section">
+        <p className="sectionTitle">סטטיסטיקות</p>
+        <div className="metricsGrid">
+          <div className="metricCard">
+            <div className="metricVal pos">{currentUser.wins}</div>
+            <div className="metricLabel">נצחונות</div>
+          </div>
+          <div className="metricCard">
+            <div className="metricVal neg">{currentUser.losses}</div>
+            <div className="metricLabel">הפסדים</div>
+          </div>
+          <div className="metricCard">
+            <div className="metricVal">{winRate}%</div>
+            <div className="metricLabel">אחוז נצחון</div>
+          </div>
+          <div className="metricCard">
+            <div className="metricVal">{currentUser.wins + currentUser.losses}</div>
+            <div className="metricLabel">סה"כ משחקים</div>
+          </div>
+          <div className="metricCard">
+            <div className={`metricVal ${score >= 0 ? 'pos' : 'neg'}`}>
+              {score > 0 ? '+' : ''}{score}
+            </div>
+            <div className="metricLabel">מדד</div>
+          </div>
+          <div className="metricCard">
+            <div className="metricVal">4</div>
+            <div className="metricLabel">רצף נצחונות</div>
+          </div>
+        </div>
       </div>
 
-      <h3>נגד כל שחקן</h3>
-      {mockRivals.map(rival => (
-        <div key={rival.name}>
-          <span>{rival.name}</span>
-          <span>{rival.wins}/{rival.total}</span>
-        </div>
-      ))}
+      <div className="section">
+        <p className="sectionTitle">נגד כל שחקן</p>
+        {mockRivals.map(rival => (
+          <div key={rival.name} className="rivalRow">
+            <div className="avatarSm">{rival.name[0]}</div>
+            <span className="rivalName">{rival.name}</span>
+            <div className="rivalBar">
+              <div
+                className="rivalBarFill"
+                style={{ width: `${Math.round((rival.wins / rival.total) * 100)}%` }}
+              />
+            </div>
+            <span className="rivalScore">{rival.wins}/{rival.total}</span>
+          </div>
+        ))}
+      </div>
 
-      <h3>היסטוריית משחקים</h3>
-      {mockGames.map(game => (
-        <div key={game.id}>
-          <span>{game.result === 'win' ? 'נצחון' : 'הפסד'}</span>
-          <span>נגד {game.opponent}</span>
-          <span>{game.date}</span>
-        </div>
-      ))}
+      <div className="section">
+        <p className="sectionTitle">היסטוריית משחקים</p>
+        {mockGames.map(game => (
+          <div key={game.id} className="historyRow">
+            <span className={`resultBadge ${game.result}`}>
+              {game.result === 'win' ? 'נצחון' : 'הפסד'}
+            </span>
+            <span className="historyOpponent">נגד {game.opponent}</span>
+            <span className="historyDate">{game.date}</span>
+          </div>
+        ))}
+      </div>
 
-      <button onClick={() => navigate('/h2h')}>ראש בראש</button>
+      <button className="h2hBtn" onClick={() => navigate('/h2h')}>
+        ראש בראש ↗
+      </button>
     </div>
   )
 }

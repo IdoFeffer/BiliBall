@@ -1,0 +1,58 @@
+// ============ LIGHT MODE ============
+$light-bg: #ffffff;
+$light-bg-secondary: #f5f5f5;
+$light-text-primary: #1a1a1a;
+$light-text-secondary: #666666;
+$light-text-tertiary: #999999;
+$light-border: #e5e5e5;
+$light-border-secondary: #f0f0f0;
+
+// ============ DARK MODE ============
+$dark-bg: #2d2640;
+$dark-bg-secondary: #3d3550;
+$dark-text-primary: #e2e0f0;
+$dark-text-secondary: #99A1A6;
+$dark-text-tertiary: #5C5D8D;
+$dark-border: #4a4060;
+$dark-border-secondary: #3d3550;
+
+// ============ צבעים משותפים ============
+$color-grape: #654F6F;
+$color-dusty: #5C5D8D;
+$color-steel: #99A1A6;
+$color-celadon: #A8C69F;
+$color-tea: #CCE2A3;
+
+// ============ סמנטי ============
+$success-light: #3B6D11;
+$success-light-bg: #EAF3DE;
+$danger-light: #A32D2D;
+$danger-light-bg: #FCEBEB;
+$info-light: #185FA5;
+$info-light-bg: #E6F1FB;
+$warning-light: #854F0B;
+$warning-light-bg: #FAEEDA;
+
+$success-dark: #A8C69F;
+$danger-dark: #e07070;
+$info-dark: #CCE2A3;
+
+// ============ גדלים ============
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-full: 999px;
+
+// ============ פונטים ============
+$font-xs: 10px;
+$font-sm: 12px;
+$font-md: 14px;
+$font-lg: 16px;
+$font-xl: 20px;
+$font-xxl: 24px;
+
+// ============ layout ============
+$bottom-nav-height: 56px;
+$max-width-mobile: 480px;
+$max-width-tablet: 720px;
+$max-width-desktop: 960px;
