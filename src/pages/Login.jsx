@@ -32,6 +32,7 @@ function Login() {
         if (leagueRes.data) {
           localStorage.setItem('leagueId', leagueRes.data.id)
           localStorage.setItem('leagueName', leagueRes.data.name)
+          localStorage.setItem('leagueCode', leagueRes.data.invite_code) // הוסף שורה זו
         }
       } catch {
         // אין ליגה
@@ -79,7 +80,11 @@ function Login() {
           )}
         </div>
 
-        {error && <p style={{ color: 'red', fontSize: '13px', marginBottom: '10px' }}>{error}</p>}
+        {error && (
+          <p style={{ color: 'red', fontSize: '13px', marginBottom: '10px' }}>
+            {error}
+          </p>
+        )}
 
         <button className="submitBtn" onClick={handleSubmit} disabled={loading}>
           {loading ? 'טוען...' : isRegister ? 'הירשם' : 'התחבר'}
@@ -87,7 +92,10 @@ function Login() {
 
         <p className="switchText">
           {isRegister ? 'כבר יש לך חשבון?' : 'אין לך חשבון?'}
-          <button className="switchBtn" onClick={() => setIsRegister(!isRegister)}>
+          <button
+            className="switchBtn"
+            onClick={() => setIsRegister(!isRegister)}
+          >
             {isRegister ? 'התחבר' : 'הירשם'}
           </button>
         </p>

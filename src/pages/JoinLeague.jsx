@@ -19,6 +19,7 @@ function JoinLeague() {
       const res = await leagues.join({ invite_code: code })
       localStorage.setItem('leagueId', res.data.id)
       localStorage.setItem('leagueName', res.data.name)
+      localStorage.setItem('leagueCode', res.data.invite_code)
       navigate('/home')
     } catch (err) {
       setError(err.response?.data?.error || 'קוד לא תקין')

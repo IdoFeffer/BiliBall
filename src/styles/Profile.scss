@@ -16,7 +16,7 @@
   justify-content: space-between;
   padding: 14px 16px;
   border-bottom: 1px solid $light-border;
-  position: sticky;
+  position: relative;
   top: 0;
   background: $light-bg;
   z-index: 10;
@@ -30,6 +30,10 @@
 
 
 .headerTitle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font-size: $font-lg;
   font-weight: 700;
   color: $light-text-primary;

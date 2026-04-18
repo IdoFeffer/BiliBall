@@ -19,6 +19,7 @@ function CreateLeague() {
       setInviteCode(res.data.invite_code)
       localStorage.setItem('leagueId', res.data.id)
       localStorage.setItem('leagueName', res.data.name)
+      localStorage.setItem('leagueCode', res.data.invite_code)
       setCreated(true)
     } catch (err) {
       setError('משהו השתבש')

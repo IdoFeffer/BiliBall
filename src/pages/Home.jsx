@@ -204,22 +204,43 @@ function Home() {
         </section>
       )}
 
-      {isLoggedIn && hasLeague && (
-        <nav className="bottomNav">
-          <button className="navTab active">
-            <span className="navTabIcon">🏠</span>
-            בית
-          </button>
-          <button className="navCenter" onClick={() => navigate('/add-game')}>
-            <span className="navCenterIcon">+</span>
-            הוספת משחק
-          </button>
-          <button className="navTab" onClick={() => navigate('/profile')}>
-            <span className="navTabIcon">👤</span>
-            פרופיל
-          </button>
-        </nav>
-      )}
+{isLoggedIn && hasLeague && (
+  <section className="section">
+    <h2 className="sectionTitle">הזמן לליגה</h2>
+    <div className="inviteCode">
+      <div>
+        <p className="inviteLabel">קוד הצטרפות</p>
+        <p className="inviteCodeText">{localStorage.getItem('leagueCode')}</p>
+      </div>
+      <button
+        className="inviteCopyBtn"
+        onClick={() => {
+          navigator.clipboard.writeText(localStorage.getItem('leagueCode'))
+          alert('הקוד הועתק!')
+        }}
+      >
+        העתק
+      </button>
+    </div>
+    <button
+      className="inviteShareBtn"
+      onClick={() => {
+        const code = localStorage.getItem('leagueCode')
+        if (navigator.share) {
+          navigator.share({
+            title: 'הצטרף ל-BiliBall',
+            text: `הצטרף לליגה שלנו עם הקוד: ${code}`,
+          })
+        } else {
+          navigator.clipboard.writeText(`הצטרף לליגה שלנו עם הקוד: ${code}`)
+          alert('הקישור הועתק!')
+        }
+      }}
+    >
+      🔗 שתף הזמנה
+    </button>
+  </section>
+)}
     </div>
   )
 }

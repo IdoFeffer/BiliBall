@@ -493,3 +493,86 @@
     color: $dark-bg;
   }
 }
+
+// ============ INVITE ============
+.inviteCode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: $light-bg-secondary;
+  border-radius: $radius-md;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+
+  body.dark & {
+    background: $dark-bg-secondary;
+  }
+}
+
+.inviteLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $light-text-tertiary;
+  margin-bottom: 4px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.inviteCodeText {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: $light-text-primary;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.inviteCopyBtn {
+  font-size: $font-xs;
+  padding: 7px 14px;
+  border-radius: $radius-md;
+  border: 1px solid $light-border;
+  color: $light-text-secondary;
+  background: $light-bg;
+  font-weight: 600;
+
+  body.dark & {
+    border-color: $dark-border;
+    color: $color-steel;
+    background: $dark-bg;
+  }
+
+  &:active {
+    background: $light-bg-secondary;
+  }
+}
+
+.inviteShareBtn {
+  width: 100%;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: 1px solid $light-border;
+  color: $light-text-primary;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  body.dark & {
+    border-color: $dark-border;
+    color: $dark-text-primary;
+  }
+
+  &:active {
+    background: $light-bg-secondary;
+  }
+}
