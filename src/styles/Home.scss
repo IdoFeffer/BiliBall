@@ -576,3 +576,141 @@
     background: $light-bg-secondary;
   }
 }
+
+.leagueChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: $light-bg-secondary;
+  border: 1px solid $light-border;
+  border-radius: $radius-full;
+  padding: 2px 10px;
+  font-size: $font-xs;
+  color: $light-text-secondary;
+  cursor: pointer;
+  margin-top: 2px;
+
+  body.dark & {
+    background: $dark-bg-secondary;
+    border-color: $dark-border;
+    color: $color-steel;
+  }
+}
+
+.leagueChevron {
+  font-size: 9px;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.leagueDropdown {
+  background: $light-bg;
+  border-bottom: 1px solid $light-border;
+  padding: 8px;
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.leagueOption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-size: $font-sm;
+  color: $light-text-primary;
+
+  &.active {
+    background: $light-bg-secondary;
+
+    body.dark & {
+      background: $dark-bg-secondary;
+    }
+  }
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.leagueDot {
+  width: 8px;
+  height: 8px;
+  border-radius: $radius-full;
+  background: $light-border;
+  flex-shrink: 0;
+
+  &.active {
+    background: $info-light;
+  }
+
+  body.dark & {
+    background: $dark-border;
+
+    &.active {
+      background: $color-celadon;
+    }
+  }
+}
+
+.leagueOptionName {
+  flex: 1;
+}
+
+.leagueCheck {
+  font-size: $font-xs;
+  color: $info-light;
+
+  body.dark & {
+    color: $color-celadon;
+  }
+}
+
+.leagueDivider {
+  height: 1px;
+  background: $light-border;
+  margin: 4px 0;
+
+  body.dark & {
+    background: $dark-border;
+  }
+}
+
+.leagueOptionNew {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: $radius-md;
+  cursor: pointer;
+  font-size: $font-sm;
+  color: $light-text-secondary;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.leaguePlus {
+  width: 24px;
+  height: 24px;
+  border-radius: $radius-full;
+  border: 1.5px dashed $light-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-md;
+  color: $light-text-tertiary;
+
+  body.dark & {
+    border-color: $dark-border;
+    color: $color-steel;
+  }
+}

@@ -29,6 +29,7 @@ export const leagues = {
   join: (data) => api.post('/leagues/join', data),
   getMembers: (leagueId) => api.get(`/leagues/${leagueId}/members`),
   getUserLeague: () => api.get('/leagues/user'),
+  getAllLeagues: () => api.get('/leagues/user/all'),
 }
 
 export const games = {

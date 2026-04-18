@@ -1,7 +1,7 @@
 import '../styles/Home.scss'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { players, games } from '../api'
+import { players, games, leagues } from '../api'
 
 const avatarColors = ['blue', 'green', 'amber', 'steel']
 
@@ -11,12 +11,14 @@ function Home() {
   const [recentGames, setRecentGames] = useState([])
   const [loading, setLoading] = useState(true)
   const [openNote, setOpenNote] = useState(null)
+  const [showLeagueDropdown, setShowLeagueDropdown] = useState(false)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
   const leagueName = localStorage.getItem('leagueName')
   const isLoggedIn = !!localStorage.getItem('token')
   const hasLeague = !!leagueId
+  const userLeagues = JSON.parse(localStorage.getItem('userLeagues') || '[]')
 
   useEffect(() => {
     if (!isLoggedIn) return
@@ -41,9 +43,42 @@ function Home() {
     fetchData()
   }, [])
 
+  useEffect(() => {
+  if (!isLoggedIn) return
+  if (!hasLeague) {
+    setLoading(false)
+    return
+  }
+  const fetchData = async () => {
+    try {
+      const [playersRes, gamesRes, allLeaguesRes] = await Promise.all([
+        players.getLeaguePlayers(leagueId),
+        games.getLeagueGames(leagueId),
+        leagues.getAllLeagues(),
+      ])
+      setLeaguePlayers(playersRes.data)
+      setRecentGames(gamesRes.data.slice(0, 5))
+      localStorage.setItem('userLeagues', JSON.stringify(allLeaguesRes.data))
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+  fetchData()
+}, [])
+
   const handleLogout = () => {
     localStorage.clear()
     navigate('/login')
+  }
+
+  const switchLeague = (league) => {
+    localStorage.setItem('leagueId', league.id)
+    localStorage.setItem('leagueName', league.name)
+    localStorage.setItem('leagueCode', league.invite_code)
+    setShowLeagueDropdown(false)
+    window.location.reload()
   }
 
   if (loading) return <div style={{ padding: 20 }}>טוען...</div>
@@ -60,21 +95,61 @@ function Home() {
         </div>
         <div style={{ textAlign: 'center' }}>
           <h1 className="navLogo">BiliBall 🎱</h1>
+          {hasLeague && (
+            <div
+              className="leagueChip"
+              onClick={() => {
+                setShowLeagueDropdown(!showLeagueDropdown)
+                setShowLeagueOptions(false)
+              }}
+            >
+              <span>{leagueName}</span>
+              <span className="leagueChevron">
+                {showLeagueDropdown ? '▴' : '▾'}
+              </span>
+            </div>
+          )}
         </div>
         <div />
       </nav>
 
-      {isLoggedIn && hasLeague && (
-        <p
-          style={{
-            textAlign: 'center',
-            fontSize: '12px',
-            color: '#999',
-            padding: '8px 0 0',
-          }}
-        >
-          {leagueName}
-        </p>
+      {showLeagueDropdown && (
+        <div className="leagueDropdown">
+          {userLeagues.map((league) => (
+            <div
+              key={league.id}
+              className={`leagueOption ${league.id == leagueId ? 'active' : ''}`}
+              onClick={() => switchLeague(league)}
+            >
+              <div
+                className={`leagueDot ${league.id == leagueId ? 'active' : ''}`}
+              />
+              <span className="leagueOptionName">{league.name}</span>
+              {league.id == leagueId && <span className="leagueCheck">✓</span>}
+            </div>
+          ))}
+          <div className="leagueDivider" />
+          <div
+            className="leagueOption"
+            onClick={() => {
+              setShowLeagueDropdown(false)
+              navigate('/create-league')
+            }}
+          >
+            <span className="leaguePlus">+</span>
+            <span className="leagueOptionName">צור ליגה חדשה</span>
+          </div>
+          <div
+            className="leagueOption"
+            onClick={() => {
+              setShowLeagueDropdown(false)
+              navigate('/join-league')
+            }}
+          >
+            <span className="leaguePlus">→</span>
+            <span className="leagueOptionName">הצטרף לליגה קיימת</span>
+          </div>
+        </div>
       )}
 
       {isLoggedIn && !hasLeague && (
@@ -158,9 +233,6 @@ function Home() {
 
       {isLoggedIn && hasLeague && (
         <section className="section">
-          <button className="h2hBtn" onClick={() => navigate('/h2h')}>
-            ראש בראש ↗
-          </button>
           <h2 className="sectionTitle">משחקים אחרונים</h2>
           {recentGames.length === 0 && (
             <p
@@ -213,6 +285,14 @@ function Home() {
 
       {isLoggedIn && hasLeague && (
         <section className="section">
+          <button className="h2hBtn" onClick={() => navigate('/h2h')}>
+            ראש בראש ↗
+          </button>
+        </section>
+      )}
+
+      {isLoggedIn && hasLeague && (
+        <section className="section">
           <h2 className="sectionTitle">הזמן לליגה</h2>
           <div className="inviteCode">
             <div>
@@ -246,13 +326,30 @@ function Home() {
                 navigator.clipboard.writeText(
                   `הצטרף לליגה שלנו עם הקוד: ${code}`,
                 )
-                alert('הקישור הועתק!')
+                alert('הועתק!')
               }
             }}
           >
             🔗 שתף הזמנה
           </button>
         </section>
+      )}
+
+      {isLoggedIn && hasLeague && (
+        <nav className="bottomNav">
+          <button className="navTab active">
+            <span className="navTabIcon">🏠</span>
+            בית
+          </button>
+          <button className="navCenter" onClick={() => navigate('/add-game')}>
+            <span className="navCenterIcon">+</span>
+            הוספת משחק
+          </button>
+          <button className="navTab" onClick={() => navigate('/profile')}>
+            <span className="navTabIcon">👤</span>
+            פרופיל
+          </button>
+        </nav>
       )}
     </div>
   )

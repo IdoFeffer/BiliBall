@@ -20,6 +20,10 @@ function JoinLeague() {
       localStorage.setItem('leagueId', res.data.id)
       localStorage.setItem('leagueName', res.data.name)
       localStorage.setItem('leagueCode', res.data.invite_code)
+
+      const allRes = await leagues.getAllLeagues()
+      localStorage.setItem('userLeagues', JSON.stringify(allRes.data))
+
       navigate('/home')
     } catch (err) {
       setError(err.response?.data?.error || 'קוד לא תקין')
@@ -44,7 +48,11 @@ function JoinLeague() {
           value={link}
           onChange={(e) => setLink(e.target.value)}
         />
-        {error && <p style={{ color: 'red', fontSize: '13px', marginTop: '8px' }}>{error}</p>}
+        {error && (
+          <p style={{ color: 'red', fontSize: '13px', marginTop: '8px' }}>
+            {error}
+          </p>
+        )}
         <button className="submitBtn" onClick={handleJoin} disabled={loading}>
           {loading ? 'מצטרף...' : 'הצטרף'}
         </button>

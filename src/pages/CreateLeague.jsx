@@ -20,6 +20,10 @@ function CreateLeague() {
       localStorage.setItem('leagueId', res.data.id)
       localStorage.setItem('leagueName', res.data.name)
       localStorage.setItem('leagueCode', res.data.invite_code)
+
+      const allRes = await leagues.getAllLeagues()
+      localStorage.setItem('userLeagues', JSON.stringify(allRes.data))
+
       setCreated(true)
     } catch (err) {
       setError('משהו השתבש')
@@ -52,14 +56,16 @@ function CreateLeague() {
         />
         {error && <p style={{ color: 'red', fontSize: '13px' }}>{error}</p>}
         {!created && (
-          <button className="submitBtn" onClick={handleCreate} disabled={loading}>
+          <button
+            className="submitBtn"
+            onClick={handleCreate}
+            disabled={loading}
+          >
             {loading ? 'יוצר...' : 'צור ליגה'}
           </button>
         )}
         {created && (
-          <div className="successBanner">
-            ✓ הליגה נוצרה! עכשיו הזמן חברים
-          </div>
+          <div className="successBanner">✓ הליגה נוצרה! עכשיו הזמן חברים</div>
         )}
       </div>
 
@@ -69,7 +75,9 @@ function CreateLeague() {
             <p className="sectionTitle">הזמן חברים</p>
             <div className="linkBox">
               <span className="linkText">biliball.app/join/{inviteCode}</span>
-              <button className="copyBtn" onClick={handleCopy}>העתק</button>
+              <button className="copyBtn" onClick={handleCopy}>
+                העתק
+              </button>
             </div>
             <div className="shareButtons">
               <button className="shareBtn">📱 וואטסאפ</button>
@@ -81,7 +89,10 @@ function CreateLeague() {
             <p className="sectionTitle">{leagueName} — חברים</p>
             <div className="memberRow">
               <div className="avatar">
-                {JSON.parse(localStorage.getItem('user') || '{}').full_name?.[0]}
+                {
+                  JSON.parse(localStorage.getItem('user') || '{}')
+                    .full_name?.[0]
+                }
               </div>
               <span className="memberName">
                 {JSON.parse(localStorage.getItem('user') || '{}').full_name}
