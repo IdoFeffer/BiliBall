@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import '../styles/Profile.scss'
-import { players } from '../api'
+import { players, games } from '../api'
 
 function Profile() {
   const navigate = useNavigate()
@@ -155,6 +155,29 @@ function Profile() {
                 <span className="historyDate">
                   {new Date(game.played_at).toLocaleDateString('he-IL')}
                 </span>
+                {isOwnProfile && (
+                  <span
+                    style={{
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      color: '#ccc',
+                    }}
+                    onClick={async () => {
+                      if (!window.confirm('למחוק את המשחק?')) return
+                      try {
+                        await games.delete(game.id)
+                        setStats((prev) => ({
+                          ...prev,
+                          games: prev.games.filter((g) => g.id !== game.id),
+                        }))
+                      } catch (err) {
+                        alert('שגיאה במחיקה')
+                      }
+                    }}
+                  >
+                    🗑
+                  </span>
+                )}
               </div>
             </div>
             {openNote === game.id && game.note && (
