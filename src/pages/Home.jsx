@@ -1,36 +1,63 @@
 import '../styles/Home.scss'
 import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { players, games } from '../api'
 
-const mockPlayers = [
-  { id: 1, name: 'יוסי', wins: 12, losses: 4 },
-  { id: 2, name: 'דני', wins: 9, losses: 6 },
-  { id: 3, name: 'מור', wins: 5, losses: 8 },
-  { id: 4, name: 'רון', wins: 3, losses: 9 },
-]
-
-const mockGames = [
-  { id: 1, winner: 'יוסי', loser: 'דני', date: 'היום' },
-  { id: 2, winner: 'דני', loser: 'מור', date: 'אתמול' },
-  { id: 3, winner: 'יוסי', loser: 'רון', date: '15.4' },
-]
-
-const isLoggedIn = true
-const hasLeague = false
-const currentUser = 'יוסי'
 const avatarColors = ['blue', 'green', 'amber', 'steel']
 
 function Home() {
   const navigate = useNavigate()
+  const [leaguePlayers, setLeaguePlayers] = useState([])
+  const [recentGames, setRecentGames] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const leagueId = localStorage.getItem('leagueId')
+  const leagueName = localStorage.getItem('leagueName')
+  const isLoggedIn = !!localStorage.getItem('token')
+  const hasLeague = !!leagueId
+
+  useEffect(() => {
+    if (!isLoggedIn) return
+    if (!hasLeague) {
+      setLoading(false)
+      return
+    }
+
+    const fetchData = async () => {
+      try {
+        const [playersRes, gamesRes] = await Promise.all([
+          players.getLeaguePlayers(leagueId),
+          games.getLeagueGames(leagueId),
+        ])
+        setLeaguePlayers(playersRes.data)
+        setRecentGames(gamesRes.data.slice(0, 5))
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.clear()
+    navigate('/login')
+  }
+
+  if (loading) return <div style={{ padding: 20 }}>טוען...</div>
 
   return (
     <div className="page">
       <nav className="nav">
         <div>
           <h1 className="navLogo">BiliBall 🎱</h1>
-          {isLoggedIn && hasLeague && <p className="navLeague">ליגת המרתף</p>}
+          {isLoggedIn && hasLeague && <p className="navLeague">{leagueName}</p>}
         </div>
         {isLoggedIn
-          ? <div className="navAvatar">{currentUser[0]}</div>
+          ? <div className="navAvatar" onClick={handleLogout} style={{ cursor: 'pointer' }}>{user.full_name?.[0] || user.username?.[0]}</div>
           : <button className="loginBtn" onClick={() => navigate('/login')}>התחבר</button>
         }
       </nav>
@@ -53,15 +80,15 @@ function Home() {
         <section className={`section ${!isLoggedIn ? 'lockedSection' : ''}`}>
           <h2 className="sectionTitle">לוח מובילים</h2>
           <div>
-            {mockPlayers.map((player, index) => (
+            {leaguePlayers.map((player, index) => (
               <div key={player.id} className="playerRow">
                 <span className={`rank ${index === 0 ? 'first' : ''}`}>{index + 1}</span>
-                <div className={`avatar ${avatarColors[index]}`}>{player.name[0]}</div>
+                <div className={`avatar ${avatarColors[index % avatarColors.length]}`}>
+                  {player.full_name?.[0] || player.username?.[0]}
+                </div>
                 <span className="playerName">
-                  {isLoggedIn && currentUser === player.name && (
-                    <span className="youBadge">את/ה</span>
-                  )}
-                  {player.name}
+                  {user.id === player.id && <span className="youBadge">את/ה</span>}
+                  {player.full_name || player.username}
                 </span>
                 <div className="stats">
                   <div className="stat">
@@ -96,13 +123,18 @@ function Home() {
       {isLoggedIn && hasLeague && (
         <section className="section">
           <h2 className="sectionTitle">משחקים אחרונים</h2>
-          {mockGames.map(game => (
+          {recentGames.length === 0 && (
+            <p style={{ fontSize: '13px', color: '#999', textAlign: 'center', padding: '16px 0' }}>
+              אין משחקים עדיין
+            </p>
+          )}
+          {recentGames.map((game, index) => (
             <div key={game.id} className="recentRow">
-              <div className={`avatar ${avatarColors[mockPlayers.findIndex(p => p.name === game.winner)]}`}>
-                {game.winner[0]}
+              <div className={`avatar ${avatarColors[index % avatarColors.length]}`}>
+                {game.winner_name?.[0]}
               </div>
-              <span className="recentText">{game.winner} ניצח את {game.loser}</span>
-              <span className="recentDate">{game.date}</span>
+              <span className="recentText">{game.winner_name} ניצח את {game.loser_name}</span>
+              <span className="recentDate">{new Date(game.played_at).toLocaleDateString('he-IL')}</span>
             </div>
           ))}
         </section>
