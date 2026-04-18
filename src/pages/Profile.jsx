@@ -109,10 +109,6 @@ function Profile() {
         </div>
       )}
 
-      <button className="h2hBtn" onClick={() => navigate('/h2h')}>
-        ראש בראש ↗
-      </button>
-
       <div className="section">
         <p className="sectionTitle">היסטוריית משחקים</p>
         {stats.games.length === 0 && (
