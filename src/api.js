@@ -35,6 +35,7 @@ export const games = {
   add: (data) => api.post('/games', data),
   getLeagueGames: (leagueId) => api.get(`/games/league/${leagueId}`),
   delete: (gameId) => api.delete(`/games/${gameId}`),
+  deleteNote: (gameId) => api.patch(`/games/${gameId}/note`),
 }
 
 export const players = {

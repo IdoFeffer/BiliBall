@@ -86,4 +86,17 @@ router.delete('/:id', auth, (req, res) => {
   res.json({ success: true })
 })
 
+router.patch('/:id/note', auth, (req, res) => {
+  const game = db.prepare('SELECT * FROM games WHERE id = ?').get(req.params.id)
+  
+  if (!game) return res.status(404).json({ error: 'משחק לא נמצא' })
+  
+  if (game.winner_id !== req.user.id && game.loser_id !== req.user.id) {
+    return res.status(403).json({ error: 'לא מורשה' })
+  }
+  
+  db.prepare('UPDATE games SET note = NULL WHERE id = ?').run(req.params.id)
+  res.json({ success: true })
+})
+
 module.exports = router

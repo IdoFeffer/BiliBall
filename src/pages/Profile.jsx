@@ -181,7 +181,37 @@ function Profile() {
               </div>
             </div>
             {openNote === game.id && game.note && (
-              <div className="noteTooltip">{game.note}</div>
+              <div
+                className="noteTooltip"
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <span>{game.note}</span>
+                {isOwnProfile && (
+                  <span
+                    style={{
+                      cursor: 'pointer',
+                      color: '#aaa',
+                      fontSize: '12px',
+                    }}
+                    onClick={async () => {
+                      try {
+                        await games.deleteNote(game.id)
+                        setStats((prev) => ({
+                          ...prev,
+                          games: prev.games.map((g) =>
+                            g.id === game.id ? { ...g, note: null } : g,
+                          ),
+                        }))
+                        setOpenNote(null)
+                      } catch (err) {
+                        alert('שגיאה במחיקה')
+                      }
+                    }}
+                  >
+                    ✕
+                  </span>
+                )}
+              </div>
             )}
           </div>
         ))}
