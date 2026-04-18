@@ -714,3 +714,153 @@
     color: $color-steel;
   }
 }
+
+.leaveBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: 1px solid $warning-light;
+  color: $warning-light;
+  background: transparent;
+
+  body.dark & {
+    border-color: $warning-dark;
+    color: $warning-dark;
+  }
+}
+
+.deleteBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: 1px solid $danger-light;
+  color: $danger-light;
+  background: transparent;
+
+  body.dark & {
+    border-color: $danger-dark;
+    color: $danger-dark;
+  }
+}
+
+.deleteBtnFull {
+  width: 100%;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: 1px solid $danger-light;
+  color: $danger-light;
+  background: transparent;
+
+  body.dark & {
+    border-color: $danger-dark;
+    color: $danger-dark;
+  }
+}
+
+.confirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 100;
+}
+
+.confirmSheet {
+  background: $light-bg;
+  border-radius: $radius-md $radius-md 0 0;
+  padding: 20px 16px;
+  width: 100%;
+  max-width: $max-width-mobile;
+
+  body.dark & {
+    background: $dark-bg;
+  }
+}
+
+.confirmTitle {
+  font-size: $font-md;
+  font-weight: 700;
+  color: $light-text-primary;
+  text-align: center;
+  margin-bottom: 6px;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.confirmSub {
+  font-size: $font-xs;
+  color: $light-text-secondary;
+  text-align: center;
+  margin-bottom: 20px;
+  line-height: 1.5;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.confirmBtnWarn {
+  width: 100%;
+  padding: 12px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: none;
+  margin-bottom: 8px;
+  background: $warning-light-bg;
+  color: $warning-light;
+  cursor: pointer;
+
+  body.dark & {
+    background: rgba(255, 193, 7, 0.15);
+    color: $warning-dark;
+  }
+}
+
+.confirmBtnDanger {
+  width: 100%;
+  padding: 12px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: none;
+  margin-bottom: 8px;
+  background: $danger-light-bg;
+  color: $danger-light;
+  cursor: pointer;
+
+  body.dark & {
+    background: rgba(224, 112, 112, 0.15);
+    color: $danger-dark;
+  }
+}
+
+.confirmBtnCancel {
+  width: 100%;
+  padding: 12px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: none;
+  background: $light-bg-secondary;
+  color: $light-text-secondary;
+  cursor: pointer;
+
+  body.dark & {
+    background: $dark-bg-secondary;
+    color: $color-steel;
+  }
+}

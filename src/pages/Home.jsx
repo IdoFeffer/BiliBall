@@ -12,6 +12,8 @@ function Home() {
   const [loading, setLoading] = useState(true)
   const [openNote, setOpenNote] = useState(null)
   const [showLeagueDropdown, setShowLeagueDropdown] = useState(false)
+  const [userRole, setUserRole] = useState('member')
+  const [showConfirm, setShowConfirm] = useState(null)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
@@ -28,12 +30,18 @@ function Home() {
     }
     const fetchData = async () => {
       try {
-        const [playersRes, gamesRes] = await Promise.all([
-          players.getLeaguePlayers(leagueId),
-          games.getLeagueGames(leagueId),
-        ])
+        const [playersRes, gamesRes, allLeaguesRes, membersRes] =
+          await Promise.all([
+            players.getLeaguePlayers(leagueId),
+            games.getLeagueGames(leagueId),
+            leagues.getAllLeagues(),
+            leagues.getMembers(leagueId),
+          ])
         setLeaguePlayers(playersRes.data)
         setRecentGames(gamesRes.data.slice(0, 5))
+        localStorage.setItem('userLeagues', JSON.stringify(allLeaguesRes.data))
+        const me = membersRes.data.find((m) => m.id === user.id)
+        if (me) setUserRole(me.role)
       } catch (err) {
         console.error(err)
       } finally {
@@ -42,31 +50,6 @@ function Home() {
     }
     fetchData()
   }, [])
-
-  useEffect(() => {
-  if (!isLoggedIn) return
-  if (!hasLeague) {
-    setLoading(false)
-    return
-  }
-  const fetchData = async () => {
-    try {
-      const [playersRes, gamesRes, allLeaguesRes] = await Promise.all([
-        players.getLeaguePlayers(leagueId),
-        games.getLeagueGames(leagueId),
-        leagues.getAllLeagues(),
-      ])
-      setLeaguePlayers(playersRes.data)
-      setRecentGames(gamesRes.data.slice(0, 5))
-      localStorage.setItem('userLeagues', JSON.stringify(allLeaguesRes.data))
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
-  fetchData()
-}, [])
 
   const handleLogout = () => {
     localStorage.clear()
@@ -79,6 +62,32 @@ function Home() {
     localStorage.setItem('leagueCode', league.invite_code)
     setShowLeagueDropdown(false)
     window.location.reload()
+  }
+
+  const handleLeaveOrDelete = async () => {
+    try {
+      if (showConfirm === 'leave') {
+        await leagues.leave(leagueId)
+      } else {
+        await leagues.deleteLeague(leagueId)
+      }
+      localStorage.removeItem('leagueId')
+      localStorage.removeItem('leagueName')
+      localStorage.removeItem('leagueCode')
+      const allRes = await leagues.getAllLeagues()
+      const remaining = allRes.data
+      if (remaining.length > 0) {
+        localStorage.setItem('leagueId', remaining[0].id)
+        localStorage.setItem('leagueName', remaining[0].name)
+        localStorage.setItem('leagueCode', remaining[0].invite_code)
+        localStorage.setItem('userLeagues', JSON.stringify(remaining))
+      } else {
+        localStorage.removeItem('userLeagues')
+      }
+      window.location.reload()
+    } catch (err) {
+      alert(err.response?.data?.error || 'משהו השתבש')
+    }
   }
 
   if (loading) return <div style={{ padding: 20 }}>טוען...</div>
@@ -98,10 +107,7 @@ function Home() {
           {hasLeague && (
             <div
               className="leagueChip"
-              onClick={() => {
-                setShowLeagueDropdown(!showLeagueDropdown)
-                setShowLeagueOptions(false)
-              }}
+              onClick={() => setShowLeagueDropdown(!showLeagueDropdown)}
             >
               <span>{leagueName}</span>
               <span className="leagueChevron">
@@ -333,6 +339,65 @@ function Home() {
             🔗 שתף הזמנה
           </button>
         </section>
+      )}
+
+      {isLoggedIn && hasLeague && (
+        <div style={{ padding: '12px 16px' }}>
+          {userRole === 'admin' ? (
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                className="leaveBtn"
+                onClick={() => setShowConfirm('leave')}
+              >
+                ↩ עזוב ליגה
+              </button>
+              <button
+                className="deleteBtn"
+                onClick={() => setShowConfirm('delete')}
+              >
+                ✕ מחק ליגה
+              </button>
+            </div>
+          ) : (
+            <button
+              className="deleteBtnFull"
+              onClick={() => setShowConfirm('leave')}
+            >
+              ↩ עזוב ליגה
+            </button>
+          )}
+        </div>
+      )}
+
+      {showConfirm && (
+        <div className="confirmOverlay" onClick={() => setShowConfirm(null)}>
+          <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
+            <p className="confirmTitle">
+              {showConfirm === 'leave'
+                ? `עזוב את ${leagueName}?`
+                : `מחק את ${leagueName}?`}
+            </p>
+            <p className="confirmSub">
+              {showConfirm === 'leave'
+                ? 'תוכל להצטרף מחדש עם קוד הזמנה. המשחקים שלך יישמרו.'
+                : 'כל החברים יוסרו מהליגה. המשחקים יישמרו.'}
+            </p>
+            <button
+              className={
+                showConfirm === 'leave' ? 'confirmBtnWarn' : 'confirmBtnDanger'
+              }
+              onClick={handleLeaveOrDelete}
+            >
+              {showConfirm === 'leave' ? 'עזוב ליגה' : 'מחק ליגה לצמיתות'}
+            </button>
+            <button
+              className="confirmBtnCancel"
+              onClick={() => setShowConfirm(null)}
+            >
+              ביטול
+            </button>
+          </div>
+        </div>
       )}
 
       {isLoggedIn && hasLeague && (

@@ -30,6 +30,8 @@ export const leagues = {
   getMembers: (leagueId) => api.get(`/leagues/${leagueId}/members`),
   getUserLeague: () => api.get('/leagues/user'),
   getAllLeagues: () => api.get('/leagues/user/all'),
+  leave: (leagueId) => api.post(`/leagues/${leagueId}/leave`),
+  deleteLeague: (leagueId) => api.delete(`/leagues/${leagueId}`),
 }
 
 export const games = {

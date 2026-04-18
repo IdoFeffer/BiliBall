@@ -58,7 +58,6 @@ router.post('/join', auth, (req, res) => {
   res.json(league)
 })
 
-// חשוב: static routes לפני dynamic routes
 router.get('/user/all', auth, (req, res) => {
   const leagues = db
     .prepare(
@@ -103,6 +102,34 @@ router.get('/:id/members', auth, (req, res) => {
     .all(req.params.id)
 
   res.json(members)
+})
+
+router.post('/:id/leave', auth, (req, res) => {
+  const leagueId = req.params.id
+  const member = db
+    .prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
+    .get(leagueId, req.user.id)
+  if (!member) return res.status(404).json({ error: 'לא חבר בליגה' })
+
+  db.prepare(
+    'DELETE FROM league_members WHERE league_id = ? AND user_id = ?',
+  ).run(leagueId, req.user.id)
+
+  res.json({ success: true })
+})
+
+router.delete('/:id', auth, (req, res) => {
+  const leagueId = req.params.id
+  const member = db
+    .prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
+    .get(leagueId, req.user.id)
+  if (!member || member.role !== 'admin')
+    return res.status(403).json({ error: 'אין הרשאה' })
+
+  db.prepare('DELETE FROM league_members WHERE league_id = ?').run(leagueId)
+  db.prepare('DELETE FROM leagues WHERE id = ?').run(leagueId)
+
+  res.json({ success: true })
 })
 
 module.exports = router
