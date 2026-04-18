@@ -1,21 +1,24 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import '../styles/Profile.scss'
 import { players } from '../api'
 
 function Profile() {
   const navigate = useNavigate()
+  const { userId } = useParams()
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [openNote, setOpenNote] = useState(null)
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
+  const targetUserId = userId || currentUser.id
+  const isOwnProfile = !userId || parseInt(userId) === currentUser.id
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await players.getStats(user.id, leagueId)
+        const res = await players.getStats(targetUserId, leagueId)
         setStats(res.data)
       } catch (err) {
         console.error(err)
@@ -24,7 +27,7 @@ function Profile() {
       }
     }
     fetchStats()
-  }, [])
+  }, [targetUserId])
 
   if (loading) return <div style={{ padding: 20 }}>טוען...</div>
   if (!stats) return <div style={{ padding: 20 }}>שגיאה בטעינה</div>
@@ -41,7 +44,9 @@ function Profile() {
         <button className="backBtn" onClick={() => navigate('/home')}>
           ← חזרה
         </button>
-        <h2 className="headerTitle">פרופיל</h2>
+        <h2 className="headerTitle">
+          {isOwnProfile ? 'פרופיל' : stats.user.full_name}
+        </h2>
         <div style={{ width: 60 }} />
       </header>
 

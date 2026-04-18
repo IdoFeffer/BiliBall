@@ -95,7 +95,12 @@ function Home() {
           <h2 className="sectionTitle">לוח מובילים</h2>
           <div>
             {leaguePlayers.map((player, index) => (
-              <div key={player.id} className="playerRow">
+              <div
+                key={player.id}
+                className="playerRow"
+                onClick={() => navigate(`/profile/${player.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <span className={`rank ${index === 0 ? 'first' : ''}`}>
                   {index + 1}
                 </span>

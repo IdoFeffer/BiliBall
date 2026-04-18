@@ -45,6 +45,7 @@ function App() {
         <Route path="/add-game" element={<AddGame />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/h2h" element={<H2H />} />
+        <Route path="/profile/:userId" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   )
