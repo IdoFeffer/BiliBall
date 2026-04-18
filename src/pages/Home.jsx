@@ -50,25 +50,28 @@ function Home() {
 
   return (
     <div className="page">
-      <nav className="nav">
-        <div>
-          <h1 className="navLogo">BiliBall 🎱</h1>
-          {isLoggedIn && hasLeague && <p className="navLeague">{leagueName}</p>}
-        </div>
-        {isLoggedIn ? (
-          <div
-            className="navAvatar"
-            onClick={handleLogout}
-            style={{ cursor: 'pointer' }}
-          >
-            {user.full_name?.[0] || user.username?.[0]}
-          </div>
-        ) : (
-          <button className="loginBtn" onClick={() => navigate('/login')}>
-            התחבר
-          </button>
-        )}
-      </nav>
+<nav className="nav">
+  <div className="navAvatar" onClick={handleLogout} style={{ cursor: 'pointer' }}>
+    {user.full_name?.[0] || user.username?.[0]}
+  </div>
+  <div style={{ textAlign: 'center' }}>
+    <h1 className="navLogo">BiliBall 🎱</h1>
+  </div>
+  <div />
+</nav>
+
+      {isLoggedIn && hasLeague && (
+        <p
+          style={{
+            textAlign: 'center',
+            fontSize: '12px',
+            color: '#999',
+            padding: '8px 0 0',
+          }}
+        >
+          {leagueName}
+        </p>
+      )}
 
       {isLoggedIn && !hasLeague && (
         <div className="noLeague">

@@ -1,4 +1,3 @@
-
 @use 'variables' as *;
 
 .page {
@@ -7,10 +6,11 @@
 
 // ============ NAV ============
 .nav {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
   align-items: center;
   padding: 12px 16px;
+  gap: 16px;
   border-bottom: 1px solid $light-border;
   background: $light-bg;
   position: sticky;
@@ -149,15 +149,39 @@
   font-weight: 700;
   flex-shrink: 0;
 
-  &.blue { background: $info-light-bg; color: $info-light; }
-  &.green { background: $success-light-bg; color: $success-light; }
-  &.amber { background: $warning-light-bg; color: $warning-light; }
-  &.steel { background: #f0f0f0; color: #666; }
+  &.blue {
+    background: $info-light-bg;
+    color: $info-light;
+  }
+  &.green {
+    background: $success-light-bg;
+    color: $success-light;
+  }
+  &.amber {
+    background: $warning-light-bg;
+    color: $warning-light;
+  }
+  &.steel {
+    background: #f0f0f0;
+    color: #666;
+  }
 
-  body.dark &.blue { background: $color-grape; color: $color-tea; }
-  body.dark &.green { background: $color-dusty; color: $color-tea; }
-  body.dark &.amber { background: $color-celadon; color: $dark-bg; }
-  body.dark &.steel { background: $dark-border; color: $color-steel; }
+  body.dark &.blue {
+    background: $color-grape;
+    color: $color-tea;
+  }
+  body.dark &.green {
+    background: $color-dusty;
+    color: $color-tea;
+  }
+  body.dark &.amber {
+    background: $color-celadon;
+    color: $dark-bg;
+  }
+  body.dark &.steel {
+    background: $dark-border;
+    color: $color-steel;
+  }
 }
 
 .playerName {
@@ -178,7 +202,7 @@
   background: $info-light-bg;
   color: $info-light;
   font-weight: 700;
-  margin-right: 4px;
+  margin-left: 6px;
 
   body.dark & {
     background: $color-celadon;
@@ -200,13 +224,25 @@
   font-size: $font-sm;
   font-weight: 700;
 
-  &.pos { color: $success-light; }
-  &.neg { color: $danger-light; }
-  &.neutral { color: $light-text-primary; }
+  &.pos {
+    color: $success-light;
+  }
+  &.neg {
+    color: $danger-light;
+  }
+  &.neutral {
+    color: $light-text-primary;
+  }
 
-  body.dark &.pos { color: $success-dark; }
-  body.dark &.neg { color: $danger-dark; }
-  body.dark &.neutral { color: $color-tea; }
+  body.dark &.pos {
+    color: $success-dark;
+  }
+  body.dark &.neg {
+    color: $danger-dark;
+  }
+  body.dark &.neutral {
+    color: $color-tea;
+  }
 }
 
 .statLabel {
@@ -231,7 +267,11 @@
   left: 0;
   right: 0;
   height: 80%;
-  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.97));
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.97)
+  );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -240,7 +280,7 @@
   gap: 8px;
 
   body.dark & {
-    background: linear-gradient(to bottom, transparent, rgba(45,38,64,0.97));
+    background: linear-gradient(to bottom, transparent, rgba(45, 38, 64, 0.97));
   }
 }
 
