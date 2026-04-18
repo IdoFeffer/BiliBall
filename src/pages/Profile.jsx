@@ -7,6 +7,7 @@ function Profile() {
   const navigate = useNavigate()
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [openNote, setOpenNote] = useState(null)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
@@ -28,15 +29,18 @@ function Profile() {
   if (loading) return <div style={{ padding: 20 }}>טוען...</div>
   if (!stats) return <div style={{ padding: 20 }}>שגיאה בטעינה</div>
 
-  const winRate = stats.wins + stats.losses > 0
-    ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
-    : 0
+  const winRate =
+    stats.wins + stats.losses > 0
+      ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
+      : 0
   const score = stats.wins - stats.losses
 
   return (
     <div className="page">
       <header className="header">
-        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
+        <button className="backBtn" onClick={() => navigate('/home')}>
+          ← חזרה
+        </button>
         <h2 className="headerTitle">פרופיל</h2>
         <div style={{ width: 60 }} />
       </header>
@@ -72,7 +76,8 @@ function Profile() {
           </div>
           <div className="metricCard">
             <div className={`metricVal ${score >= 0 ? 'pos' : 'neg'}`}>
-              {score > 0 ? '+' : ''}{score}
+              {score > 0 ? '+' : ''}
+              {score}
             </div>
             <div className="metricLabel">מדד</div>
           </div>
@@ -82,17 +87,21 @@ function Profile() {
       {stats.rivals.length > 0 && (
         <div className="section">
           <p className="sectionTitle">נגד כל שחקן</p>
-          {stats.rivals.map(rival => (
+          {stats.rivals.map((rival) => (
             <div key={rival.opponent_id} className="rivalRow">
               <div className="avatarSm">{rival.opponent_name?.[0]}</div>
               <span className="rivalName">{rival.opponent_name}</span>
               <div className="rivalBar">
                 <div
                   className="rivalBarFill"
-                  style={{ width: `${Math.round((rival.wins / rival.total) * 100)}%` }}
+                  style={{
+                    width: `${Math.round((rival.wins / rival.total) * 100)}%`,
+                  }}
                 />
               </div>
-              <span className="rivalScore">{rival.wins}/{rival.total}</span>
+              <span className="rivalScore">
+                {rival.wins}/{rival.total}
+              </span>
             </div>
           ))}
         </div>
@@ -101,19 +110,50 @@ function Profile() {
       <div className="section">
         <p className="sectionTitle">היסטוריית משחקים</p>
         {stats.games.length === 0 && (
-          <p style={{ fontSize: '13px', color: '#999', textAlign: 'center', padding: '16px 0' }}>
+          <p
+            style={{
+              fontSize: '13px',
+              color: '#999',
+              textAlign: 'center',
+              padding: '16px 0',
+            }}
+          >
             אין משחקים עדיין
           </p>
         )}
-        {stats.games.map(game => (
-          <div key={game.id} className="historyRow">
-            <span className={`resultBadge ${game.result}`}>
-              {game.result === 'win' ? 'נצחון' : 'הפסד'}
-            </span>
-            <span className="historyOpponent">נגד {game.opponent_name}</span>
-            <span className="historyDate">
-              {new Date(game.played_at).toLocaleDateString('he-IL')}
-            </span>
+        {stats.games.map((game) => (
+          <div key={game.id}>
+            <div className="historyRow">
+              <span className={`resultBadge ${game.result}`}>
+                {game.result === 'win' ? 'נצחון' : 'הפסד'}
+              </span>
+              <span className="historyOpponent">נגד {game.opponent_name}</span>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginRight: 'auto',
+                }}
+              >
+                {game.note && (
+                  <span
+                    style={{ cursor: 'pointer', fontSize: '14px' }}
+                    onClick={() =>
+                      setOpenNote(openNote === game.id ? null : game.id)
+                    }
+                  >
+                    💬
+                  </span>
+                )}
+                <span className="historyDate">
+                  {new Date(game.played_at).toLocaleDateString('he-IL')}
+                </span>
+              </div>
+            </div>
+            {openNote === game.id && game.note && (
+              <div className="noteTooltip">{game.note}</div>
+            )}
           </div>
         ))}
       </div>

@@ -10,6 +10,7 @@ function Home() {
   const [leaguePlayers, setLeaguePlayers] = useState([])
   const [recentGames, setRecentGames] = useState([])
   const [loading, setLoading] = useState(true)
+  const [openNote, setOpenNote] = useState(null)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
@@ -23,7 +24,6 @@ function Home() {
       setLoading(false)
       return
     }
-
     const fetchData = async () => {
       try {
         const [playersRes, gamesRes] = await Promise.all([
@@ -38,7 +38,6 @@ function Home() {
         setLoading(false)
       }
     }
-
     fetchData()
   }, [])
 
@@ -56,10 +55,19 @@ function Home() {
           <h1 className="navLogo">BiliBall 🎱</h1>
           {isLoggedIn && hasLeague && <p className="navLeague">{leagueName}</p>}
         </div>
-        {isLoggedIn
-          ? <div className="navAvatar" onClick={handleLogout} style={{ cursor: 'pointer' }}>{user.full_name?.[0] || user.username?.[0]}</div>
-          : <button className="loginBtn" onClick={() => navigate('/login')}>התחבר</button>
-        }
+        {isLoggedIn ? (
+          <div
+            className="navAvatar"
+            onClick={handleLogout}
+            style={{ cursor: 'pointer' }}
+          >
+            {user.full_name?.[0] || user.username?.[0]}
+          </div>
+        ) : (
+          <button className="loginBtn" onClick={() => navigate('/login')}>
+            התחבר
+          </button>
+        )}
       </nav>
 
       {isLoggedIn && !hasLeague && (
@@ -67,10 +75,16 @@ function Home() {
           <p className="noLeagueIcon">🎱</p>
           <p className="noLeagueTitle">ברוך הבא ל-BiliBall!</p>
           <p className="noLeagueSub">צור ליגה חדשה או הצטרף לליגה קיימת</p>
-          <button className="noLeagueBtn" onClick={() => navigate('/create-league')}>
+          <button
+            className="noLeagueBtn"
+            onClick={() => navigate('/create-league')}
+          >
             צור ליגה חדשה
           </button>
-          <button className="noLeagueBtnSecondary" onClick={() => navigate('/join-league')}>
+          <button
+            className="noLeagueBtnSecondary"
+            onClick={() => navigate('/join-league')}
+          >
             הצטרף לליגה קיימת
           </button>
         </div>
@@ -82,12 +96,18 @@ function Home() {
           <div>
             {leaguePlayers.map((player, index) => (
               <div key={player.id} className="playerRow">
-                <span className={`rank ${index === 0 ? 'first' : ''}`}>{index + 1}</span>
-                <div className={`avatar ${avatarColors[index % avatarColors.length]}`}>
+                <span className={`rank ${index === 0 ? 'first' : ''}`}>
+                  {index + 1}
+                </span>
+                <div
+                  className={`avatar ${avatarColors[index % avatarColors.length]}`}
+                >
                   {player.full_name?.[0] || player.username?.[0]}
                 </div>
                 <span className="playerName">
-                  {user.id === player.id && <span className="youBadge">את/ה</span>}
+                  {user.id === player.id && (
+                    <span className="youBadge">את/ה</span>
+                  )}
                   {player.full_name || player.username}
                 </span>
                 <div className="stats">
@@ -100,8 +120,11 @@ function Home() {
                     <div className="statLabel">הפ'</div>
                   </div>
                   <div className="stat">
-                    <div className={`statVal ${player.wins - player.losses >= 0 ? 'pos' : 'neg'}`}>
-                      {player.wins - player.losses > 0 ? '+' : ''}{player.wins - player.losses}
+                    <div
+                      className={`statVal ${player.wins - player.losses >= 0 ? 'pos' : 'neg'}`}
+                    >
+                      {player.wins - player.losses > 0 ? '+' : ''}
+                      {player.wins - player.losses}
                     </div>
                     <div className="statLabel">מדד</div>
                   </div>
@@ -109,12 +132,13 @@ function Home() {
               </div>
             ))}
           </div>
-
           {!isLoggedIn && (
             <div className="lockedOverlay">
               <p>🔒</p>
               <p className="lockedTitle">התחבר לראות את הליגה</p>
-              <button className="loginBtn" onClick={() => navigate('/login')}>התחבר</button>
+              <button className="loginBtn" onClick={() => navigate('/login')}>
+                התחבר
+              </button>
             </div>
           )}
         </section>
@@ -124,17 +148,49 @@ function Home() {
         <section className="section">
           <h2 className="sectionTitle">משחקים אחרונים</h2>
           {recentGames.length === 0 && (
-            <p style={{ fontSize: '13px', color: '#999', textAlign: 'center', padding: '16px 0' }}>
+            <p
+              style={{
+                fontSize: '13px',
+                color: '#999',
+                textAlign: 'center',
+                padding: '16px 0',
+              }}
+            >
               אין משחקים עדיין
             </p>
           )}
           {recentGames.map((game, index) => (
-            <div key={game.id} className="recentRow">
-              <div className={`avatar ${avatarColors[index % avatarColors.length]}`}>
-                {game.winner_name?.[0]}
+            <div key={game.id}>
+              <div className="recentRow">
+                <div
+                  className={`avatar ${avatarColors[index % avatarColors.length]}`}
+                >
+                  {game.winner_name?.[0]}
+                </div>
+                <span className="recentText">
+                  {game.winner_name} ניצח את {game.loser_name}
+                </span>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                >
+                  {game.note && (
+                    <span
+                      style={{ cursor: 'pointer', fontSize: '14px' }}
+                      onClick={() =>
+                        setOpenNote(openNote === game.id ? null : game.id)
+                      }
+                    >
+                      💬
+                    </span>
+                  )}
+                  <span className="recentDate">
+                    {new Date(game.played_at).toLocaleDateString('he-IL')}
+                  </span>
+                </div>
               </div>
-              <span className="recentText">{game.winner_name} ניצח את {game.loser_name}</span>
-              <span className="recentDate">{new Date(game.played_at).toLocaleDateString('he-IL')}</span>
+              {openNote === game.id && game.note && (
+                <div className="noteTooltip">{game.note}</div>
+              )}
             </div>
           ))}
         </section>

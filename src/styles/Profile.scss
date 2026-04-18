@@ -327,3 +327,18 @@
     }
   }
 }
+
+.noteTooltip {
+  margin: 0 0 6px 0;
+  background: $light-text-primary;
+  color: $light-bg;
+  font-size: $font-xs;
+  padding: 5px 10px;
+  border-radius: $radius-md;
+  display: inline-block;
+
+  body.dark & {
+    background: $dark-text-primary;
+    color: $dark-bg;
+  }
+}
