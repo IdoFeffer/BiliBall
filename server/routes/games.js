@@ -17,32 +17,42 @@ const auth = (req, res, next) => {
 }
 
 router.post('/', auth, (req, res) => {
-  const { league_id, loser_id, note } = req.body
+  const { league_id, winner_id, loser_id, note } = req.body
 
-  if (!league_id || !loser_id) {
+  if (parseInt(winner_id) === parseInt(loser_id)) {
     return res.status(400).json({ error: 'חסרים פרטים' })
   }
 
-  if (req.user.id === loser_id) {
+  if (winner_id === loser_id) {
     return res.status(400).json({ error: 'לא יכול לשחק נגד עצמך' })
   }
 
-  const isMember = db.prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
+  const isMember = db
+    .prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
     .get(league_id, req.user.id)
   if (!isMember) return res.status(403).json({ error: 'לא חבר בליגה' })
+
+  const isPlayerInGame =
+    parseInt(winner_id) === req.user.id || parseInt(loser_id) === req.user.id
+  if (!isPlayerInGame)
+    return res.status(403).json({ error: 'אתה לא שחקן במשחק הזה' })
 
   const stmt = db.prepare(`
     INSERT INTO games (league_id, winner_id, loser_id, note)
     VALUES (?, ?, ?, ?)
   `)
-  const result = stmt.run(league_id, req.user.id, loser_id, note || null)
+  const result = stmt.run(league_id, winner_id, loser_id, note || null)
 
-  const game = db.prepare('SELECT * FROM games WHERE id = ?').get(result.lastInsertRowid)
+  const game = db
+    .prepare('SELECT * FROM games WHERE id = ?')
+    .get(result.lastInsertRowid)
   res.json(game)
 })
 
 router.get('/league/:league_id', auth, (req, res) => {
-  const games = db.prepare(`
+  const games = db
+    .prepare(
+      `
     SELECT 
       g.id,
       g.note,
@@ -56,7 +66,9 @@ router.get('/league/:league_id', auth, (req, res) => {
     JOIN users l ON l.id = g.loser_id
     WHERE g.league_id = ?
     ORDER BY g.played_at DESC
-  `).all(req.params.league_id)
+  `,
+    )
+    .all(req.params.league_id)
 
   res.json(games)
 })

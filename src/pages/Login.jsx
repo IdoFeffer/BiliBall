@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Login.scss'
-import { auth } from '../api'
+import { auth, leagues } from '../api'
 
 function Login() {
   const navigate = useNavigate()
@@ -26,6 +26,17 @@ function Login() {
 
       localStorage.setItem('token', res.data.token)
       localStorage.setItem('user', JSON.stringify(res.data.user))
+
+      try {
+        const leagueRes = await leagues.getUserLeague()
+        if (leagueRes.data) {
+          localStorage.setItem('leagueId', leagueRes.data.id)
+          localStorage.setItem('leagueName', leagueRes.data.name)
+        }
+      } catch {
+        // אין ליגה
+      }
+
       navigate('/home')
     } catch (err) {
       setError(err.response?.data?.error || 'משהו השתבש')

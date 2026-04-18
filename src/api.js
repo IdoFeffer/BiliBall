@@ -28,6 +28,7 @@ export const leagues = {
   create: (data) => api.post('/leagues/create', data),
   join: (data) => api.post('/leagues/join', data),
   getMembers: (leagueId) => api.get(`/leagues/${leagueId}/members`),
+  getUserLeague: () => api.get('/leagues/user'),
 }
 
 export const games = {
@@ -37,6 +38,8 @@ export const games = {
 
 export const players = {
   getLeaguePlayers: (leagueId) => api.get(`/players/league/${leagueId}`),
-  getStats: (userId, leagueId) => api.get(`/players/${userId}/stats/${leagueId}`),
-  getH2H: (user1Id, user2Id, leagueId) => api.get(`/players/h2h/${user1Id}/${user2Id}/${leagueId}`),
+  getStats: (userId, leagueId) =>
+    api.get(`/players/${userId}/stats/${leagueId}`),
+  getH2H: (user1Id, user2Id, leagueId) =>
+    api.get(`/players/h2h/${user1Id}/${user2Id}/${leagueId}`),
 }

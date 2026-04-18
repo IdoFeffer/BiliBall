@@ -59,4 +59,16 @@ router.get('/:id/members', auth, (req, res) => {
   res.json(members)
 })
 
+router.get('/user', auth, (req, res) => {
+  const league = db.prepare(`
+    SELECT l.* FROM leagues l
+    JOIN league_members lm ON lm.league_id = l.id
+    WHERE lm.user_id = ?
+    ORDER BY lm.joined_at DESC
+    LIMIT 1
+  `).get(req.user.id)
+
+  res.json(league || null)
+})
+
 module.exports = router

@@ -19,7 +19,7 @@ function AddGame() {
     const fetchMembers = async () => {
       try {
         const res = await leagues.getMembers(leagueId)
-        const others = res.data.filter(m => m.id !== user.id)
+        const others = res.data.filter((m) => m.id !== user.id)
         setMembers(others)
         if (others.length > 0) setOpponent(others[0].id)
       } catch (err) {
@@ -34,10 +34,13 @@ function AddGame() {
     setLoading(true)
     setError('')
     try {
+      const winnerId = result === 'win' ? user.id : parseInt(opponent)
+      const loserId = result === 'win' ? parseInt(opponent) : user.id
+
       await games.add({
         league_id: parseInt(leagueId),
-        loser_id: result === 'win' ? parseInt(opponent) : user.id,
-        winner_id: result === 'win' ? user.id : parseInt(opponent),
+        winner_id: winnerId,
+        loser_id: loserId,
         note,
       })
       navigate('/home')
@@ -51,7 +54,9 @@ function AddGame() {
   return (
     <div className="page">
       <header className="header">
-        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
+        <button className="backBtn" onClick={() => navigate('/home')}>
+          ← חזרה
+        </button>
         <h2 className="headerTitle">הוספת משחק</h2>
         <div style={{ width: 60 }} />
       </header>
@@ -77,14 +82,16 @@ function AddGame() {
       <div className="section">
         <p className="label">נגד מי?</p>
         {members.length === 0 ? (
-          <p style={{ fontSize: '13px', color: '#999' }}>אין חברים בליגה עדיין</p>
+          <p style={{ fontSize: '13px', color: '#999' }}>
+            אין חברים בליגה עדיין
+          </p>
         ) : (
           <select
             className="select"
             value={opponent}
             onChange={(e) => setOpponent(e.target.value)}
           >
-            {members.map(member => (
+            {members.map((member) => (
               <option key={member.id} value={member.id}>
                 {member.full_name || member.username}
               </option>
@@ -104,13 +111,19 @@ function AddGame() {
         />
       </div>
 
-      {error && <p style={{ color: 'red', fontSize: '13px', padding: '0 16px' }}>{error}</p>}
+      {error && (
+        <p style={{ color: 'red', fontSize: '13px', padding: '0 16px' }}>
+          {error}
+        </p>
+      )}
 
-      <p className="notice">
-        ⓘ רק משחקים שבהם אתה שחקן יכולים להירשם
-      </p>
+      <p className="notice">ⓘ רק משחקים שבהם אתה שחקן יכולים להירשם</p>
 
-      <button className="submitBtn" onClick={handleSubmit} disabled={loading || members.length === 0}>
+      <button
+        className="submitBtn"
+        onClick={handleSubmit}
+        disabled={loading || members.length === 0}
+      >
         {loading ? 'שומר...' : 'שמור תוצאה'}
       </button>
     </div>
