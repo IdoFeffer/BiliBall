@@ -30,7 +30,6 @@ function JoinLeague() {
   return (
     <div className="page">
       <header className="header">
-        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
         <h2 className="headerTitle">הצטרף לליגה</h2>
         <div style={{ width: 60 }} />
       </header>

@@ -27,15 +27,6 @@
   }
 }
 
-.backBtn {
-  font-size: $font-sm;
-  color: $light-text-secondary;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
 .headerTitle {
   font-size: $font-lg;
   font-weight: 700;

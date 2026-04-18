@@ -41,9 +41,6 @@ function Profile() {
   return (
     <div className="page">
       <header className="header">
-        <button className="backBtn" onClick={() => navigate('/home')}>
-          ← חזרה
-        </button>
         <h2 className="headerTitle">
           {isOwnProfile ? 'פרופיל' : stats.user.full_name}
         </h2>

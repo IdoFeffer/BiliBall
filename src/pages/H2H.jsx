@@ -61,7 +61,6 @@ function H2H() {
   return (
     <div className="page">
       <header className="header">
-        <button className="backBtn" onClick={() => navigate('/profile')}>← חזרה</button>
         <h2 className="headerTitle">ראש בראש</h2>
         <div style={{ width: 60 }} />
       </header>

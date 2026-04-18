@@ -35,7 +35,6 @@ function CreateLeague() {
   return (
     <div className="page">
       <header className="header">
-        <button className="backBtn" onClick={() => navigate('/home')}>← חזרה</button>
         <h2 className="headerTitle">צור ליגה</h2>
         <div style={{ width: 60 }} />
       </header>
