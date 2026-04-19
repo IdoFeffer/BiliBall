@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/Login.scss'
 import { auth, leagues } from '../api'
+import BgBalls from '../components/BgBalls'
 
 function Login() {
   const navigate = useNavigate()
@@ -51,6 +52,7 @@ function Login() {
 
   return (
     <div className="page">
+      <BgBalls />
       <h1 className="logo">BiliBall 🎱</h1>
       <p className="subtitle">עקוב אחר הניצחונות שלך</p>
 
@@ -83,7 +85,11 @@ function Login() {
           )}
         </div>
 
-        {error && <p style={{ color: 'red', fontSize: '13px', marginBottom: '10px' }}>{error}</p>}
+        {error && (
+          <p style={{ color: 'red', fontSize: '13px', marginBottom: '10px' }}>
+            {error}
+          </p>
+        )}
 
         <button className="submitBtn" onClick={handleSubmit} disabled={loading}>
           {loading ? 'טוען...' : isRegister ? 'הירשם' : 'התחבר'}
@@ -91,7 +97,10 @@ function Login() {
 
         <p className="switchText">
           {isRegister ? 'כבר יש לך חשבון?' : 'אין לך חשבון?'}
-          <button className="switchBtn" onClick={() => setIsRegister(!isRegister)}>
+          <button
+            className="switchBtn"
+            onClick={() => setIsRegister(!isRegister)}
+          >
             {isRegister ? 'התחבר' : 'הירשם'}
           </button>
         </p>
