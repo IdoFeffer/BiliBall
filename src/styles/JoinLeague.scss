@@ -225,3 +225,44 @@
     color: $color-steel;
   }
 }
+
+.tabsWrapper {
+  display: flex;
+  margin: 16px 16px 0;
+  background: $light-bg-secondary;
+  border-radius: $radius-md;
+  padding: 3px;
+  gap: 3px;
+
+  body.dark & {
+    background: $dark-bg-secondary;
+  }
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 8px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: $light-text-secondary;
+
+  &.active {
+    background: $light-bg;
+    color: $light-text-primary;
+    border: 1px solid $light-border;
+  }
+
+  body.dark & {
+    color: $color-steel;
+
+    &.active {
+      background: $dark-bg;
+      color: $dark-text-primary;
+      border-color: $dark-border;
+    }
+  }
+}

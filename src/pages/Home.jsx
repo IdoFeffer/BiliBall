@@ -139,21 +139,13 @@ function Home() {
             className="leagueOption"
             onClick={() => {
               setShowLeagueDropdown(false)
-              navigate('/create-league')
-            }}
-          >
-            <span className="leaguePlus">+</span>
-            <span className="leagueOptionName">צור ליגה חדשה</span>
-          </div>
-          <div
-            className="leagueOption"
-            onClick={() => {
-              setShowLeagueDropdown(false)
               navigate('/join-league')
             }}
           >
             <span className="leaguePlus">→</span>
-            <span className="leagueOptionName">הצטרף לליגה קיימת</span>
+            <span className="leagueOptionName">
+              הצטרף לליגה קיימת או צור חדשה
+            </span>
           </div>
         </div>
       )}
@@ -165,15 +157,9 @@ function Home() {
           <p className="noLeagueSub">צור ליגה חדשה או הצטרף לליגה קיימת</p>
           <button
             className="noLeagueBtn"
-            onClick={() => navigate('/create-league')}
-          >
-            צור ליגה חדשה
-          </button>
-          <button
-            className="noLeagueBtnSecondary"
             onClick={() => navigate('/join-league')}
           >
-            הצטרף לליגה קיימת
+            צור או הצטרף לליגה
           </button>
         </div>
       )}
@@ -182,48 +168,86 @@ function Home() {
         <section className={`section ${!isLoggedIn ? 'lockedSection' : ''}`}>
           <h2 className="sectionTitle">לוח מובילים</h2>
           <div>
-            {leaguePlayers.map((player, index) => (
-              <div
-                key={player.id}
-                className="playerRow"
-                onClick={() => navigate(`/profile/${player.id}`)}
-                style={{ cursor: 'pointer' }}
-              >
-                <span className={`rank ${index === 0 ? 'first' : ''}`}>
-                  {index + 1}
-                </span>
-                <div
-                  className={`avatar ${avatarColors[index % avatarColors.length]}`}
-                >
-                  {player.full_name?.[0] || player.username?.[0]}
-                </div>
-                <span className="playerName">
-                  {user.id === player.id && (
-                    <span className="youBadge">את/ה</span>
-                  )}
-                  {player.full_name || player.username}
-                </span>
-                <div className="stats">
-                  <div className="stat">
-                    <div className="statVal pos">{player.wins}</div>
-                    <div className="statLabel">נצ'</div>
-                  </div>
-                  <div className="stat">
-                    <div className="statVal neg">{player.losses}</div>
-                    <div className="statLabel">הפ'</div>
-                  </div>
-                  <div className="stat">
-                    <div
-                      className={`statVal ${player.wins - player.losses >= 0 ? 'pos' : 'neg'}`}
-                    >
-                      {player.wins - player.losses > 0 ? '+' : ''}
-                      {player.wins - player.losses}
+            {leaguePlayers.map((player, index) => {
+              const isMe = user.id === player.id
+              const score = player.wins - player.losses
+              const isFirst = index === 0
+
+              if (isFirst) {
+                return (
+                  <div
+                    key={player.id}
+                    className="playerRowFirst"
+                    onClick={() => navigate(`/profile/${player.id}`)}
+                  >
+                    <span className="rankFirst">1</span>
+                    <div className="avatarFirst">
+                      {player.full_name?.[0] || player.username?.[0]}
                     </div>
-                    <div className="statLabel">מדד</div>
+                    <span className="playerNameFirst">
+                      {player.full_name || player.username}
+                      {isMe && <span className="youBadgeFirst">את/ה</span>}
+                    </span>
+                    <div className="statsFirst">
+                      <div className="stat">
+                        <div className="statValFirst pos">{player.wins}</div>
+                        <div className="statLabelFirst">נצ'</div>
+                      </div>
+                      <div className="stat">
+                        <div className="statValFirst neg">{player.losses}</div>
+                        <div className="statLabelFirst">הפ'</div>
+                      </div>
+                      <div className="stat">
+                        <div
+                          className={`statValFirst ${score >= 0 ? 'pos' : 'neg'}`}
+                        >
+                          {score > 0 ? '+' : ''}
+                          {score}
+                        </div>
+                        <div className="statLabelFirst">מדד</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+
+              return (
+                <div
+                  key={player.id}
+                  className="playerRow"
+                  onClick={() => navigate(`/profile/${player.id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="rank">{index + 1}</span>
+                  <div
+                    className={`avatar ${avatarColors[index % avatarColors.length]}`}
+                  >
+                    {player.full_name?.[0] || player.username?.[0]}
+                  </div>
+                  <span className="playerName">
+                    {player.full_name || player.username}
+                    {isMe && <span className="youBadge">את/ה</span>}
+                  </span>
+                  <div className="stats">
+                    <div className="stat">
+                      <div className="statVal pos">{player.wins}</div>
+                      <div className="statLabel">נצ'</div>
+                    </div>
+                    <div className="stat">
+                      <div className="statVal neg">{player.losses}</div>
+                      <div className="statLabel">הפ'</div>
+                    </div>
+                    <div className="stat">
+                      <div className={`statVal ${score >= 0 ? 'pos' : 'neg'}`}>
+                        {score > 0 ? '+' : ''}
+                        {score}
+                      </div>
+                      <div className="statLabel">מדד</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
           {!isLoggedIn && (
             <div className="lockedOverlay">
