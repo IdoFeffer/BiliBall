@@ -6,11 +6,13 @@ const gameRoutes = require('./routes/games')
 const playerRoutes = require('./routes/players')
 
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
-app.use(cors({
-  origin: 'http://localhost:5173'
-}))
+app.use(
+  cors({
+    origin: ['http://localhost:5173', 'https://bili-ball.vercel.app'],
+  }),
+)
 
 app.use(express.json())
 
@@ -24,5 +26,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`)
+  console.log(`Server running on port ${PORT}`)
 })
