@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import '../styles/Profile.scss'
 import { players, games } from '../api'
+import ProfileSkeleton from '../components/ProfileSkeleton'
 
 function Profile() {
   const navigate = useNavigate()
@@ -29,7 +30,7 @@ function Profile() {
     fetchStats()
   }, [targetUserId])
 
-  if (loading) return <div style={{ padding: 20 }}>טוען...</div>
+  if (loading) return <ProfileSkeleton />
   if (!stats) return <div style={{ padding: 20 }}>שגיאה בטעינה</div>
 
   const winRate =

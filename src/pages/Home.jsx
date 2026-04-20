@@ -1,4 +1,5 @@
 import '../styles/Home.scss'
+import HomeSkeleton from '../components/HomeSkeleton'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { players, games, leagues } from '../api'
@@ -90,8 +91,8 @@ function Home() {
     }
   }
 
-  if (loading) return <div style={{ padding: 20 }}>טוען...</div>
-
+  if (loading) return <HomeSkeleton />
+  
   return (
     <div className="page">
       <nav className="nav">

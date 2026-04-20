@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/H2H.scss'
 import { players } from '../api'
+import H2HSkeleton from '../components/H2HSkeleton'
 
 function H2H() {
   const navigate = useNavigate()
@@ -47,7 +48,7 @@ function H2H() {
   }, [player1, player2])
 
   const getPlayerName = (id) => {
-    const p = leaguePlayers.find(p => String(p.id) === String(id))
+    const p = leaguePlayers.find((p) => String(p.id) === String(id))
     return p?.full_name || p?.username || ''
   }
 
@@ -56,7 +57,12 @@ function H2H() {
   const p2Wins = h2hData?.user2Wins || 0
   const p1Pct = total > 0 ? Math.round((p1Wins / total) * 100) : 50
   const p2Pct = total > 0 ? Math.round((p2Wins / total) * 100) : 50
-  const leader = p1Wins > p2Wins ? getPlayerName(player1) : p2Wins > p1Wins ? getPlayerName(player2) : null
+  const leader =
+    p1Wins > p2Wins
+      ? getPlayerName(player1)
+      : p2Wins > p1Wins
+        ? getPlayerName(player2)
+        : null
 
   return (
     <div className="page">
@@ -67,22 +73,33 @@ function H2H() {
 
       <div className="section">
         <div className="selectorRow">
-          <select className="select" value={player1} onChange={(e) => setPlayer1(e.target.value)}>
-            {leaguePlayers.map(p => (
-              <option key={p.id} value={p.id}>{p.full_name || p.username}</option>
+          <select
+            className="select"
+            value={player1}
+            onChange={(e) => setPlayer1(e.target.value)}
+          >
+            {leaguePlayers.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.full_name || p.username}
+              </option>
             ))}
           </select>
           <span className="vsLabel">VS</span>
-          <select className="select" value={player2} onChange={(e) => setPlayer2(e.target.value)}>
-            {leaguePlayers.map(p => (
-              <option key={p.id} value={p.id}>{p.full_name || p.username}</option>
+          <select
+            className="select"
+            value={player2}
+            onChange={(e) => setPlayer2(e.target.value)}
+          >
+            {leaguePlayers.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.full_name || p.username}
+              </option>
             ))}
           </select>
         </div>
       </div>
 
-      {loading && <p style={{ textAlign: 'center', padding: '20px', color: '#999' }}>טוען...</p>}
-
+      {loading && <H2HSkeleton />}
       {!loading && h2hData && (
         <>
           <div className="scoreSection">
@@ -98,7 +115,9 @@ function H2H() {
                 <span className="totalGames">{total} משחקים</span>
               </div>
               <div className="playerSide">
-                <div className="avatarLg green">{getPlayerName(player2)[0]}</div>
+                <div className="avatarLg green">
+                  {getPlayerName(player2)[0]}
+                </div>
                 <span className="playerName">{getPlayerName(player2)}</span>
                 <span className="playerScore">{p2Wins}</span>
                 <span className="playerScoreLabel">נצחונות</span>
@@ -128,9 +147,11 @@ function H2H() {
             {h2hData.games.length === 0 && (
               <p className="emptyText">אין משחקים ביניהם עדיין</p>
             )}
-            {h2hData.games.map(game => (
+            {h2hData.games.map((game) => (
               <div key={game.id} className="historyRow">
-                <span className={`resultBadge ${game.winner_id == player1 ? 'win' : 'lose'}`}>
+                <span
+                  className={`resultBadge ${game.winner_id == player1 ? 'win' : 'lose'}`}
+                >
                   {game.winner_name} ניצח
                 </span>
                 <span className="historyDate">
