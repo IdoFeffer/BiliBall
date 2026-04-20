@@ -53,12 +53,10 @@ function Login() {
   return (
     <div className="page">
       <BgBalls />
-      <h1 className="logo">BiliBall 🎱</h1>
-      <p className="subtitle">עקוב אחר הניצחונות שלך</p>
-
       <div className="card">
+        <h1 className="logo">BiliBall 🎱</h1>
+        <p className="subtitle">עקוב אחר הניצחונות שלך</p>
         <h2 className="title">{isRegister ? 'הרשמה' : 'התחברות'}</h2>
-
         <div className="inputGroup">
           <input
             className="input"
@@ -84,17 +82,14 @@ function Login() {
             />
           )}
         </div>
-
         {error && (
           <p style={{ color: 'red', fontSize: '13px', marginBottom: '10px' }}>
             {error}
           </p>
         )}
-
         <button className="submitBtn" onClick={handleSubmit} disabled={loading}>
           {loading ? 'טוען...' : isRegister ? 'הירשם' : 'התחבר'}
         </button>
-
         <p className="switchText">
           {isRegister ? 'כבר יש לך חשבון?' : 'אין לך חשבון?'}
           <button

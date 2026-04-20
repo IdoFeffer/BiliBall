@@ -299,32 +299,6 @@
   }
 }
 
-.h2hBtn {
-  width: calc(100% - 32px);
-  margin: 16px;
-  padding: 12px;
-  border-radius: $radius-md;
-  font-size: $font-md;
-  font-weight: 700;
-  border: 1px solid $light-border;
-  color: $light-text-primary;
-  background: transparent;
-  transition: background 0.2s;
-
-  &:hover {
-    background: $light-bg-secondary;
-  }
-
-  body.dark & {
-    border-color: $dark-border;
-    color: $dark-text-primary;
-
-    &:hover {
-      background: $dark-bg-secondary;
-    }
-  }
-}
-
 .noteTooltip {
   margin: 0 0 6px 0;
   background: $light-text-primary;

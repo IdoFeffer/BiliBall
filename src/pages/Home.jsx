@@ -314,11 +314,9 @@ function Home() {
       )}
 
       {isLoggedIn && hasLeague && (
-        <section className="section">
-          <button className="h2hBtn" onClick={() => navigate('/h2h')}>
-            ראש בראש ↗
-          </button>
-        </section>
+        <button className="h2hBtn" onClick={() => navigate('/h2h')}>
+          ראש בראש ↗
+        </button>
       )}
 
       {isLoggedIn && hasLeague && (
