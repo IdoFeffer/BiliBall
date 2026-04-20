@@ -7,7 +7,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
+    password TEXT NOT NULL DEFAULT '',
     full_name TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
@@ -37,11 +37,24 @@ db.exec(`
     winner_id INTEGER NOT NULL,
     loser_id INTEGER NOT NULL,
     note TEXT,
+    status TEXT DEFAULT 'pending',
+    expires_at DATETIME,
     played_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (league_id) REFERENCES leagues(id),
     FOREIGN KEY (winner_id) REFERENCES users(id),
     FOREIGN KEY (loser_id) REFERENCES users(id)
   );
 `)
+
+try {
+  db.exec('ALTER TABLE users ADD COLUMN google_id TEXT')
+} catch {}
+try {
+  db.exec('ALTER TABLE games ADD COLUMN status TEXT DEFAULT "pending"')
+} catch {}
+try {
+  db.exec('ALTER TABLE games ADD COLUMN expires_at DATETIME')
+} catch {}
+db.exec(`UPDATE games SET status = 'confirmed' WHERE status IS NULL`)
 
 module.exports = db

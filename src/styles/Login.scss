@@ -17,7 +17,7 @@
 .logo {
   font-size: $font-xl;
   font-weight: 700;
-  color: #56351E;
+  color: #56351e;
   margin-bottom: 4px;
 
   @media (min-width: 768px) {
@@ -31,7 +31,7 @@
 
 .subtitle {
   font-size: $font-xs;
-  color: #C47335;
+  color: #c47335;
   margin-bottom: 20px;
 
   body.dark & {
@@ -154,5 +154,43 @@
 
   body.dark & {
     color: $color-celadon;
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 0.5px;
+  background: rgba(196, 115, 53, 0.2);
+}
+
+.dividerText {
+  font-size: $font-xs;
+  color: #c47335;
+}
+
+.googleBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: $radius-md;
+  border: 1px solid #e0e0e0;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: $font-sm;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+
+  &:hover {
+    background: #f5f5f5;
   }
 }

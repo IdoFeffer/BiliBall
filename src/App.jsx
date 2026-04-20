@@ -7,6 +7,7 @@ import JoinLeague from './pages/JoinLeague'
 import AddGame from './pages/AddGame'
 import Profile from './pages/Profile'
 import H2H from './pages/H2H'
+import AuthCallback from './pages/AuthCallback'
 
 const PAGES_WITH_BACK = ['/profile', '/h2h', '/create-league', '/join-league', '/add-game']
 
@@ -69,6 +70,7 @@ function App() {
       </button>
       <BackButton />
       <Routes>
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<Home />} />
