@@ -5,8 +5,9 @@ import { games, leagues } from '../api'
 
 function AddGame() {
   const navigate = useNavigate()
-  const [result, setResult] = useState('win')
   const [opponent, setOpponent] = useState('')
+  const [myScore, setMyScore] = useState(0)
+  const [oppScore, setOppScore] = useState(0)
   const [note, setNote] = useState('')
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -31,16 +32,32 @@ function AddGame() {
 
   const handleSubmit = async () => {
     if (!opponent) return
+    if (myScore === oppScore) {
+      setError('לא יכול להיות תיקו — מישהו חייב לנצח')
+      return
+    }
     setLoading(true)
     setError('')
     try {
-      const winnerId = result === 'win' ? user.id : parseInt(opponent)
-      const loserId = result === 'win' ? parseInt(opponent) : user.id
+      const iWon = myScore > oppScore
+      const winnerId = iWon ? user.id : parseInt(opponent)
+      const loserId = iWon ? parseInt(opponent) : user.id
+      const winnerScore = iWon ? myScore : oppScore
+      const loserScore = iWon ? oppScore : myScore
+
+      console.log('sending:', {
+        winner_id: winnerId,
+        loser_id: loserId,
+        winner_score: winnerScore,
+        loser_score: loserScore,
+      }) 
 
       await games.add({
         league_id: parseInt(leagueId),
         winner_id: winnerId,
         loser_id: loserId,
+        winner_score: winnerScore,
+        loser_score: loserScore,
         note,
       })
       navigate('/home')
@@ -51,30 +68,17 @@ function AddGame() {
     }
   }
 
+  const oppName =
+    members.find((m) => m.id == opponent)?.full_name ||
+    members.find((m) => m.id == opponent)?.username ||
+    'יריב'
+
   return (
     <div className="page">
       <header className="header">
         <h2 className="headerTitle">הוספת משחק</h2>
         <div style={{ width: 60 }} />
       </header>
-
-      <div className="section">
-        <p className="label">תוצאה</p>
-        <div className="toggleGroup">
-          <button
-            className={`toggleBtn ${result === 'win' ? 'active' : ''}`}
-            onClick={() => setResult('win')}
-          >
-            אני ניצחתי
-          </button>
-          <button
-            className={`toggleBtn ${result === 'lose' ? 'active' : ''}`}
-            onClick={() => setResult('lose')}
-          >
-            אני הפסדתי
-          </button>
-        </div>
-      </div>
 
       <div className="section">
         <p className="label">נגד מי?</p>
@@ -98,6 +102,92 @@ function AddGame() {
       </div>
 
       <div className="section">
+        <p className="label">סקור סיבובים</p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 4,
+          }}
+        >
+          <div style={{ flex: 1, textAlign: 'center' }}>
+            <p style={{ fontSize: 12, color: '#888', marginBottom: 10 }}>אני</p>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 12,
+              }}
+            >
+              <button
+                className="scoreBtn minus"
+                onClick={() => setMyScore((s) => Math.max(0, s - 1))}
+              >
+                −
+              </button>
+              <span
+                style={{
+                  fontSize: 32,
+                  fontWeight: 700,
+                  minWidth: 40,
+                  textAlign: 'center',
+                }}
+              >
+                {myScore}
+              </span>
+              <button
+                className="scoreBtn plus"
+                onClick={() => setMyScore((s) => Math.min(10, s + 1))}
+              >
+                +
+              </button>
+            </div>
+          </div>
+          <span style={{ fontSize: 28, color: '#ccc', padding: '0 8px' }}>
+            :
+          </span>
+          <div style={{ flex: 1, textAlign: 'center' }}>
+            <p style={{ fontSize: 12, color: '#888', marginBottom: 10 }}>
+              {oppName}
+            </p>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 12,
+              }}
+            >
+              <button
+                className="scoreBtn minus"
+                onClick={() => setOppScore((s) => Math.max(0, s - 1))}
+              >
+                −
+              </button>
+              <span
+                style={{
+                  fontSize: 32,
+                  fontWeight: 700,
+                  minWidth: 40,
+                  textAlign: 'center',
+                }}
+              >
+                {oppScore}
+              </span>
+              <button
+                className="scoreBtn plus"
+                onClick={() => setOppScore((s) => Math.min(10, s + 1))}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="section">
         <p className="label">הערה (אופציונלי)</p>
         <input
           className="input"
@@ -114,7 +204,7 @@ function AddGame() {
         </p>
       )}
 
-      <p className="notice">ⓘ רק משחקים שבהם אתה שחקן יכולים להירשם</p>
+      <p className="notice">ⓘ מי שיש לו יותר סיבובים נרשם כמנצח</p>
 
       <button
         className="submitBtn"

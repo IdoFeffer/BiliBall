@@ -955,3 +955,119 @@
     background: $dark-bg-secondary;
   }
 }
+
+.recentScore {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2660A4;
+  background: #EDF7F6;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+// ============ PENDING BANNER ============
+.pendingBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px;
+  padding: 14px 16px;
+  border-radius: $radius-md;
+  background: #2660A4;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(38, 96, 164, 0.25);
+}
+
+.pendingBannerIcon {
+  font-size: 22px;
+}
+
+.pendingBannerText {
+  flex: 1;
+}
+
+.pendingBannerTitle {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: #EDF7F6;
+}
+
+.pendingBannerSub {
+  font-size: $font-xs;
+  color: rgba(237, 247, 246, 0.7);
+  margin-top: 2px;
+}
+
+.pendingBannerArrow {
+  font-size: 22px;
+  color: rgba(237, 247, 246, 0.7);
+}
+
+// ============ PENDING MODAL ============
+.pendingGameCard {
+  background: rgba(38, 96, 164, 0.06);
+  border: 0.5px solid rgba(38, 96, 164, 0.15);
+  border-radius: $radius-md;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.pendingGameInfo {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: #56351E;
+  margin-bottom: 2px;
+
+  body.dark & {
+    color: $dark-text-primary;
+  }
+}
+
+.pendingGameScore {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2660A4;
+  text-align: center;
+  margin: 8px 0;
+  letter-spacing: 0.05em;
+}
+
+.pendingGameSub {
+  font-size: $font-xs;
+  color: #C47335;
+  margin-bottom: 12px;
+
+  body.dark & {
+    color: $color-steel;
+  }
+}
+
+.pendingGameActions {
+  display: flex;
+  gap: 8px;
+}
+
+.pendingConfirmBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: none;
+  background: #2660A4;
+  color: #EDF7F6;
+  cursor: pointer;
+}
+
+.pendingRejectBtn {
+  flex: 1;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: none;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  cursor: pointer;
+}

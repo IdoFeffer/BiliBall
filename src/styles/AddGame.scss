@@ -168,3 +168,25 @@
     color: $dark-bg;
   }
 }
+
+.scoreBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.minus {
+    background: #f0f0f0;
+    color: #555;
+  }
+
+  &.plus {
+    background: #2660A4;
+    color: white;
+  }
+}

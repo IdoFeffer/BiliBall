@@ -17,14 +17,10 @@ const auth = (req, res, next) => {
 }
 
 router.post('/', auth, (req, res) => {
-  const { league_id, winner_id, loser_id, note } = req.body
+  const { league_id, winner_id, loser_id, note, winner_score, loser_score } = req.body
 
   if (parseInt(winner_id) === parseInt(loser_id)) {
     return res.status(400).json({ error: 'חסרים פרטים' })
-  }
-
-  if (winner_id === loser_id) {
-    return res.status(400).json({ error: 'לא יכול לשחק נגד עצמך' })
   }
 
   const isMember = db
@@ -37,37 +33,36 @@ router.post('/', auth, (req, res) => {
   if (!isPlayerInGame)
     return res.status(403).json({ error: 'אתה לא שחקן במשחק הזה' })
 
-  const stmt = db.prepare(`
-    INSERT INTO games (league_id, winner_id, loser_id, note)
-    VALUES (?, ?, ?, ?)
-  `)
-  const result = stmt.run(league_id, winner_id, loser_id, note || null)
+  const result = db
+    .prepare(`
+      INSERT INTO games (league_id, winner_id, loser_id, note, winner_score, loser_score, status, expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, 'pending', datetime('now', '+24 hours'))
+    `)
+    .run(league_id, winner_id, loser_id, note || null, winner_score || 0, loser_score || 0)
 
-  const game = db
-    .prepare('SELECT * FROM games WHERE id = ?')
-    .get(result.lastInsertRowid)
+  const game = db.prepare('SELECT * FROM games WHERE id = ?').get(result.lastInsertRowid)
   res.json(game)
 })
 
 router.get('/league/:league_id', auth, (req, res) => {
   const games = db
-    .prepare(
-      `
-    SELECT 
-      g.id,
-      g.note,
-      g.played_at,
-      w.username as winner_username,
-      w.full_name as winner_name,
-      l.username as loser_username,
-      l.full_name as loser_name
-    FROM games g
-    JOIN users w ON w.id = g.winner_id
-    JOIN users l ON l.id = g.loser_id
-    WHERE g.league_id = ?
-    ORDER BY g.played_at DESC
-  `,
-    )
+    .prepare(`
+      SELECT 
+        g.id,
+        g.note,
+        g.played_at,
+        g.winner_score,
+        g.loser_score,
+        w.username as winner_username,
+        w.full_name as winner_name,
+        l.username as loser_username,
+        l.full_name as loser_name
+      FROM games g
+      JOIN users w ON w.id = g.winner_id
+      JOIN users l ON l.id = g.loser_id
+      WHERE g.league_id = ?
+      ORDER BY g.played_at DESC
+    `)
     .all(req.params.league_id)
 
   res.json(games)
@@ -75,27 +70,48 @@ router.get('/league/:league_id', auth, (req, res) => {
 
 router.delete('/:id', auth, (req, res) => {
   const game = db.prepare('SELECT * FROM games WHERE id = ?').get(req.params.id)
-
   if (!game) return res.status(404).json({ error: 'משחק לא נמצא' })
-
   if (game.winner_id !== req.user.id && game.loser_id !== req.user.id) {
     return res.status(403).json({ error: 'לא מורשה למחוק משחק זה' })
   }
-
   db.prepare('DELETE FROM games WHERE id = ?').run(req.params.id)
   res.json({ success: true })
 })
 
 router.patch('/:id/note', auth, (req, res) => {
   const game = db.prepare('SELECT * FROM games WHERE id = ?').get(req.params.id)
-  
   if (!game) return res.status(404).json({ error: 'משחק לא נמצא' })
-  
   if (game.winner_id !== req.user.id && game.loser_id !== req.user.id) {
     return res.status(403).json({ error: 'לא מורשה' })
   }
-  
   db.prepare('UPDATE games SET note = NULL WHERE id = ?').run(req.params.id)
+  res.json({ success: true })
+})
+
+router.get('/pending/:league_id', auth, (req, res) => {
+  const games = db
+    .prepare(`
+      SELECT g.*, w.full_name as winner_name
+      FROM games g
+      JOIN users w ON w.id = g.winner_id
+      WHERE g.league_id = ?
+      AND g.loser_id = ?
+      AND g.status = 'pending'
+      AND datetime(g.expires_at) > datetime('now')
+    `)
+    .all(req.params.league_id, req.user.id)
+  res.json(games)
+})
+
+router.post('/:id/confirm', auth, (req, res) => {
+  db.prepare(`UPDATE games SET status = 'confirmed' WHERE id = ? AND loser_id = ?`)
+    .run(req.params.id, req.user.id)
+  res.json({ success: true })
+})
+
+router.post('/:id/reject', auth, (req, res) => {
+  db.prepare(`DELETE FROM games WHERE id = ? AND loser_id = ?`)
+    .run(req.params.id, req.user.id)
   res.json({ success: true })
 })
 

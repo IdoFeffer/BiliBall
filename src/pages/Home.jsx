@@ -15,6 +15,8 @@ function Home() {
   const [showLeagueDropdown, setShowLeagueDropdown] = useState(false)
   const [userRole, setUserRole] = useState('member')
   const [showConfirm, setShowConfirm] = useState(null)
+  const [pendingGames, setPendingGames] = useState([])
+  const [showPending, setShowPending] = useState(false)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
@@ -29,6 +31,7 @@ function Home() {
       setLoading(false)
       return
     }
+
     const fetchData = async () => {
       try {
         const [playersRes, gamesRes, allLeaguesRes, membersRes] =
@@ -49,7 +52,18 @@ function Home() {
         setLoading(false)
       }
     }
+
+    const fetchPending = async () => {
+      try {
+        const pendingRes = await games.getPending(leagueId)
+        setPendingGames(pendingRes.data)
+      } catch (err) {
+        console.error('pending error:', err)
+      }
+    }
+
     fetchData()
+    fetchPending()
   }, [])
 
   const handleLogout = () => {
@@ -91,8 +105,33 @@ function Home() {
     }
   }
 
+  const handleConfirmGame = async (gameId) => {
+    try {
+      await games.confirm(gameId)
+      setPendingGames((prev) => prev.filter((g) => g.id !== gameId))
+      window.location.reload()
+    } catch (err) {
+      alert('שגיאה באישור')
+    }
+  }
+
+  const handleRejectGame = async (gameId) => {
+    try {
+      await games.reject(gameId)
+      setPendingGames((prev) => prev.filter((g) => g.id !== gameId))
+    } catch (err) {
+      alert('שגיאה בדחייה')
+    }
+  }
+
+  const getHoursLeft = (expiresAt) => {
+    if (!expiresAt) return 24
+    const diff = new Date(expiresAt + 'Z') - new Date()
+    return Math.max(0, Math.floor(diff / (1000 * 60 * 60)))
+  }
+
   if (loading) return <HomeSkeleton />
-  
+
   return (
     <div className="page">
       <nav className="nav">
@@ -151,6 +190,19 @@ function Home() {
         </div>
       )}
 
+      {isLoggedIn && hasLeague && pendingGames.length > 0 && (
+        <div className="pendingBanner" onClick={() => setShowPending(true)}>
+          <span className="pendingBannerIcon">⏳</span>
+          <div className="pendingBannerText">
+            <p className="pendingBannerTitle">
+              יש לך {pendingGames.length} משחקים לאישור
+            </p>
+            <p className="pendingBannerSub">לחץ לאישור או דחייה</p>
+          </div>
+          <span className="pendingBannerArrow">›</span>
+        </div>
+      )}
+
       {isLoggedIn && !hasLeague && (
         <div className="noLeague">
           <p className="noLeagueIcon">🎱</p>
@@ -173,7 +225,6 @@ function Home() {
               const isMe = user.id === player.id
               const score = player.wins - player.losses
               const isFirst = index === 0
-
               if (isFirst) {
                 return (
                   <div
@@ -211,7 +262,6 @@ function Home() {
                   </div>
                 )
               }
-
               return (
                 <div
                   key={player.id}
@@ -301,6 +351,11 @@ function Home() {
                       💬
                     </span>
                   )}
+                  {(game.winner_score > 0 || game.loser_score > 0) && (
+                    <span className="recentScore">
+                      {game.winner_score} : {game.loser_score}
+                    </span>
+                  )}
                   <span className="recentDate">
                     {new Date(game.played_at).toLocaleDateString('he-IL')}
                   </span>
@@ -310,7 +365,7 @@ function Home() {
                 <div className="noteTooltip">{game.note}</div>
               )}
             </div>
-          ))}
+          ))}{' '}
         </section>
       )}
 
@@ -423,6 +478,42 @@ function Home() {
         </div>
       )}
 
+      {showPending && (
+        <div className="confirmOverlay" onClick={() => setShowPending(false)}>
+          <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
+            <p className="confirmTitle">משחקים ממתינים לאישור</p>
+            {pendingGames.map((game) => (
+              <div key={game.id} className="pendingGameCard">
+                <p className="pendingGameInfo">
+                  {game.winner_name} טוען שניצח אותך
+                </p>
+                {(game.winner_score > 0 || game.loser_score > 0) && (
+                  <p className="pendingGameScore">
+                    {game.winner_score} : {game.loser_score}
+                  </p>
+                )}
+                <p className="pendingGameSub">
+                  פג תוקף בעוד {getHoursLeft(game.expires_at)} שעות
+                </p>
+                <div className="pendingGameActions">
+                  <button
+                    className="pendingConfirmBtn"
+                    onClick={() => handleConfirmGame(game.id)}
+                  >
+                    ✓ אשר
+                  </button>
+                  <button
+                    className="pendingRejectBtn"
+                    onClick={() => handleRejectGame(game.id)}
+                  >
+                    ✕ דחה
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {isLoggedIn && hasLeague && (
         <nav className="bottomNav">
           <button className="navTab active">
