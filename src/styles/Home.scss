@@ -1071,3 +1071,83 @@
   color: #e74c3c;
   cursor: pointer;
 }
+
+.installBtn {
+  flex: 1;
+  padding: 14px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(38, 96, 164, 0.2);
+  background: rgba(38, 96, 164, 0.04);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.installBtnLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2660A4;
+}
+
+.installBtnSub {
+  font-size: 11px;
+  color: #C47335;
+}
+
+.installSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 12px;
+}
+
+.installStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 0.5px solid rgba(196, 115, 53, 0.12);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.installStepNum {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #2660A4;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.installStepText {
+  font-size: 13px;
+  color: #56351E;
+  line-height: 1.5;
+}
+
+.installNote {
+  font-size: 11px;
+  color: #C47335;
+  text-align: center;
+  padding-top: 12px;
+  border-top: 0.5px solid rgba(196, 115, 53, 0.12);
+}
+
+.sheetHandle {
+  width: 36px;
+  height: 4px;
+  background: rgba(196, 115, 53, 0.3);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}

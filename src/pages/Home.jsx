@@ -17,6 +17,7 @@ function Home() {
   const [showConfirm, setShowConfirm] = useState(null)
   const [pendingGames, setPendingGames] = useState([])
   const [showPending, setShowPending] = useState(false)
+  const [showInstall, setShowInstall] = useState(null) // 'ios' | 'android' | null
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
@@ -420,6 +421,30 @@ function Home() {
       )}
 
       {isLoggedIn && hasLeague && (
+        <section className="section">
+          <h2 className="sectionTitle">התקן כאפליקציה</h2>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              className="installBtn"
+              onClick={() => setShowInstall('ios')}
+            >
+              <span style={{ fontSize: 28 }}></span>
+              <span className="installBtnLabel">iPhone</span>
+              <span className="installBtnSub">Safari</span>
+            </button>
+            <button
+              className="installBtn"
+              onClick={() => setShowInstall('android')}
+            >
+              <span style={{ fontSize: 28 }}>🤖</span>
+              <span className="installBtnLabel">Android</span>
+              <span className="installBtnSub">Chrome</span>
+            </button>
+          </div>
+        </section>
+      )}
+
+      {isLoggedIn && hasLeague && (
         <div style={{ padding: '12px 16px' }}>
           {userRole === 'admin' ? (
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -514,6 +539,74 @@ function Home() {
           </div>
         </div>
       )}
+      {showInstall === 'ios' && (
+        <div className="confirmOverlay" onClick={() => setShowInstall(null)}>
+          <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheetHandle" />
+            <p className="confirmTitle"> הוסף ל-iPhone</p>
+            <p className="confirmSub">פתח באפליקציית Safari בלבד</p>
+            <div className="installSteps">
+              <div className="installStep">
+                <div className="installStepNum">1</div>
+                <div className="installStepText">
+                  לחץ על שלוש הנקודות <strong>⋯</strong> בסרגל Safari
+                </div>
+              </div>
+              <div className="installStep">
+                <div className="installStepNum">2</div>
+                <div className="installStepText">
+                  לחץ על <strong>Share</strong> 📤
+                </div>
+              </div>
+              <div className="installStep">
+                <div className="installStepNum">3</div>
+                <div className="installStepText">
+                  גלול ובחר <strong>Add to Home Screen</strong> ➕
+                </div>
+              </div>
+              <div className="installStep">
+                <div className="installStepNum">4</div>
+                <div className="installStepText">
+                  לחץ <strong>Add</strong> — פתח כ-Web App 🎉
+                </div>
+              </div>
+            </div>
+            <p className="installNote">⚠️ עובד רק עם Safari — לא Chrome</p>
+          </div>
+        </div>
+      )}
+
+      {showInstall === 'android' && (
+        <div className="confirmOverlay" onClick={() => setShowInstall(null)}>
+          <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheetHandle" />
+            <p className="confirmTitle">🤖 הוסף לאנדרואיד</p>
+            <p className="confirmSub">פתח ב-Chrome</p>
+            <div className="installSteps">
+              <div className="installStep">
+                <div className="installStepNum">1</div>
+                <div className="installStepText">
+                  לחץ על שלוש הנקודות <strong>⋮</strong> בפינה הימנית העליונה
+                </div>
+              </div>
+              <div className="installStep">
+                <div className="installStepNum">2</div>
+                <div className="installStepText">
+                  בחר <strong>הוסף למסך הבית</strong> 📲
+                </div>
+              </div>
+              <div className="installStep">
+                <div className="installStepNum">3</div>
+                <div className="installStepText">
+                  לחץ <strong>הוסף</strong> — האייקון יופיע על המסך 🎉
+                </div>
+              </div>
+            </div>
+            <p className="installNote">עובד עם Chrome, Edge, Samsung Browser</p>
+          </div>
+        </div>
+      )}
+
       {isLoggedIn && hasLeague && (
         <nav className="bottomNav">
           <button className="navTab active">
