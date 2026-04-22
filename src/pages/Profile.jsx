@@ -131,6 +131,13 @@ function Profile() {
                 {game.result === 'win' ? 'נצחון' : 'הפסד'}
               </span>
               <span className="historyOpponent">נגד {game.opponent_name}</span>
+              {(game.winner_score > 0 || game.loser_score > 0) && (
+                <span className="recentScore" style={{ marginRight: 6 }}>
+                  {game.result === 'win'
+                    ? `${game.winner_score} : ${game.loser_score}`
+                    : `${game.loser_score} : ${game.winner_score}`}
+                </span>
+              )}{' '}
               <div
                 style={{
                   display: 'flex',
