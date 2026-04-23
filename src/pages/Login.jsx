@@ -59,7 +59,7 @@ function Login() {
       <BgBalls />
       <div className="card">
         <h1 className="logo">BiliBall 🎱</h1>
-        <p className="subtitle">עקוב אחר הניצחונות שלך</p>
+        <p className="subtitle">השולחן לא משקר</p>
         <h2 className="title">{isRegister ? 'הרשמה' : 'התחברות'}</h2>
         <div className="inputGroup">
           <input
