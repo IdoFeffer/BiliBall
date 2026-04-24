@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const db = require('../database')
+const { db } = require('../database')
 const jwt = require('jsonwebtoken')
 
 const SECRET = 'biliball_secret_key'
@@ -19,117 +19,137 @@ const auth = (req, res, next) => {
 const generateCode = () =>
   Math.random().toString(36).substring(2, 8).toUpperCase()
 
-router.post('/create', auth, (req, res) => {
+router.post('/create', auth, async (req, res) => {
   const { name } = req.body
   if (!name) return res.status(400).json({ error: 'שם הליגה נדרש' })
-
-  const invite_code = generateCode()
-  const stmt = db.prepare(
-    'INSERT INTO leagues (name, invite_code, created_by) VALUES (?, ?, ?)',
-  )
-  const result = stmt.run(name, invite_code, req.user.id)
-
-  db.prepare(
-    'INSERT INTO league_members (league_id, user_id, role) VALUES (?, ?, ?)',
-  ).run(result.lastInsertRowid, req.user.id, 'admin')
-
-  const league = db
-    .prepare('SELECT * FROM leagues WHERE id = ?')
-    .get(result.lastInsertRowid)
-  res.json(league)
+  try {
+    const invite_code = generateCode()
+    const result = await db.execute({
+      sql: 'INSERT INTO leagues (name, invite_code, created_by) VALUES (?, ?, ?)',
+      args: [name, invite_code, req.user.id]
+    })
+    await db.execute({
+      sql: 'INSERT INTO league_members (league_id, user_id, role) VALUES (?, ?, ?)',
+      args: [Number(result.lastInsertRowid), req.user.id, 'admin']
+    })
+    const league = await db.execute({
+      sql: 'SELECT * FROM leagues WHERE id = ?',
+      args: [Number(result.lastInsertRowid)]
+    })
+    res.json(league.rows[0])
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה ביצירת ליגה' })
+  }
 })
 
-router.post('/join', auth, (req, res) => {
-  const { invite_code } = req.body
-  const league = db
-    .prepare('SELECT * FROM leagues WHERE invite_code = ?')
-    .get(invite_code)
-  if (!league) return res.status(404).json({ error: 'ליגה לא נמצאה' })
+router.post('/join', auth, async (req, res) => {
+  try {
+    const { invite_code } = req.body
+    const leagueRes = await db.execute({
+      sql: 'SELECT * FROM leagues WHERE invite_code = ?',
+      args: [invite_code]
+    })
+    const league = leagueRes.rows[0]
+    if (!league) return res.status(404).json({ error: 'ליגה לא נמצאה' })
 
-  const existing = db
-    .prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
-    .get(league.id, req.user.id)
-  if (existing) return res.status(400).json({ error: 'כבר חבר בליגה' })
+    const existingRes = await db.execute({
+      sql: 'SELECT * FROM league_members WHERE league_id = ? AND user_id = ?',
+      args: [league.id, req.user.id]
+    })
+    if (existingRes.rows[0]) return res.status(400).json({ error: 'כבר חבר בליגה' })
 
-  db.prepare(
-    'INSERT INTO league_members (league_id, user_id, role) VALUES (?, ?, ?)',
-  ).run(league.id, req.user.id, 'member')
-
-  res.json(league)
+    await db.execute({
+      sql: 'INSERT INTO league_members (league_id, user_id, role) VALUES (?, ?, ?)',
+      args: [league.id, req.user.id, 'member']
+    })
+    res.json(league)
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה בהצטרפות' })
+  }
 })
 
-router.get('/user/all', auth, (req, res) => {
-  const leagues = db
-    .prepare(
-      `
-    SELECT l.* FROM leagues l
-    JOIN league_members lm ON lm.league_id = l.id
-    WHERE lm.user_id = ?
-    ORDER BY lm.joined_at DESC
-  `,
-    )
-    .all(req.user.id)
-
-  res.json(leagues)
+router.get('/user/all', auth, async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: `SELECT l.* FROM leagues l
+            JOIN league_members lm ON lm.league_id = l.id
+            WHERE lm.user_id = ?
+            ORDER BY lm.joined_at DESC`,
+      args: [req.user.id]
+    })
+    res.json(result.rows)
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה' })
+  }
 })
 
-router.get('/user', auth, (req, res) => {
-  const league = db
-    .prepare(
-      `
-    SELECT l.* FROM leagues l
-    JOIN league_members lm ON lm.league_id = l.id
-    WHERE lm.user_id = ?
-    ORDER BY lm.joined_at DESC
-    LIMIT 1
-  `,
-    )
-    .get(req.user.id)
-
-  res.json(league || null)
+router.get('/user', auth, async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: `SELECT l.* FROM leagues l
+            JOIN league_members lm ON lm.league_id = l.id
+            WHERE lm.user_id = ?
+            ORDER BY lm.joined_at DESC
+            LIMIT 1`,
+      args: [req.user.id]
+    })
+    res.json(result.rows[0] || null)
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה' })
+  }
 })
 
-router.get('/:id/members', auth, (req, res) => {
-  const members = db
-    .prepare(
-      `
-    SELECT u.id, u.username, u.full_name, lm.role
-    FROM league_members lm
-    JOIN users u ON u.id = lm.user_id
-    WHERE lm.league_id = ?
-  `,
-    )
-    .all(req.params.id)
-
-  res.json(members)
+router.get('/:id/members', auth, async (req, res) => {
+  try {
+    const result = await db.execute({
+      sql: `SELECT u.id, u.username, u.full_name, lm.role
+            FROM league_members lm
+            JOIN users u ON u.id = lm.user_id
+            WHERE lm.league_id = ?`,
+      args: [req.params.id]
+    })
+    res.json(result.rows)
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה' })
+  }
 })
 
-router.post('/:id/leave', auth, (req, res) => {
-  const leagueId = req.params.id
-  const member = db
-    .prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
-    .get(leagueId, req.user.id)
-  if (!member) return res.status(404).json({ error: 'לא חבר בליגה' })
+router.post('/:id/leave', auth, async (req, res) => {
+  try {
+    const leagueId = req.params.id
+    const memberRes = await db.execute({
+      sql: 'SELECT * FROM league_members WHERE league_id = ? AND user_id = ?',
+      args: [leagueId, req.user.id]
+    })
+    if (!memberRes.rows[0]) return res.status(404).json({ error: 'לא חבר בליגה' })
 
-  db.prepare(
-    'DELETE FROM league_members WHERE league_id = ? AND user_id = ?',
-  ).run(leagueId, req.user.id)
-
-  res.json({ success: true })
+    await db.execute({
+      sql: 'DELETE FROM league_members WHERE league_id = ? AND user_id = ?',
+      args: [leagueId, req.user.id]
+    })
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה' })
+  }
 })
 
-router.delete('/:id', auth, (req, res) => {
-  const leagueId = req.params.id
-  const member = db
-    .prepare('SELECT * FROM league_members WHERE league_id = ? AND user_id = ?')
-    .get(leagueId, req.user.id)
-  if (!member || member.role !== 'admin')
-    return res.status(403).json({ error: 'אין הרשאה' })
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const leagueId = req.params.id
+    const memberRes = await db.execute({
+      sql: 'SELECT * FROM league_members WHERE league_id = ? AND user_id = ?',
+      args: [leagueId, req.user.id]
+    })
+    const member = memberRes.rows[0]
+    if (!member || member.role !== 'admin')
+      return res.status(403).json({ error: 'אין הרשאה' })
 
-  db.prepare('DELETE FROM league_members WHERE league_id = ?').run(leagueId)
-  db.prepare('DELETE FROM leagues WHERE id = ?').run(leagueId)
-
-  res.json({ success: true })
+    await db.execute({ sql: 'DELETE FROM league_members WHERE league_id = ?', args: [leagueId] })
+    await db.execute({ sql: 'DELETE FROM leagues WHERE id = ?', args: [leagueId] })
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה' })
+  }
 })
 
 module.exports = router
