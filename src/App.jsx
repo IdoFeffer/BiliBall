@@ -1,4 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom'
 import { useState } from 'react'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -9,13 +16,19 @@ import Profile from './pages/Profile'
 import H2H from './pages/H2H'
 import AuthCallback from './pages/AuthCallback'
 
-const PAGES_WITH_BACK = ['/profile', '/h2h', '/create-league', '/join-league', '/add-game']
+const PAGES_WITH_BACK = [
+  '/profile',
+  '/h2h',
+  '/create-league',
+  '/join-league',
+  '/add-game',
+]
 
 function BackButton() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const showBack = PAGES_WITH_BACK.some(p => location.pathname.startsWith(p))
+  const showBack = PAGES_WITH_BACK.some((p) => location.pathname.startsWith(p))
   if (!showBack) return null
 
   return (
@@ -71,8 +84,18 @@ function App() {
       <BackButton />
       <Routes>
         <Route path="/auth/callback" element={<AuthCallback />} />
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <Navigate to={localStorage.getItem('token') ? '/home' : '/login'} />
+          }
+        />{' '}
+        <Route
+          path="/login"
+          element={
+            localStorage.getItem('token') ? <Navigate to="/home" /> : <Login />
+          }
+        />{' '}
         <Route path="/home" element={<Home />} />
         <Route path="/create-league" element={<CreateLeague />} />
         <Route path="/join-league" element={<JoinLeague />} />
