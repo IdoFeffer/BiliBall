@@ -225,8 +225,27 @@ function Home() {
             {leaguePlayers.map((player, index) => {
               const isMe = user.id === player.id
               const score = player.wins - player.losses
-              const isFirst = index === 0
-              if (isFirst) {
+              const ballColorsList = [
+                '#2660A4',
+                '#f1c40f',
+                '#e74c3c',
+                '#27ae60',
+                '#F19953',
+                '#9b59b6',
+                '#2980b9',
+                '#111',
+              ]
+              const ballColor = ballColorsList[index % ballColorsList.length]
+              const medal =
+                index === 0
+                  ? '🥇'
+                  : index === 1
+                    ? '🥈'
+                    : index === 2
+                      ? '🥉'
+                      : null
+
+              if (index === 0) {
                 return (
                   <div
                     key={player.id}
@@ -234,8 +253,21 @@ function Home() {
                     onClick={() => navigate(`/profile/${player.id}`)}
                   >
                     <span className="rankFirst">1</span>
-                    <div className="avatarFirst">
-                      {player.full_name?.[0] || player.username?.[0]}
+                    <div className="ballWrap">
+                      <div
+                        className="ballAvatar"
+                        style={{
+                          background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`,
+                          width: 38,
+                          height: 38,
+                          fontSize: 15,
+                        }}
+                      >
+                        <div className="ballInner">
+                          {player.full_name?.[0] || player.username?.[0]}
+                        </div>
+                      </div>
+                      <div className="medalBadge">{medal}</div>
                     </div>
                     <span className="playerNameFirst">
                       {player.full_name || player.username}
@@ -263,6 +295,7 @@ function Home() {
                   </div>
                 )
               }
+
               return (
                 <div
                   key={player.id}
@@ -271,10 +304,21 @@ function Home() {
                   style={{ cursor: 'pointer' }}
                 >
                   <span className="rank">{index + 1}</span>
-                  <div
-                    className={`avatar ${avatarColors[index % avatarColors.length]}`}
-                  >
-                    {player.full_name?.[0] || player.username?.[0]}
+                  <div className="ballWrap">
+                    <div
+                      className="ballAvatar"
+                      style={{
+                        background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`,
+                        width: 32,
+                        height: 32,
+                        fontSize: 12,
+                      }}
+                    >
+                      <div className="ballInner">
+                        {player.full_name?.[0] || player.username?.[0]}
+                      </div>
+                    </div>
+                    {medal && <div className="medalBadge">{medal}</div>}
                   </div>
                   <span className="playerName">
                     {player.full_name || player.username}
