@@ -379,13 +379,6 @@ function Home() {
           >
             ראש בראש ↗
           </button>
-          <button
-            className="h2hBtn"
-            style={{ flex: 1 }}
-            onClick={() => navigate('/tournament')}
-          >
-            טורניר 🏆
-          </button>
         </div>
       )}
 
