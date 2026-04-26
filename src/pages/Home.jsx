@@ -69,7 +69,7 @@ function Home() {
 
   const handleLogout = () => {
     localStorage.clear()
-    navigate('/login')
+    window.location.href = '/login'
   }
 
   const switchLeague = (league) => {
@@ -371,9 +371,22 @@ function Home() {
       )}
 
       {isLoggedIn && hasLeague && (
-        <button className="h2hBtn" onClick={() => navigate('/h2h')}>
-          ראש בראש ↗
-        </button>
+        <div style={{ display: 'flex', gap: '8px', margin: '4px 8px' }}>
+          <button
+            className="h2hBtn"
+            style={{ flex: 1 }}
+            onClick={() => navigate('/h2h')}
+          >
+            ראש בראש ↗
+          </button>
+          <button
+            className="h2hBtn"
+            style={{ flex: 1 }}
+            onClick={() => navigate('/tournament')}
+          >
+            טורניר 🏆
+          </button>
+        </div>
       )}
 
       {isLoggedIn && hasLeague && (
