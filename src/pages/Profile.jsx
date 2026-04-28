@@ -2,7 +2,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import '../styles/Profile.scss'
 import { players, games } from '../api'
+import { auth } from '../api'
 import ProfileSkeleton from '../components/ProfileSkeleton'
+import axios from 'axios'
 
 function Profile() {
   const navigate = useNavigate()
@@ -10,12 +12,18 @@ function Profile() {
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const [openNote, setOpenNote] = useState(null)
-
+  const [showEditName, setShowEditName] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [savingName, setSavingName] = useState(false)
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
   const targetUserId = userId || currentUser.id
   const isOwnProfile = !userId || parseInt(userId) === currentUser.id
+  const BASE_URL =
+    import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
 
+
+    
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -29,6 +37,30 @@ function Profile() {
     }
     fetchStats()
   }, [targetUserId])
+
+  const handleSaveName = async () => {
+    if (!newName.trim()) return
+    setSavingName(true)
+    try {
+      const token = localStorage.getItem('token')
+      await axios.patch(
+        `${BASE_URL}/auth/update-name`,
+        { full_name: newName.trim() },
+        { headers: { Authorization: `Bearer ${token}` } },
+      )
+      const updatedUser = { ...currentUser, full_name: newName.trim() }
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+      setStats((prev) => ({
+        ...prev,
+        user: { ...prev.user, full_name: newName.trim() },
+      }))
+      setShowEditName(false)
+    } catch (err) {
+      alert('שגיאה בעדכון השם')
+    } finally {
+      setSavingName(false)
+    }
+  }
 
   if (loading) return <ProfileSkeleton />
   if (!stats) return <div style={{ padding: 20 }}>שגיאה בטעינה</div>
@@ -52,7 +84,28 @@ function Profile() {
         <div className="playerInfo">
           <div className="avatarLg">{stats.user.full_name?.[0]}</div>
           <div>
-            <p className="playerName">{stats.user.full_name}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <p className="playerName">{stats.user.full_name}</p>
+              {isOwnProfile && (
+                <button
+                  onClick={() => {
+                    setNewName(stats.user.full_name)
+                    setShowEditName(true)
+                  }}
+                  style={{
+                    background: 'none',
+                    border: '1px solid rgba(196,115,53,0.3)',
+                    borderRadius: 6,
+                    padding: '1px 7px',
+                    fontSize: 10,
+                    color: '#C47335',
+                    cursor: 'pointer',
+                  }}
+                >
+                  ✏ ערוך
+                </button>
+              )}
+            </div>
             <p className="memberSince">@{stats.user.username}</p>
           </div>
         </div>
@@ -137,7 +190,7 @@ function Profile() {
                     ? `${game.winner_score} : ${game.loser_score}`
                     : `${game.loser_score} : ${game.winner_score}`}
                 </span>
-              )}{' '}
+              )}
               <div
                 style={{
                   display: 'flex',
@@ -220,6 +273,69 @@ function Profile() {
           </div>
         ))}
       </div>
+
+      {showEditName && (
+        <div className="confirmOverlay" onClick={() => setShowEditName(false)}>
+          <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheetHandle" />
+            <p className="confirmTitle">שנה שם</p>
+            <p className="confirmSub">השם יעודכן בכל הליגות</p>
+            <input
+              style={{
+                width: '100%',
+                padding: '13px 14px',
+                borderRadius: 10,
+                border: '1.5px solid rgba(38,96,164,0.3)',
+                fontSize: 15,
+                color: '#56351E',
+                background: 'white',
+                boxSizing: 'border-box',
+                textAlign: 'right',
+                marginBottom: 12,
+                outline: 'none',
+              }}
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="הכנס שם חדש"
+              autoFocus
+            />
+            <button
+              style={{
+                width: '100%',
+                padding: 13,
+                borderRadius: 10,
+                background: newName.trim() ? '#2660A4' : '#ccc',
+                color: 'white',
+                border: 'none',
+                fontSize: 14,
+                fontWeight: 700,
+                marginBottom: 8,
+                cursor: newName.trim() ? 'pointer' : 'not-allowed',
+              }}
+              disabled={!newName.trim() || savingName}
+              onClick={handleSaveName}
+            >
+              {savingName ? 'שומר...' : 'שמור'}
+            </button>
+            <button
+              style={{
+                width: '100%',
+                padding: 12,
+                borderRadius: 10,
+                background: 'rgba(196,115,53,0.1)',
+                color: '#C47335',
+                border: 'none',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+              onClick={() => setShowEditName(false)}
+            >
+              ביטול
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
