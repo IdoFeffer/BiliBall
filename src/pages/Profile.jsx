@@ -6,6 +6,9 @@ import { auth } from '../api'
 import ProfileSkeleton from '../components/ProfileSkeleton'
 import axios from 'axios'
 
+const BASE_URL =
+  import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
+
 function Profile() {
   const navigate = useNavigate()
   const { userId } = useParams()
@@ -19,11 +22,7 @@ function Profile() {
   const leagueId = localStorage.getItem('leagueId')
   const targetUserId = userId || currentUser.id
   const isOwnProfile = !userId || parseInt(userId) === currentUser.id
-  const BASE_URL =
-    import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
 
-
-    
   useEffect(() => {
     const fetchStats = async () => {
       try {

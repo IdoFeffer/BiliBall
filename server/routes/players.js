@@ -120,22 +120,9 @@ router.get('/h2h/:user1_id/:user2_id/:league_id', auth, async (req, res) => {
       args: [league_id, user1_id, user2_id, user2_id, user1_id],
     })
     const games = result.rows
-    const user1Wins = games.reduce(
-      (sum, g) =>
-        sum +
-        (g.winner_id == user1_id
-          ? Number(g.winner_score)
-          : Number(g.loser_score)),
-      0,
-    )
-    const user2Wins = games.reduce(
-      (sum, g) =>
-        sum +
-        (g.winner_id == user2_id
-          ? Number(g.winner_score)
-          : Number(g.loser_score)),
-      0,
-    )
+    const user1Wins = games.filter((g) => g.winner_id == user1_id).length
+    const user2Wins = games.filter((g) => g.winner_id == user2_id).length
+
     res.json({ games, user1Wins, user2Wins, total: games.length })
   } catch (err) {
     res.status(500).json({ error: 'שגיאה' })

@@ -2,6 +2,9 @@ import axios from 'axios'
 
 const BASE_URL =
   import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
+// const BASE_URL =
+//   import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
 const getToken = () => localStorage.getItem('token')
 
 const api = axios.create({
