@@ -127,7 +127,7 @@ function Profile() {
           </div>
           <div className="metricCard">
             <div className="metricVal">{stats.wins + stats.losses}</div>
-            <div className="metricLabel">סה"כ משחקים</div>
+            <div className="metricLabel">סה"כ סיבובים</div>
           </div>
           <div className="metricCard">
             <div className={`metricVal ${score >= 0 ? 'pos' : 'neg'}`}>

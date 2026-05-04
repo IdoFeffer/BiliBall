@@ -83,7 +83,7 @@ router.get('/:user_id/stats/:league_id', auth, async (req, res) => {
           CASE WHEN g.winner_id = ? THEN l.id ELSE w.id END as opponent_id,
           CASE WHEN g.winner_id = ? THEN l.full_name ELSE w.full_name END as opponent_name,
           COUNT(*) as total,
-          COALESCE(SUM(CASE WHEN g.winner_id = ? THEN g.winner_score ELSE g.loser_score END), 0) as wins
+          COALESCE(SUM(CASE WHEN g.winner_id = ? THEN 1 ELSE 0 END), 0) as wins
         FROM games g
         JOIN users w ON w.id = g.winner_id
         JOIN users l ON l.id = g.loser_id
