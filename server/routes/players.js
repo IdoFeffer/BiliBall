@@ -52,16 +52,16 @@ router.get('/:user_id/stats/:league_id', auth, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'משתמש לא נמצא' })
 
     const winsRes = await db.execute({
-      sql: `SELECT COALESCE(SUM(CASE WHEN winner_id = ? THEN winner_score ELSE loser_score END), 0) as count
-            FROM games WHERE (winner_id = ? OR loser_id = ?) AND league_id = ? AND status = 'confirmed'`,
-      args: [user_id, user_id, user_id, league_id],
+      sql: `SELECT COUNT(*) as count
+            FROM games WHERE winner_id = ? AND league_id = ? AND status = 'confirmed'`,
+      args: [user_id, league_id],
     })
     const wins = winsRes.rows[0].count
 
     const lossesRes = await db.execute({
-      sql: `SELECT COALESCE(SUM(CASE WHEN loser_id = ? THEN winner_score ELSE loser_score END), 0) as count
-            FROM games WHERE (winner_id = ? OR loser_id = ?) AND league_id = ? AND status = 'confirmed'`,
-      args: [user_id, user_id, user_id, league_id],
+      sql: `SELECT COUNT(*) as count
+            FROM games WHERE loser_id = ? AND league_id = ? AND status = 'confirmed'`,
+      args: [user_id, league_id],
     })
     const losses = lossesRes.rows[0].count
 
@@ -83,7 +83,7 @@ router.get('/:user_id/stats/:league_id', auth, async (req, res) => {
               CASE WHEN g.winner_id = ? THEN l.id ELSE w.id END as opponent_id,
               CASE WHEN g.winner_id = ? THEN l.full_name ELSE w.full_name END as opponent_name,
               COUNT(*) as total,
-              COALESCE(SUM(CASE WHEN g.winner_id = ? THEN g.winner_score ELSE g.loser_score END), 0) as wins
+              COALESCE(SUM(CASE WHEN g.winner_id = ? THEN 1 ELSE 0 END), 0) as wins
             FROM games g
             JOIN users w ON w.id = g.winner_id
             JOIN users l ON l.id = g.loser_id
