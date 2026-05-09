@@ -122,14 +122,14 @@ function Bulletin() {
   return (
     <div className="bulletin-page">
       <nav className="bulletin-nav">
-        <div style={{ width: 40 }} />
-        <div style={{ textAlign: 'center' }}>
+        <div className="bulletin-nav-spacer" />
+        <div className="bulletin-nav-center">
           <h1 className="navLogo">BiliBall 🎱</h1>
-          <div className="leagueChip" style={{ cursor: 'default' }}>
+          <div className="leagueChip">
             <span>{leagueName}</span>
           </div>
         </div>
-        <div style={{ width: 40 }} />
+        <div className="bulletin-nav-spacer" />
       </nav>
 
       <div className="bulletin-header">
@@ -143,9 +143,7 @@ function Bulletin() {
           <div className="bulletin-empty">
             <p className="bulletin-empty-icon">📢</p>
             <p>אין הודעות עדיין</p>
-            <p style={{ fontSize: '13px', opacity: 0.6 }}>
-              היה הראשון לכתוב משהו
-            </p>
+            <p className="bulletin-empty-sub">היה הראשון לכתוב משהו</p>
           </div>
         )}
         {posts.map((post, i) => {
@@ -155,9 +153,20 @@ function Bulletin() {
           return (
             <div key={post.id} className="bulletin-card">
               <div className="bulletin-card-header">
-                <div className="bulletin-avatar" style={{ background: color }}>
-                  <div className="bulletin-avatar-inner">{initial}</div>
-                </div>
+                {post.avatar_url ? (
+                  <img
+                    src={post.avatar_url}
+                    alt=""
+                    className="bulletin-avatar-img"
+                  />
+                ) : (
+                  <div
+                    className="bulletin-avatar"
+                    style={{ background: color }}
+                  >
+                    <div className="bulletin-avatar-inner">{initial}</div>
+                  </div>
+                )}
                 <div className="bulletin-meta">
                   <span className="bulletin-name">
                     {post.full_name || post.username}
@@ -168,7 +177,7 @@ function Bulletin() {
                   </span>
                 </div>
                 {isMe && (
-                  <div style={{ display: 'flex', gap: '4px' }}>
+                  <div className="bulletin-actions">
                     <button
                       className="bulletin-edit"
                       onClick={() => {
@@ -189,16 +198,10 @@ function Bulletin() {
                   </div>
                 )}
               </div>
+
               <p className="bulletin-content">{post.content}</p>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  borderTop: '0.5px solid #e8f5ee',
-                  paddingTop: '8px',
-                  marginTop: '8px',
-                }}
-              >
+
+              <div className="bulletin-footer">
                 <button
                   className="bulletin-like"
                   onClick={() => handleLike(post.id)}
@@ -206,15 +209,15 @@ function Bulletin() {
                   ❤️ {post.like_count || 0}
                 </button>
               </div>
+
               {editingId === post.id && (
                 <div className="bulletin-edit-compose">
                   <span className="bulletin-edit-label">עורך:</span>
                   <textarea
-                    className="bulletin-input"
+                    className="bulletin-input bulletin-edit-input"
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
                     rows={1}
-                    style={{ flex: 1 }}
                     autoFocus
                   />
                   <button

@@ -21,11 +21,13 @@ router.get('/:league_id', auth, async (req, res) => {
     const result = await db.execute({
       sql: `SELECT a.id, a.content, a.created_at,
               u.full_name, u.username,
+              ua.avatar_url,
               COUNT(l.id) as like_count,
               MAX(CASE WHEN l.user_id = ? THEN 1 ELSE 0 END) as liked_by_me
             FROM announcements a
             JOIN users u ON a.user_id = u.id
             LEFT JOIN announcement_likes l ON l.announcement_id = a.id
+            LEFT JOIN user_avatars ua ON ua.user_id = u.id
             WHERE a.league_id = ?
             GROUP BY a.id
             ORDER BY a.created_at DESC

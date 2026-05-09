@@ -317,3 +317,45 @@
     opacity: 0.8;
   }
 }
+
+.bulletin-nav-spacer {
+  width: 40px;
+}
+
+.bulletin-nav-center {
+  text-align: center;
+}
+
+.bulletin-empty-sub {
+  font-size: 13px;
+  opacity: 0.6;
+}
+
+.bulletin-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.bulletin-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.bulletin-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 0.5px solid #e8f5ee;
+  padding-top: 8px;
+  margin-top: 8px;
+
+  .dark & {
+    border-top-color: #4a4060;
+  }
+}
+
+.bulletin-edit-input {
+  flex: 1;
+}
