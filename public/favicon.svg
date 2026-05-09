@@ -1,30 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 200">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <radialGradient id="ballGrad" cx="35%" cy="30%" r="65%">
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#07070f"/>
+    </radialGradient>
+    <radialGradient id="ball" cx="35%" cy="30%" r="65%">
       <stop offset="0%" stop-color="#555"/>
       <stop offset="40%" stop-color="#111"/>
       <stop offset="100%" stop-color="#000"/>
     </radialGradient>
-    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#1a1a2e"/>
-      <stop offset="100%" stop-color="#07070f"/>
-    </radialGradient>
-    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#2660A4" stop-opacity="0.3"/>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2660A4" stop-opacity="0.4"/>
       <stop offset="100%" stop-color="#2660A4" stop-opacity="0"/>
     </radialGradient>
   </defs>
-
-  <rect width="380" height="200" fill="url(#bgGrad)"/>
-  <circle cx="190" cy="90" r="80" fill="url(#glowGrad)"/>
-  <circle cx="190" cy="90" r="62" fill="url(#ballGrad)"/>
-  <ellipse cx="165" cy="65" rx="18" ry="11" fill="white" opacity="0.12" transform="rotate(-30 165 65)"/>
-  <ellipse cx="172" cy="60" rx="6" ry="4" fill="white" opacity="0.25" transform="rotate(-30 172 60)"/>
-  <circle cx="190" cy="90" r="23" fill="white"/>
-  <circle cx="190" cy="90" r="21" fill="#f0f0f0"/>
-  <text x="190" y="98" text-anchor="middle" font-size="22" font-weight="900" fill="#111" font-family="Arial, sans-serif">8</text>
-  <circle cx="190" cy="90" r="62" fill="none" stroke="#333" stroke-width="1"/>
-  <text x="190" y="175" text-anchor="middle" font-size="22" font-weight="900" fill="white" font-family="Arial, sans-serif" letter-spacing="10">BILIBALL</text>
-  <line x1="80" y1="183" x2="138" y2="183" stroke="#F19953" stroke-width="1.5" opacity="0.7"/>
-  <line x1="242" y1="183" x2="300" y2="183" stroke="#F19953" stroke-width="1.5" opacity="0.7"/>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="200" fill="url(#glow)"/>
+  <circle cx="256" cy="256" r="185" fill="url(#ball)"/>
+  <ellipse cx="185" cy="160" rx="55" ry="34" fill="white" opacity="0.12" transform="rotate(-30 185 160)"/>
+  <ellipse cx="200" cy="145" rx="20" ry="13" fill="white" opacity="0.28" transform="rotate(-30 200 145)"/>
+  <circle cx="256" cy="256" r="72" fill="white"/>
+  <circle cx="256" cy="256" r="66" fill="#f0f0f0"/>
+  <text x="256" y="282" text-anchor="middle" font-size="72" font-weight="900" fill="#111" font-family="Arial, sans-serif">8</text>
+  <circle cx="256" cy="256" r="185" fill="none" stroke="#333" stroke-width="2"/>
 </svg>
