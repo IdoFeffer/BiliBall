@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-const BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
 // const BASE_URL =
-//   import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+//   import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
+const BASE_URL =
+  import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 const getToken = () => localStorage.getItem('token')
 
@@ -54,4 +54,10 @@ export const players = {
     api.get(`/players/${userId}/stats/${leagueId}`),
   getH2H: (user1Id, user2Id, leagueId) =>
     api.get(`/players/h2h/${user1Id}/${user2Id}/${leagueId}`),
+}
+
+export const announcements = {
+  get: (leagueId) => api.get(`/announcements/${leagueId}`),
+  post: (leagueId, content) => api.post('/announcements', { league_id: leagueId, content }),
+  delete: (id) => api.delete(`/announcements/${id}`),
 }
