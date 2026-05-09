@@ -104,6 +104,28 @@ router.get('/:user_id/stats/:league_id', auth, async (req, res) => {
   }
 })
 
+router.delete('/:id', auth, async (req, res) => {
+  if (parseInt(req.params.id) !== req.user.id)
+    return res.status(403).json({ error: 'לא מורשה למחוק משתמש זה' })
+  try {
+    await db.execute({
+      sql: 'DELETE FROM league_members WHERE user_id = ?',
+      args: [req.user.id],
+    })
+    await db.execute({
+      sql: 'DELETE FROM games WHERE winner_id = ? OR loser_id = ?',
+      args: [req.user.id, req.user.id],
+    })
+    await db.execute({
+      sql: 'DELETE FROM users WHERE id = ?',
+      args: [req.user.id],
+    })
+    res.json({ success: true })
+  } catch (err) {
+    res.status(500).json({ error: 'שגיאה' })
+  }
+})
+
 router.get('/h2h/:user1_id/:user2_id/:league_id', auth, async (req, res) => {
   const { user1_id, user2_id, league_id } = req.params
   try {
@@ -124,28 +146,6 @@ router.get('/h2h/:user1_id/:user2_id/:league_id', auth, async (req, res) => {
     const user2Wins = games.filter((g) => g.winner_id == user2_id).length
 
     res.json({ games, user1Wins, user2Wins, total: games.length })
-  } catch (err) {
-    res.status(500).json({ error: 'שגיאה' })
-  }
-})
-
-router.delete('/:id', auth, async (req, res) => {
-  if (parseInt(req.params.id) !== req.user.id)
-    return res.status(403).json({ error: 'לא מורשה למחוק משתמש זה' })
-  try {
-    await db.execute({
-      sql: 'DELETE FROM league_members WHERE user_id = ?',
-      args: [req.user.id],
-    })
-    await db.execute({
-      sql: 'DELETE FROM games WHERE winner_id = ? OR loser_id = ?',
-      args: [req.user.id, req.user.id],
-    })
-    await db.execute({
-      sql: 'DELETE FROM users WHERE id = ?',
-      args: [req.user.id],
-    })
-    res.json({ success: true })
   } catch (err) {
     res.status(500).json({ error: 'שגיאה' })
   }

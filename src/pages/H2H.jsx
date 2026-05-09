@@ -154,6 +154,11 @@ function H2H() {
                 >
                   {game.winner_name} ניצח
                 </span>
+                {(game.winner_score > 0 || game.loser_score > 0) && (
+                  <span className="historyScore">
+                    {game.winner_score} : {game.loser_score}
+                  </span>
+                )}
                 <span className="historyDate">
                   {new Date(game.played_at).toLocaleDateString('he-IL')}
                 </span>
