@@ -69,6 +69,12 @@ const initDB = async () => {
   FOREIGN KEY (announcement_id) REFERENCES announcements(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS user_avatars (
+  user_id INTEGER PRIMARY KEY,
+  avatar_url TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
     
   `)
 }

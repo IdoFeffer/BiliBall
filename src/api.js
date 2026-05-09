@@ -61,3 +61,10 @@ export const announcements = {
   delete: (id) => api.delete(`/announcements/${id}`),
   like: (id) => api.post(`/announcements/${id}/like`),
 }
+
+export const upload = {
+  getAvatar: (userId) => api.get(`/upload/avatar/${userId}`),
+  uploadAvatar: (formData) => api.post('/upload/avatar', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+}

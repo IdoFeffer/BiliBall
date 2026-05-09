@@ -21,18 +21,20 @@ router.get('/league/:league_id', auth, async (req, res) => {
   try {
     const result = await db.execute({
       sql: `SELECT 
-              u.id, u.username, u.full_name, lm.role,
-              COALESCE(SUM(CASE WHEN g.winner_id = u.id THEN g.winner_score ELSE 0 END), 0) +
-              COALESCE(SUM(CASE WHEN g.loser_id = u.id THEN g.loser_score ELSE 0 END), 0) as wins,
-              COALESCE(SUM(CASE WHEN g.winner_id = u.id THEN g.loser_score ELSE 0 END), 0) +
-              COALESCE(SUM(CASE WHEN g.loser_id = u.id THEN g.winner_score ELSE 0 END), 0) as losses
-            FROM league_members lm
-            JOIN users u ON u.id = lm.user_id
-            LEFT JOIN games g ON (g.winner_id = u.id OR g.loser_id = u.id)
-              AND g.league_id = ? AND g.status = 'confirmed'
-            WHERE lm.league_id = ?
-            GROUP BY u.id
-            ORDER BY wins - losses DESC`,
+          u.id, u.username, u.full_name, lm.role,
+          ua.avatar_url,
+          COALESCE(SUM(CASE WHEN g.winner_id = u.id THEN g.winner_score ELSE 0 END), 0) +
+          COALESCE(SUM(CASE WHEN g.loser_id = u.id THEN g.loser_score ELSE 0 END), 0) as wins,
+          COALESCE(SUM(CASE WHEN g.winner_id = u.id THEN g.loser_score ELSE 0 END), 0) +
+          COALESCE(SUM(CASE WHEN g.loser_id = u.id THEN g.winner_score ELSE 0 END), 0) as losses
+        FROM league_members lm
+        JOIN users u ON u.id = lm.user_id
+        LEFT JOIN games g ON (g.winner_id = u.id OR g.loser_id = u.id)
+          AND g.league_id = ? AND g.status = 'confirmed'
+        LEFT JOIN user_avatars ua ON ua.user_id = u.id
+        WHERE lm.league_id = ?
+        GROUP BY u.id
+        ORDER BY wins - losses DESC`,
       args: [league_id, league_id],
     })
     res.json(result.rows)

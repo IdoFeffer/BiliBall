@@ -17,7 +17,7 @@ function Home() {
   const [showConfirm, setShowConfirm] = useState(null)
   const [pendingGames, setPendingGames] = useState([])
   const [showPending, setShowPending] = useState(false)
-  const [showInstall, setShowInstall] = useState(null) // 'ios' | 'android' | null
+  const [showInstall, setShowInstall] = useState(null)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
@@ -28,20 +28,16 @@ function Home() {
 
   useEffect(() => {
     if (!isLoggedIn) return
-    if (!hasLeague) {
-      setLoading(false)
-      return
-    }
+    if (!hasLeague) { setLoading(false); return }
 
     const fetchData = async () => {
       try {
-        const [playersRes, gamesRes, allLeaguesRes, membersRes] =
-          await Promise.all([
-            players.getLeaguePlayers(leagueId),
-            games.getLeagueGames(leagueId),
-            leagues.getAllLeagues(),
-            leagues.getMembers(leagueId),
-          ])
+        const [playersRes, gamesRes, allLeaguesRes, membersRes] = await Promise.all([
+          players.getLeaguePlayers(leagueId),
+          games.getLeagueGames(leagueId),
+          leagues.getAllLeagues(),
+          leagues.getMembers(leagueId),
+        ])
         setLeaguePlayers(playersRes.data)
         setRecentGames(gamesRes.data.slice(0, 5))
         localStorage.setItem('userLeagues', JSON.stringify(allLeaguesRes.data))
@@ -136,24 +132,15 @@ function Home() {
   return (
     <div className="page">
       <nav className="nav">
-        <div
-          className="navAvatar"
-          onClick={handleLogout}
-          style={{ cursor: 'pointer' }}
-        >
+        <div className="navAvatar" onClick={handleLogout} style={{ cursor: 'pointer' }}>
           {user.full_name?.[0] || user.username?.[0]}
         </div>
         <div style={{ textAlign: 'center' }}>
           <h1 className="navLogo">BiliBall 🎱</h1>
           {hasLeague && (
-            <div
-              className="leagueChip"
-              onClick={() => setShowLeagueDropdown(!showLeagueDropdown)}
-            >
+            <div className="leagueChip" onClick={() => setShowLeagueDropdown(!showLeagueDropdown)}>
               <span>{leagueName}</span>
-              <span className="leagueChevron">
-                {showLeagueDropdown ? '▴' : '▾'}
-              </span>
+              <span className="leagueChevron">{showLeagueDropdown ? '▴' : '▾'}</span>
             </div>
           )}
         </div>
@@ -168,25 +155,15 @@ function Home() {
               className={`leagueOption ${league.id == leagueId ? 'active' : ''}`}
               onClick={() => switchLeague(league)}
             >
-              <div
-                className={`leagueDot ${league.id == leagueId ? 'active' : ''}`}
-              />
+              <div className={`leagueDot ${league.id == leagueId ? 'active' : ''}`} />
               <span className="leagueOptionName">{league.name}</span>
               {league.id == leagueId && <span className="leagueCheck">✓</span>}
             </div>
           ))}
           <div className="leagueDivider" />
-          <div
-            className="leagueOption"
-            onClick={() => {
-              setShowLeagueDropdown(false)
-              navigate('/join-league')
-            }}
-          >
+          <div className="leagueOption" onClick={() => { setShowLeagueDropdown(false); navigate('/join-league') }}>
             <span className="leaguePlus">→</span>
-            <span className="leagueOptionName">
-              הצטרף לליגה קיימת או צור חדשה
-            </span>
+            <span className="leagueOptionName">הצטרף לליגה קיימת או צור חדשה</span>
           </div>
         </div>
       )}
@@ -195,9 +172,7 @@ function Home() {
         <div className="pendingBanner" onClick={() => setShowPending(true)}>
           <span className="pendingBannerIcon">⏳</span>
           <div className="pendingBannerText">
-            <p className="pendingBannerTitle">
-              יש לך {pendingGames.length} משחקים לאישור
-            </p>
+            <p className="pendingBannerTitle">יש לך {pendingGames.length} משחקים לאישור</p>
             <p className="pendingBannerSub">לחץ לאישור או דחייה</p>
           </div>
           <span className="pendingBannerArrow">›</span>
@@ -209,12 +184,7 @@ function Home() {
           <p className="noLeagueIcon">🎱</p>
           <p className="noLeagueTitle">ברוך הבא ל-BiliBall!</p>
           <p className="noLeagueSub">צור ליגה חדשה או הצטרף לליגה קיימת</p>
-          <button
-            className="noLeagueBtn"
-            onClick={() => navigate('/join-league')}
-          >
-            צור או הצטרף לליגה
-          </button>
+          <button className="noLeagueBtn" onClick={() => navigate('/join-league')}>צור או הצטרף לליגה</button>
         </div>
       )}
 
@@ -225,48 +195,22 @@ function Home() {
             {leaguePlayers.map((player, index) => {
               const isMe = user.id === player.id
               const score = player.wins - player.losses
-              const ballColorsList = [
-                '#2660A4',
-                '#f1c40f',
-                '#e74c3c',
-                '#27ae60',
-                '#F19953',
-                '#9b59b6',
-                '#2980b9',
-                '#111',
-              ]
+              const ballColorsList = ['#2660A4', '#f1c40f', '#e74c3c', '#27ae60', '#F19953', '#9b59b6', '#2980b9', '#111']
               const ballColor = ballColorsList[index % ballColorsList.length]
-              const medal =
-                index === 0
-                  ? '🥇'
-                  : index === 1
-                    ? '🥈'
-                    : index === 2
-                      ? '🥉'
-                      : null
+              const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : null
 
               if (index === 0) {
                 return (
-                  <div
-                    key={player.id}
-                    className="playerRowFirst"
-                    onClick={() => navigate(`/profile/${player.id}`)}
-                  >
+                  <div key={player.id} className="playerRowFirst" onClick={() => navigate(`/profile/${player.id}`)}>
                     <span className="rankFirst">1</span>
                     <div className="ballWrap">
-                      <div
-                        className="ballAvatar"
-                        style={{
-                          background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`,
-                          width: 38,
-                          height: 38,
-                          fontSize: 15,
-                        }}
-                      >
-                        <div className="ballInner">
-                          {player.full_name?.[0] || player.username?.[0]}
+                      {player.avatar_url ? (
+                        <img src={player.avatar_url} alt="" style={{ width: 38, height: 38, borderRadius: '50%', objectFit: 'cover' }} />
+                      ) : (
+                        <div className="ballAvatar" style={{ background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`, width: 38, height: 38, fontSize: 15 }}>
+                          <div className="ballInner">{player.full_name?.[0] || player.username?.[0]}</div>
                         </div>
-                      </div>
+                      )}
                       <div className="medalBadge">{medal}</div>
                     </div>
                     <span className="playerNameFirst">
@@ -283,11 +227,8 @@ function Home() {
                         <div className="statLabelFirst">הפ'</div>
                       </div>
                       <div className="stat">
-                        <div
-                          className={`statValFirst ${score >= 0 ? 'pos' : 'neg'}`}
-                        >
-                          {score > 0 ? '+' : ''}
-                          {score}
+                        <div className={`statValFirst ${score >= 0 ? 'pos' : 'neg'}`}>
+                          {score > 0 ? '+' : ''}{score}
                         </div>
                         <div className="statLabelFirst">מדד</div>
                       </div>
@@ -297,27 +238,16 @@ function Home() {
               }
 
               return (
-                <div
-                  key={player.id}
-                  className="playerRow"
-                  onClick={() => navigate(`/profile/${player.id}`)}
-                  style={{ cursor: 'pointer' }}
-                >
+                <div key={player.id} className="playerRow" onClick={() => navigate(`/profile/${player.id}`)} style={{ cursor: 'pointer' }}>
                   <span className="rank">{index + 1}</span>
                   <div className="ballWrap">
-                    <div
-                      className="ballAvatar"
-                      style={{
-                        background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`,
-                        width: 32,
-                        height: 32,
-                        fontSize: 12,
-                      }}
-                    >
-                      <div className="ballInner">
-                        {player.full_name?.[0] || player.username?.[0]}
+                    {player.avatar_url ? (
+                      <img src={player.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+                    ) : (
+                      <div className="ballAvatar" style={{ background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`, width: 32, height: 32, fontSize: 12 }}>
+                        <div className="ballInner">{player.full_name?.[0] || player.username?.[0]}</div>
                       </div>
-                    </div>
+                    )}
                     {medal && <div className="medalBadge">{medal}</div>}
                   </div>
                   <span className="playerName">
@@ -335,8 +265,7 @@ function Home() {
                     </div>
                     <div className="stat">
                       <div className={`statVal ${score >= 0 ? 'pos' : 'neg'}`}>
-                        {score > 0 ? '+' : ''}
-                        {score}
+                        {score > 0 ? '+' : ''}{score}
                       </div>
                       <div className="statLabel">מדד</div>
                     </div>
@@ -349,9 +278,7 @@ function Home() {
             <div className="lockedOverlay">
               <p>🔒</p>
               <p className="lockedTitle">התחבר לראות את הליגה</p>
-              <button className="loginBtn" onClick={() => navigate('/login')}>
-                התחבר
-              </button>
+              <button className="loginBtn" onClick={() => navigate('/login')}>התחבר</button>
             </div>
           )}
         </section>
@@ -361,68 +288,32 @@ function Home() {
         <section className="section">
           <h2 className="sectionTitle">משחקים אחרונים</h2>
           {recentGames.length === 0 && (
-            <p
-              style={{
-                fontSize: '13px',
-                color: '#999',
-                textAlign: 'center',
-                padding: '16px 0',
-              }}
-            >
-              אין משחקים עדיין
-            </p>
+            <p style={{ fontSize: '13px', color: '#999', textAlign: 'center', padding: '16px 0' }}>אין משחקים עדיין</p>
           )}
           {recentGames.map((game, index) => (
             <div key={game.id}>
               <div className="recentRow">
-                <div
-                  className={`avatar ${avatarColors[index % avatarColors.length]}`}
-                >
-                  {game.winner_name?.[0]}
-                </div>
-                <span className="recentText">
-                  {game.winner_name} ניצח את {game.loser_name}
-                </span>
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-                >
+                <div className={`avatar ${avatarColors[index % avatarColors.length]}`}>{game.winner_name?.[0]}</div>
+                <span className="recentText">{game.winner_name} ניצח את {game.loser_name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   {game.note && (
-                    <span
-                      style={{ cursor: 'pointer', fontSize: '14px' }}
-                      onClick={() =>
-                        setOpenNote(openNote === game.id ? null : game.id)
-                      }
-                    >
-                      💬
-                    </span>
+                    <span style={{ cursor: 'pointer', fontSize: '14px' }} onClick={() => setOpenNote(openNote === game.id ? null : game.id)}>💬</span>
                   )}
                   {(game.winner_score > 0 || game.loser_score > 0) && (
-                    <span className="recentScore">
-                      {game.winner_score} : {game.loser_score}
-                    </span>
+                    <span className="recentScore">{game.winner_score} : {game.loser_score}</span>
                   )}
-                  <span className="recentDate">
-                    {new Date(game.played_at).toLocaleDateString('he-IL')}
-                  </span>
+                  <span className="recentDate">{new Date(game.played_at).toLocaleDateString('he-IL')}</span>
                 </div>
               </div>
-              {openNote === game.id && game.note && (
-                <div className="noteTooltip">{game.note}</div>
-              )}
+              {openNote === game.id && game.note && <div className="noteTooltip">{game.note}</div>}
             </div>
-          ))}{' '}
+          ))}
         </section>
       )}
 
       {isLoggedIn && hasLeague && (
         <div style={{ display: 'flex', gap: '8px', margin: '4px 8px' }}>
-          <button
-            className="h2hBtn"
-            style={{ flex: 1 }}
-            onClick={() => navigate('/h2h')}
-          >
-            ראש בראש ↗
-          </button>
+          <button className="h2hBtn" style={{ flex: 1 }} onClick={() => navigate('/h2h')}>ראש בראש ↗</button>
         </div>
       )}
 
@@ -432,41 +323,19 @@ function Home() {
           <div className="inviteCode">
             <div>
               <p className="inviteLabel">קוד הצטרפות</p>
-              <p className="inviteCodeText">
-                {localStorage.getItem('leagueCode')}
-              </p>
+              <p className="inviteCodeText">{localStorage.getItem('leagueCode')}</p>
             </div>
-            <button
-              className="inviteCopyBtn"
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  localStorage.getItem('leagueCode'),
-                )
-                alert('הקוד הועתק!')
-              }}
-            >
-              העתק
-            </button>
+            <button className="inviteCopyBtn" onClick={() => { navigator.clipboard.writeText(localStorage.getItem('leagueCode')); alert('הקוד הועתק!') }}>העתק</button>
           </div>
-          <button
-            className="inviteShareBtn"
-            onClick={() => {
-              const code = localStorage.getItem('leagueCode')
-              if (navigator.share) {
-                navigator.share({
-                  title: 'הצטרף ל-BiliBall',
-                  text: `הצטרף לליגה שלנו עם הקוד: ${code}`,
-                })
-              } else {
-                navigator.clipboard.writeText(
-                  `הצטרף לליגה שלנו עם הקוד: ${code}`,
-                )
-                alert('הועתק!')
-              }
-            }}
-          >
-            🔗 שתף הזמנה
-          </button>
+          <button className="inviteShareBtn" onClick={() => {
+            const code = localStorage.getItem('leagueCode')
+            if (navigator.share) {
+              navigator.share({ title: 'הצטרף ל-BiliBall', text: `הצטרף לליגה שלנו עם הקוד: ${code}` })
+            } else {
+              navigator.clipboard.writeText(`הצטרף לליגה שלנו עם הקוד: ${code}`)
+              alert('הועתק!')
+            }
+          }}>🔗 שתף הזמנה</button>
         </section>
       )}
 
@@ -474,18 +343,12 @@ function Home() {
         <section className="section">
           <h2 className="sectionTitle">התקן כאפליקציה</h2>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              className="installBtn"
-              onClick={() => setShowInstall('ios')}
-            >
+            <button className="installBtn" onClick={() => setShowInstall('ios')}>
               <span style={{ fontSize: 28 }}></span>
               <span className="installBtnLabel">iPhone</span>
               <span className="installBtnSub">Safari</span>
             </button>
-            <button
-              className="installBtn"
-              onClick={() => setShowInstall('android')}
-            >
+            <button className="installBtn" onClick={() => setShowInstall('android')}>
               <span style={{ fontSize: 28 }}>🤖</span>
               <span className="installBtnLabel">Android</span>
               <span className="installBtnSub">Chrome</span>
@@ -495,29 +358,14 @@ function Home() {
       )}
 
       {isLoggedIn && hasLeague && (
-        <div style={{ padding: '12px 16px' }}>
+        <div style={{ padding: '12px 16px', marginBottom: '30px' }}>
           {userRole === 'admin' ? (
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                className="leaveBtn"
-                onClick={() => setShowConfirm('leave')}
-              >
-                ↩ עזוב ליגה
-              </button>
-              <button
-                className="deleteBtn"
-                onClick={() => setShowConfirm('delete')}
-              >
-                ✕ מחק ליגה
-              </button>
+              <button className="leaveBtn" onClick={() => setShowConfirm('leave')}>↩ עזוב ליגה</button>
+              <button className="deleteBtn" onClick={() => setShowConfirm('delete')}>✕ מחק ליגה</button>
             </div>
           ) : (
-            <button
-              className="deleteBtnFull"
-              onClick={() => setShowConfirm('leave')}
-            >
-              ↩ עזוב ליגה
-            </button>
+            <button className="deleteBtnFull" onClick={() => setShowConfirm('leave')}>↩ עזוב ליגה</button>
           )}
         </div>
       )}
@@ -525,30 +373,12 @@ function Home() {
       {showConfirm && (
         <div className="confirmOverlay" onClick={() => setShowConfirm(null)}>
           <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
-            <p className="confirmTitle">
-              {showConfirm === 'leave'
-                ? `עזוב את ${leagueName}?`
-                : `מחק את ${leagueName}?`}
-            </p>
-            <p className="confirmSub">
-              {showConfirm === 'leave'
-                ? 'תוכל להצטרף מחדש עם קוד הזמנה. המשחקים שלך יישמרו.'
-                : 'כל החברים יוסרו מהליגה. המשחקים יישמרו.'}
-            </p>
-            <button
-              className={
-                showConfirm === 'leave' ? 'confirmBtnWarn' : 'confirmBtnDanger'
-              }
-              onClick={handleLeaveOrDelete}
-            >
+            <p className="confirmTitle">{showConfirm === 'leave' ? `עזוב את ${leagueName}?` : `מחק את ${leagueName}?`}</p>
+            <p className="confirmSub">{showConfirm === 'leave' ? 'תוכל להצטרף מחדש עם קוד הזמנה. המשחקים שלך יישמרו.' : 'כל החברים יוסרו מהליגה. המשחקים יישמרו.'}</p>
+            <button className={showConfirm === 'leave' ? 'confirmBtnWarn' : 'confirmBtnDanger'} onClick={handleLeaveOrDelete}>
               {showConfirm === 'leave' ? 'עזוב ליגה' : 'מחק ליגה לצמיתות'}
             </button>
-            <button
-              className="confirmBtnCancel"
-              onClick={() => setShowConfirm(null)}
-            >
-              ביטול
-            </button>
+            <button className="confirmBtnCancel" onClick={() => setShowConfirm(null)}>ביטול</button>
           </div>
         </div>
       )}
@@ -559,36 +389,21 @@ function Home() {
             <p className="confirmTitle">משחקים ממתינים לאישור</p>
             {pendingGames.map((game) => (
               <div key={game.id} className="pendingGameCard">
-                <p className="pendingGameInfo">
-                  {game.winner_name} טוען שניצח אותך
-                </p>
+                <p className="pendingGameInfo">{game.winner_name} טוען שניצח אותך</p>
                 {(game.winner_score > 0 || game.loser_score > 0) && (
-                  <p className="pendingGameScore">
-                    {game.winner_score} : {game.loser_score}
-                  </p>
+                  <p className="pendingGameScore">{game.winner_score} : {game.loser_score}</p>
                 )}
-                <p className="pendingGameSub">
-                  פג תוקף בעוד {getHoursLeft(game.expires_at)} שעות
-                </p>
+                <p className="pendingGameSub">פג תוקף בעוד {getHoursLeft(game.expires_at)} שעות</p>
                 <div className="pendingGameActions">
-                  <button
-                    className="pendingConfirmBtn"
-                    onClick={() => handleConfirmGame(game.id)}
-                  >
-                    ✓ אשר
-                  </button>
-                  <button
-                    className="pendingRejectBtn"
-                    onClick={() => handleRejectGame(game.id)}
-                  >
-                    ✕ דחה
-                  </button>
+                  <button className="pendingConfirmBtn" onClick={() => handleConfirmGame(game.id)}>✓ אשר</button>
+                  <button className="pendingRejectBtn" onClick={() => handleRejectGame(game.id)}>✕ דחה</button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       )}
+
       {showInstall === 'ios' && (
         <div className="confirmOverlay" onClick={() => setShowInstall(null)}>
           <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
@@ -596,30 +411,10 @@ function Home() {
             <p className="confirmTitle"> הוסף ל-iPhone</p>
             <p className="confirmSub">פתח באפליקציית Safari בלבד</p>
             <div className="installSteps">
-              <div className="installStep">
-                <div className="installStepNum">1</div>
-                <div className="installStepText">
-                  לחץ על שלוש הנקודות <strong>⋯</strong> בסרגל Safari
-                </div>
-              </div>
-              <div className="installStep">
-                <div className="installStepNum">2</div>
-                <div className="installStepText">
-                  לחץ על <strong>Share</strong> 📤
-                </div>
-              </div>
-              <div className="installStep">
-                <div className="installStepNum">3</div>
-                <div className="installStepText">
-                  גלול ובחר <strong>Add to Home Screen</strong> ➕
-                </div>
-              </div>
-              <div className="installStep">
-                <div className="installStepNum">4</div>
-                <div className="installStepText">
-                  לחץ <strong>Add</strong> — פתח כ-Web App 🎉
-                </div>
-              </div>
+              <div className="installStep"><div className="installStepNum">1</div><div className="installStepText">לחץ על שלוש הנקודות <strong>⋯</strong> בסרגל Safari</div></div>
+              <div className="installStep"><div className="installStepNum">2</div><div className="installStepText">לחץ על <strong>Share</strong> 📤</div></div>
+              <div className="installStep"><div className="installStepNum">3</div><div className="installStepText">גלול ובחר <strong>Add to Home Screen</strong> ➕</div></div>
+              <div className="installStep"><div className="installStepNum">4</div><div className="installStepText">לחץ <strong>Add</strong> — פתח כ-Web App 🎉</div></div>
             </div>
             <p className="installNote">⚠️ עובד רק עם Safari — לא Chrome</p>
           </div>
@@ -633,24 +428,9 @@ function Home() {
             <p className="confirmTitle">🤖 הוסף לאנדרואיד</p>
             <p className="confirmSub">פתח ב-Chrome</p>
             <div className="installSteps">
-              <div className="installStep">
-                <div className="installStepNum">1</div>
-                <div className="installStepText">
-                  לחץ על שלוש הנקודות <strong>⋮</strong> בפינה הימנית העליונה
-                </div>
-              </div>
-              <div className="installStep">
-                <div className="installStepNum">2</div>
-                <div className="installStepText">
-                  בחר <strong>הוסף למסך הבית</strong> 📲
-                </div>
-              </div>
-              <div className="installStep">
-                <div className="installStepNum">3</div>
-                <div className="installStepText">
-                  לחץ <strong>הוסף</strong> — האייקון יופיע על המסך 🎉
-                </div>
-              </div>
+              <div className="installStep"><div className="installStepNum">1</div><div className="installStepText">לחץ על שלוש הנקודות <strong>⋮</strong> בפינה הימנית העליונה</div></div>
+              <div className="installStep"><div className="installStepNum">2</div><div className="installStepText">בחר <strong>הוסף למסך הבית</strong> 📲</div></div>
+              <div className="installStep"><div className="installStepNum">3</div><div className="installStepText">לחץ <strong>הוסף</strong> — האייקון יופיע על המסך 🎉</div></div>
             </div>
             <p className="installNote">עובד עם Chrome, Edge, Samsung Browser</p>
           </div>
@@ -667,10 +447,7 @@ function Home() {
             <span className="navCenterIcon">+</span>
             הוספת משחק
           </button>
-          <button
-            className="navTab active"
-            onClick={() => navigate('/profile')}
-          >
+          <button className="navTab active" onClick={() => navigate('/profile')}>
             <span className="navTabIcon">👤</span>
             פרופיל
           </button>

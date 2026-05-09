@@ -5,6 +5,7 @@ import { players, games } from '../api'
 import { auth } from '../api'
 import ProfileSkeleton from '../components/ProfileSkeleton'
 import axios from 'axios'
+import { upload } from '../api'
 
 const BASE_URL =
   import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
@@ -22,6 +23,8 @@ function Profile() {
   const leagueId = localStorage.getItem('leagueId')
   const targetUserId = userId || currentUser.id
   const isOwnProfile = !userId || parseInt(userId) === currentUser.id
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -36,6 +39,47 @@ function Profile() {
     }
     fetchStats()
   }, [targetUserId])
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await players.getStats(targetUserId, leagueId)
+        setStats(res.data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    const fetchAvatar = async () => {
+      try {
+        const res = await upload.getAvatar(targetUserId)
+        if (res.data.avatar_url) setAvatarUrl(res.data.avatar_url)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchStats()
+    fetchAvatar()
+  }, [targetUserId])
+
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploadingAvatar(true)
+    try {
+      const formData = new FormData()
+      formData.append('avatar', file)
+      const res = await upload.uploadAvatar(formData)
+      setAvatarUrl(res.data.avatar_url)
+    } catch (err) {
+      alert('שגיאה בהעלאת התמונה')
+    } finally {
+      setUploadingAvatar(false)
+    }
+  }
 
   const handleSaveName = async () => {
     if (!newName.trim()) return
@@ -81,7 +125,50 @@ function Profile() {
 
       <div className="section">
         <div className="playerInfo">
-          <div className="avatarLg">{stats.user.full_name?.[0]}</div>
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="avatar"
+                style={{
+                  width: 60,
+                  height: 60,
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <div className="avatarLg">{stats.user.full_name?.[0]}</div>
+            )}
+            {isOwnProfile && (
+              <label
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  width: 20,
+                  height: 20,
+                  background: '#F19953',
+                  borderRadius: '50%',
+                  border: '2px solid white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  fontSize: 10,
+                }}
+              >
+                📷
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleAvatarChange}
+                  disabled={uploadingAvatar}
+                />
+              </label>
+            )}
+          </div>{' '}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <p className="playerName">{stats.user.full_name}</p>

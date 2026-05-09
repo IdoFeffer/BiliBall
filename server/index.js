@@ -11,6 +11,7 @@ const leagueRoutes = require('./routes/leagues')
 const gameRoutes = require('./routes/games')
 const playerRoutes = require('./routes/players')
 const announcementsRouter = require('./routes/announcements')
+const uploadRouter = require('./routes/upload')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -133,6 +134,7 @@ app.use('/api/leagues', leagueRoutes)
 app.use('/api/games', gameRoutes)
 app.use('/api/players', playerRoutes)
 app.use('/api/announcements', announcementsRouter)
+app.use('/api/upload', uploadRouter)
 
 app.get('/', (req, res) => {
   res.json({ message: 'BiliBall Server Running!' })
