@@ -1,26 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#1a1a2e"/>
-      <stop offset="100%" stop-color="#07070f"/>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0d1117"/>
+      <stop offset="100%" stop-color="#000000"/>
     </radialGradient>
-    <radialGradient id="ball" cx="35%" cy="30%" r="65%">
-      <stop offset="0%" stop-color="#555"/>
-      <stop offset="40%" stop-color="#111"/>
-      <stop offset="100%" stop-color="#000"/>
+    <radialGradient id="ball" cx="38%" cy="32%" r="70%">
+      <stop offset="0%" stop-color="#4a4a4a"/>
+      <stop offset="25%" stop-color="#1a1a1a"/>
+      <stop offset="60%" stop-color="#080808"/>
+      <stop offset="100%" stop-color="#000000"/>
     </radialGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#2660A4" stop-opacity="0.4"/>
-      <stop offset="100%" stop-color="#2660A4" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#1e4080" stop-opacity="0.6"/>
+      <stop offset="70%" stop-color="#0a1a40" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="shine" cx="38%" cy="28%" r="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="circle_fill" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d8d8d8"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#2660A4" flood-opacity="0.5"/>
+    </filter>
+    <filter id="inner">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
   </defs>
+
   <rect width="512" height="512" fill="url(#bg)"/>
-  <circle cx="256" cy="256" r="200" fill="url(#glow)"/>
-  <circle cx="256" cy="256" r="185" fill="url(#ball)"/>
-  <ellipse cx="185" cy="160" rx="55" ry="34" fill="white" opacity="0.12" transform="rotate(-30 185 160)"/>
-  <ellipse cx="200" cy="145" rx="20" ry="13" fill="white" opacity="0.28" transform="rotate(-30 200 145)"/>
+
+  <circle cx="256" cy="256" r="230" fill="url(#glow)"/>
+  <circle cx="256" cy="256" r="195" fill="url(#ball)" filter="url(#shadow)"/>
+  <circle cx="256" cy="256" r="195" fill="url(#shine)"/>
+
+  <ellipse cx="195" cy="168" rx="52" ry="30" fill="white" opacity="0.18" transform="rotate(-35 195 168)"/>
+  <ellipse cx="208" cy="155" rx="18" ry="10" fill="white" opacity="0.35" transform="rotate(-35 208 155)"/>
+  <ellipse cx="215" cy="149" rx="7" ry="4" fill="white" opacity="0.55" transform="rotate(-35 215 149)"/>
+
+  <circle cx="256" cy="256" r="195" fill="none" stroke="#222" stroke-width="1.5"/>
+  <circle cx="256" cy="256" r="185" fill="none" stroke="#1a1a1a" stroke-width="0.5"/>
+
+  <circle cx="256" cy="256" r="78" fill="url(#circle_fill)"/>
   <circle cx="256" cy="256" r="72" fill="white"/>
-  <circle cx="256" cy="256" r="66" fill="#f0f0f0"/>
-  <text x="256" y="282" text-anchor="middle" font-size="72" font-weight="900" fill="#111" font-family="Arial, sans-serif">8</text>
-  <circle cx="256" cy="256" r="185" fill="none" stroke="#333" stroke-width="2"/>
+
+  <path d="M256 198 
+    C238 198 224 209 224 224 
+    C224 235 231 243 242 248 
+    C228 253 220 263 220 276 
+    C220 294 236 308 256 308 
+    C276 308 292 294 292 276 
+    C292 263 284 253 270 248 
+    C281 243 288 235 288 224 
+    C288 209 274 198 256 198Z
+    M256 212
+    C268 212 276 218 276 226
+    C276 234 268 240 256 240
+    C244 240 236 234 236 226
+    C236 218 244 212 256 212Z
+    M256 252
+    C270 252 280 260 280 272
+    C280 284 270 292 256 292
+    C242 292 232 284 232 272
+    C232 260 242 252 256 252Z"
+    fill="#111111"/>
+
+  <circle cx="256" cy="256" r="78" fill="none" stroke="#e0e0e0" stroke-width="1"/>
 </svg>
