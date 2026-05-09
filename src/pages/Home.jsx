@@ -659,15 +659,18 @@ function Home() {
 
       {isLoggedIn && hasLeague && (
         <nav className="bottomNav">
-          <button className="navTab active">
-            <span className="navTabIcon">🏠</span>
-            בית
+          <button className="navTab" onClick={() => navigate('/bulletin')}>
+            <span className="navTabIcon">📢</span>
+            מודעות
           </button>
           <button className="navCenter" onClick={() => navigate('/add-game')}>
             <span className="navCenterIcon">+</span>
             הוספת משחק
           </button>
-          <button className="navTab" onClick={() => navigate('/profile')}>
+          <button
+            className="navTab active"
+            onClick={() => navigate('/profile')}
+          >
             <span className="navTabIcon">👤</span>
             פרופיל
           </button>

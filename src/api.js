@@ -1,9 +1,7 @@
 import axios from 'axios'
 
-// const BASE_URL =
-//   import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
-const BASE_URL =
-  import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+// const BASE_URL = import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
 
 const getToken = () => localStorage.getItem('token')
 
@@ -42,7 +40,6 @@ export const games = {
   getLeagueGames: (leagueId) => api.get(`/games/league/${leagueId}`),
   delete: (gameId) => api.delete(`/games/${gameId}`),
   deleteNote: (gameId) => api.patch(`/games/${gameId}/note`),
-
   getPending: (leagueId) => api.get(`/games/pending/${leagueId}`),
   confirm: (gameId) => api.post(`/games/${gameId}/confirm`),
   reject: (gameId) => api.post(`/games/${gameId}/reject`),
@@ -58,6 +55,9 @@ export const players = {
 
 export const announcements = {
   get: (leagueId) => api.get(`/announcements/${leagueId}`),
-  post: (leagueId, content) => api.post('/announcements', { league_id: leagueId, content }),
+  post: (leagueId, content) =>
+    api.post('/announcements', { league_id: leagueId, content }),
+  put: (id, content) => api.put(`/announcements/${id}`, { content }),
   delete: (id) => api.delete(`/announcements/${id}`),
+  like: (id) => api.post(`/announcements/${id}/like`),
 }

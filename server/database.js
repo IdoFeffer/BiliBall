@@ -50,6 +50,26 @@ const initDB = async () => {
       FOREIGN KEY (winner_id) REFERENCES users(id),
       FOREIGN KEY (loser_id) REFERENCES users(id)
     );
+    
+    CREATE TABLE IF NOT EXISTS announcements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      league_id INTEGER NOT NULL,
+      user_id INTEGER NOT NULL,
+      content TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (league_id) REFERENCES leagues(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS announcement_likes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  announcement_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  UNIQUE(announcement_id, user_id),
+  FOREIGN KEY (announcement_id) REFERENCES announcements(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+    
   `)
 }
 

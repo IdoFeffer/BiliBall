@@ -15,6 +15,7 @@ import AddGame from './pages/AddGame'
 import Profile from './pages/Profile'
 import H2H from './pages/H2H'
 import AuthCallback from './pages/AuthCallback'
+import Bulletin from './pages/Bulletin'
 
 const PAGES_WITH_BACK = [
   '/profile',
@@ -103,6 +104,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/h2h" element={<H2H />} />
         <Route path="/profile/:userId" element={<Profile />} />
+        <Route path="/bulletin" element={<Bulletin />} />
       </Routes>
     </BrowserRouter>
   )
