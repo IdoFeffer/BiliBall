@@ -148,7 +148,7 @@ function Profile() {
                   left: 0,
                   width: 20,
                   height: 20,
-                  background: '#F19953',
+                  background: '#a77954',
                   borderRadius: '50%',
                   border: '2px solid white',
                   display: 'flex',
@@ -158,7 +158,7 @@ function Profile() {
                   fontSize: 10,
                 }}
               >
-                📷
+                ✏️
                 <input
                   type="file"
                   accept="image/*"
