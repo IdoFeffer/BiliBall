@@ -11,6 +11,17 @@ function initial(name) {
   return name?.[0]?.toUpperCase() || '?'
 }
 
+function PlayerAvatar({ player, name, color, divClass, imgClass }) {
+  if (player?.avatar_url) {
+    return <img src={player.avatar_url} alt="" className={imgClass} />
+  }
+  return (
+    <div className={divClass} style={{ background: color }}>
+      {initial(name)}
+    </div>
+  )
+}
+
 function computeStreak(games) {
   if (!games || games.length === 0) return null
   const first = games[0]
@@ -26,7 +37,7 @@ function computeStreak(games) {
   return count >= 2 ? { name: leaderName, count } : null
 }
 
-function H2H() {
+function H2H({ toggleDark }) {
   const navigate = useNavigate()
   const [leaguePlayers, setLeaguePlayers] = useState([])
   const [player1, setPlayer1] = useState('')
@@ -109,7 +120,9 @@ function H2H() {
       <header className="h2hHeader">
         <button className="h2hBack" onClick={() => navigate('/home')}>←</button>
         <h2 className="h2hTitle">ראש בראש</h2>
-        <div className="h2hHeaderSpacer" />
+        {toggleDark
+          ? <button className="h2hDarkToggle" onClick={toggleDark}>🌙</button>
+          : <div className="h2hHeaderSpacer" />}
       </header>
 
       {/* Player pickers */}
@@ -117,9 +130,7 @@ function H2H() {
         {/* Player A */}
         <div className="pickerWrap">
           <div className="pickerCard pickerCardA">
-            <div className="pickerAvatar" style={{ background: COLOR_A }}>
-              {initial(p1Name)}
-            </div>
+            <PlayerAvatar player={p1} name={p1Name} color={COLOR_A} divClass="pickerAvatar" imgClass="pickerAvatarImg" />
             <span className="pickerName">{p1Name || 'בחר...'}</span>
             <span className="pickerCaret">▾</span>
           </div>
@@ -141,9 +152,7 @@ function H2H() {
         {/* Player B */}
         <div className="pickerWrap">
           <div className="pickerCard pickerCardB">
-            <div className="pickerAvatar" style={{ background: COLOR_B }}>
-              {initial(p2Name)}
-            </div>
+            <PlayerAvatar player={p2} name={p2Name} color={COLOR_B} divClass="pickerAvatar" imgClass="pickerAvatarImg" />
             <span className="pickerName">{p2Name || 'בחר...'}</span>
             <span className="pickerCaret">▾</span>
           </div>
@@ -180,16 +189,12 @@ function H2H() {
                 {/* Players */}
                 <div className="rivalPlayers">
                   <div className="rivalPlayer">
-                    <div className="rivalAvatar" style={{ background: COLOR_A }}>
-                      {initial(p1Name)}
-                    </div>
+                    <PlayerAvatar player={p1} name={p1Name} color={COLOR_A} divClass="rivalAvatar" imgClass="rivalAvatarImg" />
                     <span className="rivalName">{p1Name}</span>
                   </div>
                   <span className="rivalAllTime">ALL-TIME</span>
                   <div className="rivalPlayer">
-                    <div className="rivalAvatar" style={{ background: COLOR_B }}>
-                      {initial(p2Name)}
-                    </div>
+                    <PlayerAvatar player={p2} name={p2Name} color={COLOR_B} divClass="rivalAvatar" imgClass="rivalAvatarImg" />
                     <span className="rivalName">{p2Name}</span>
                   </div>
                 </div>

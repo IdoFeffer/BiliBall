@@ -91,7 +91,7 @@ function ReactionCluster({ reactions }) {
   )
 }
 
-function Bulletin() {
+function Bulletin({ toggleDark }) {
   const navigate = useNavigate()
   const [posts, setPosts] = useState([])
   const [text, setText] = useState('')
@@ -258,7 +258,9 @@ const handleAddReply = async (postId) => {
           <h1 className="navLogo">BiliBall 🎱</h1>
           {leagueName && <div className="leagueChip"><span>{leagueName}</span></div>}
         </div>
-        <div className="bulletin-nav-spacer" />
+        {toggleDark
+          ? <button className="bulletin-dark-toggle" onClick={toggleDark}>🌙</button>
+          : <div className="bulletin-nav-spacer" />}
       </nav>
 
       <div className="bulletin-header">

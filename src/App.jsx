@@ -83,9 +83,9 @@ function App() {
         <Route path="/join-league" element={<JoinLeague />} />
         <Route path="/add-game" element={<AddGame />} />
         <Route path="/profile" element={<Profile toggleDark={toggleDark} darkMode={darkMode} />} />
-        <Route path="/h2h" element={<H2H />} />
+        <Route path="/h2h" element={<H2H toggleDark={toggleDark} darkMode={darkMode} />} />
         <Route path="/profile/:userId" element={<Profile toggleDark={toggleDark} darkMode={darkMode} />} />
-        <Route path="/bulletin" element={<Bulletin />} />
+        <Route path="/bulletin" element={<Bulletin toggleDark={toggleDark} darkMode={darkMode} />} />
       </Routes>
     </BrowserRouter>
   )

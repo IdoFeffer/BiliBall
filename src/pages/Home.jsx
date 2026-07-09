@@ -269,13 +269,18 @@ function Home({ toggleDark, darkMode }) {
             {leaguePlayers.slice(1).map((player, index) => {
               const isMe = user.id === player.id
               const score = player.wins - player.losses
-              const ballColor = BALL_COLORS[(index + 1) % BALL_COLORS.length]
+              const avatarColor = BALL_COLORS[(index + 1) % BALL_COLORS.length]
+              const rank = index + 2
               return (
                 <div key={player.id} className="leaderRow" onClick={() => navigate(`/profile/${player.id}`)}>
-                  <div className="leaderBall" style={{ background: `radial-gradient(circle at 35% 35%, ${ballColor}dd, ${ballColor})` }}>
-                    <span className="leaderBallNum">{index + 2}</span>
-                  </div>
+                  <div className="leaderRank">{rank}</div>
                   <div className="leaderInfo">
+                    {player.avatar_url
+                      ? <img src={player.avatar_url} alt="" className="leaderAvatarImg" />
+                      : <div className="leaderAvatar" style={{ background: avatarColor }}>
+                          {(player.full_name || player.username)?.[0]?.toUpperCase()}
+                        </div>
+                    }
                     <span className="leaderName">
                       {player.full_name || player.username}
                       {isMe && <span className="youBadge">את/ה</span>}

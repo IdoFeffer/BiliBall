@@ -45,6 +45,21 @@
 }
 
 .bulletin-nav-spacer { width: 40px; }
+
+.bulletin-dark-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 .bulletin-nav-center { text-align: center; }
 
 // ── PAGE HEADER ───────────────────────────────────
