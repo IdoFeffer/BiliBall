@@ -1,15 +1,29 @@
 import '../styles/Home.scss'
 import HomeSkeleton from '../components/HomeSkeleton'
+import BottomNav from '../components/BottomNav'
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { players, games, leagues } from '../api'
 
-const avatarColors = ['blue', 'green', 'amber', 'steel']
+const BALL_COLORS = ['#f1c40f', '#1B4FD8', '#e74c3c', '#9b59b6', '#F19953', '#27ae60', '#2980b9', '#111']
 
-function Home() {
+function DotsRating({ wins, losses }) {
+  const total = wins + losses
+  const filled = total === 0 ? 0 : Math.round((wins / total) * 5)
+  return (
+    <span className="dotsRating">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <span key={i} className={i < filled ? 'dotFilled' : 'dotEmpty'}>●</span>
+      ))}
+    </span>
+  )
+}
+
+function Home({ toggleDark, darkMode }) {
   const navigate = useNavigate()
   const [leaguePlayers, setLeaguePlayers] = useState([])
   const [recentGames, setRecentGames] = useState([])
+  const [totalGames, setTotalGames] = useState(0)
   const [loading, setLoading] = useState(true)
   const [openNote, setOpenNote] = useState(null)
   const [showLeagueDropdown, setShowLeagueDropdown] = useState(false)
@@ -39,6 +53,7 @@ function Home() {
           leagues.getMembers(leagueId),
         ])
         setLeaguePlayers(playersRes.data)
+        setTotalGames(gamesRes.data.length)
         setRecentGames(gamesRes.data.slice(0, 5))
         localStorage.setItem('userLeagues', JSON.stringify(allLeaguesRes.data))
         const me = membersRes.data.find((m) => m.id === user.id)
@@ -129,24 +144,36 @@ function Home() {
 
   if (loading) return <HomeSkeleton />
 
+  const leader = leaguePlayers[0]
+  const leaderWinPct = leader && (leader.wins + leader.losses > 0)
+    ? Math.round((leader.wins / (leader.wins + leader.losses)) * 100)
+    : 0
+
   return (
     <div className="page">
+
+      {/* ── HEADER ── */}
       <nav className="nav">
-        <div className="navAvatar" onClick={handleLogout} style={{ cursor: 'pointer' }}>
-          {user.full_name?.[0] || user.username?.[0]}
+        <div className="navBall8" onClick={handleLogout}>
+          <div className="ball8Avatar">
+            <span className="ball8Inner">8</span>
+          </div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <h1 className="navLogo">BiliBall 🎱</h1>
+        <div className="navCenter">
+          <h1 className="navLogo">BiliBall</h1>
           {hasLeague && (
             <div className="leagueChip" onClick={() => setShowLeagueDropdown(!showLeagueDropdown)}>
+              <span>🏆</span>
               <span>{leagueName}</span>
-              <span className="leagueChevron">{showLeagueDropdown ? '▴' : '▾'}</span>
             </div>
           )}
         </div>
-        <div />
+        <button className="navDarkBtn" onClick={toggleDark}>
+          {darkMode ? '☀️' : '🌙'}
+        </button>
       </nav>
 
+      {/* league dropdown */}
       {showLeagueDropdown && (
         <div className="leagueDropdown">
           {userLeagues.map((league) => (
@@ -168,6 +195,7 @@ function Home() {
         </div>
       )}
 
+      {/* pending banner */}
       {isLoggedIn && hasLeague && pendingGames.length > 0 && (
         <div className="pendingBanner" onClick={() => setShowPending(true)}>
           <span className="pendingBannerIcon">⏳</span>
@@ -179,6 +207,7 @@ function Home() {
         </div>
       )}
 
+      {/* no league */}
       {isLoggedIn && !hasLeague && (
         <div className="noLeague">
           <p className="noLeagueIcon">🎱</p>
@@ -188,188 +217,172 @@ function Home() {
         </div>
       )}
 
-      {(!isLoggedIn || hasLeague) && (
-        <section className={`section ${!isLoggedIn ? 'lockedSection' : ''}`}>
-          <h2 className="sectionTitle">לוח מובילים</h2>
-          <div>
-            {leaguePlayers.map((player, index) => {
+      {isLoggedIn && hasLeague && (
+        <div className="homeContent">
+
+          {/* ── HERO CARD ── */}
+          {leader && (
+            <div className="heroCard" onClick={() => navigate(`/profile/${leader.id}`)}>
+              <span className="heroCrown">👑</span>
+              <div className="heroCardBody">
+                <div className="heroLeft">
+                  <div className="heroLetterAvatar">
+                    {leader.avatar_url
+                      ? <img src={leader.avatar_url} alt="" className="heroAvatarImg" />
+                      : (leader.full_name?.[0] || leader.username?.[0])
+                    }
+                  </div>
+                </div>
+                <div className="heroRight">
+                  <span className="heroName">
+                    {leader.full_name || leader.username}
+                    {user.id === leader.id && <span className="youBadgeHero">את/ה</span>}
+                  </span>
+                  <span className="heroLabel">מוביל/ה את הליגה</span>
+                </div>
+              </div>
+              <div className="heroStats">
+                <div className="heroStatBox">
+                  <span className="heroStatVal">{leaderWinPct}%</span>
+                  <span className="heroStatLabel">אחוז זכייה</span>
+                </div>
+                <div className="heroStatBox">
+                  <span className="heroStatVal heroStatNeg">{leader.losses}</span>
+                  <span className="heroStatLabel">הפסדים</span>
+                </div>
+                <div className="heroStatBox">
+                  <span className="heroStatVal heroStatPos">{leader.wins}</span>
+                  <span className="heroStatLabel">נצחונות</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── LEADERBOARD ── */}
+          <div className="leaderCard">
+            <div className="leaderHead">
+              <span className="leaderHeadName">שחקן</span>
+              <span className="leaderHeadStat">נצ'</span>
+              <span className="leaderHeadStat">הפ'</span>
+              <span className="leaderHeadStat">מד'</span>
+            </div>
+            {leaguePlayers.slice(1).map((player, index) => {
               const isMe = user.id === player.id
               const score = player.wins - player.losses
-              const ballColorsList = ['#2660A4', '#f1c40f', '#e74c3c', '#27ae60', '#F19953', '#9b59b6', '#2980b9', '#111']
-              const ballColor = ballColorsList[index % ballColorsList.length]
-              const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : null
-
-              if (index === 0) {
-                return (
-                  <div key={player.id} className="playerRowFirst" onClick={() => navigate(`/profile/${player.id}`)}>
-                    <span className="rankFirst">1</span>
-                    <div className="ballWrap">
-                      {player.avatar_url ? (
-                        <img src={player.avatar_url} alt="" style={{ width: 38, height: 38, borderRadius: '50%', objectFit: 'cover' }} />
-                      ) : (
-                        <div className="ballAvatar" style={{ background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`, width: 38, height: 38, fontSize: 15 }}>
-                          <div className="ballInner">{player.full_name?.[0] || player.username?.[0]}</div>
-                        </div>
-                      )}
-                      <div className="medalBadge">{medal}</div>
-                    </div>
-                    <span className="playerNameFirst">
-                      {player.full_name || player.username}
-                      {isMe && <span className="youBadgeFirst">את/ה</span>}
-                    </span>
-                    <div className="statsFirst">
-                      <div className="stat">
-                        <div className="statValFirst pos">{player.wins}</div>
-                        <div className="statLabelFirst">נצ'</div>
-                      </div>
-                      <div className="stat">
-                        <div className="statValFirst neg">{player.losses}</div>
-                        <div className="statLabelFirst">הפ'</div>
-                      </div>
-                      <div className="stat">
-                        <div className={`statValFirst ${score >= 0 ? 'pos' : 'neg'}`}>
-                          {score > 0 ? '+' : ''}{score}
-                        </div>
-                        <div className="statLabelFirst">מדד</div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
-
+              const ballColor = BALL_COLORS[(index + 1) % BALL_COLORS.length]
               return (
-                <div key={player.id} className="playerRow" onClick={() => navigate(`/profile/${player.id}`)} style={{ cursor: 'pointer' }}>
-                  <span className="rank">{index + 1}</span>
-                  <div className="ballWrap">
-                    {player.avatar_url ? (
-                      <img src={player.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
-                    ) : (
-                      <div className="ballAvatar" style={{ background: `linear-gradient(135deg, ${ballColor}, ${ballColor}cc)`, width: 32, height: 32, fontSize: 12 }}>
-                        <div className="ballInner">{player.full_name?.[0] || player.username?.[0]}</div>
-                      </div>
-                    )}
-                    {medal && <div className="medalBadge">{medal}</div>}
+                <div key={player.id} className="leaderRow" onClick={() => navigate(`/profile/${player.id}`)}>
+                  <div className="leaderBall" style={{ background: `radial-gradient(circle at 35% 35%, ${ballColor}dd, ${ballColor})` }}>
+                    <span className="leaderBallNum">{index + 2}</span>
                   </div>
-                  <span className="playerName">
-                    {player.full_name || player.username}
-                    {isMe && <span className="youBadge">את/ה</span>}
+                  <div className="leaderInfo">
+                    <span className="leaderName">
+                      {player.full_name || player.username}
+                      {isMe && <span className="youBadge">את/ה</span>}
+                    </span>
+                  </div>
+                  <span className="leaderStat statPos">{player.wins}</span>
+                  <span className="leaderStat statNeg">{player.losses}</span>
+                  <span className={`leaderStat ${score >= 0 ? 'statPos' : 'statNeg'}`}>
+                    {score > 0 ? '+' : ''}{score}
                   </span>
-                  <div className="stats">
-                    <div className="stat">
-                      <div className="statVal pos">{player.wins}</div>
-                      <div className="statLabel">נצ'</div>
-                    </div>
-                    <div className="stat">
-                      <div className="statVal neg">{player.losses}</div>
-                      <div className="statLabel">הפ'</div>
-                    </div>
-                    <div className="stat">
-                      <div className={`statVal ${score >= 0 ? 'pos' : 'neg'}`}>
-                        {score > 0 ? '+' : ''}{score}
-                      </div>
-                      <div className="statLabel">מדד</div>
-                    </div>
-                  </div>
                 </div>
               )
             })}
           </div>
-          {!isLoggedIn && (
-            <div className="lockedOverlay">
-              <p>🔒</p>
-              <p className="lockedTitle">התחבר לראות את הליגה</p>
-              <button className="loginBtn" onClick={() => navigate('/login')}>התחבר</button>
-            </div>
-          )}
-        </section>
-      )}
 
-      {isLoggedIn && hasLeague && (
-        <section className="section">
-          <h2 className="sectionTitle">משחקים אחרונים</h2>
-          {recentGames.length === 0 && (
-            <p style={{ fontSize: '13px', color: '#999', textAlign: 'center', padding: '16px 0' }}>אין משחקים עדיין</p>
-          )}
-          {recentGames.map((game, index) => (
-            <div key={game.id}>
-              <div className="recentRow">
-                <div className={`avatar ${avatarColors[index % avatarColors.length]}`}>{game.winner_name?.[0]}</div>
-                <span className="recentText">{game.winner_name} ניצח את {game.loser_name}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  {game.note && (
-                    <span style={{ cursor: 'pointer', fontSize: '14px' }} onClick={() => setOpenNote(openNote === game.id ? null : game.id)}>💬</span>
-                  )}
+          {/* ── RECENT GAMES ── */}
+          <div className="recentCard">
+            <div className="recentHeader">
+              <span className="recentTotal">{totalGames} סה״כ</span>
+              <h2 className="recentTitle">משחקים אחרונים</h2>
+            </div>
+            {recentGames.length === 0 && <p className="recentEmpty">אין משחקים עדיין</p>}
+            {recentGames.map((game) => (
+              <div key={game.id}>
+                <div className="recentRow">
+                  <span className="recentDate">
+                    {new Date(game.played_at).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' })}
+                  </span>
                   {(game.winner_score > 0 || game.loser_score > 0) && (
-                    <span className="recentScore">{game.winner_score} : {game.loser_score}</span>
+                    <span className="recentScore">
+                      <span className="scoreWin">{game.winner_score}</span>
+                      <span className="scoreSep">-</span>
+                      <span className="scoreLoss">{game.loser_score}</span>
+                    </span>
                   )}
-                  <span className="recentDate">{new Date(game.played_at).toLocaleDateString('he-IL')}</span>
+                  <span className="recentText">
+                    {game.winner_score === game.loser_score
+                      ? `תיקו בין ${game.winner_name} ל-${game.loser_name}`
+                      : `${game.winner_name} ניצח את ${game.loser_name}`}
+                  </span>
+                  <div className="recentAvatar">{game.winner_name?.[0]}</div>
+                  {game.note && (
+                    <span className="recentNote" onClick={(e) => { e.stopPropagation(); setOpenNote(openNote === game.id ? null : game.id) }}>💬</span>
+                  )}
                 </div>
+                {openNote === game.id && game.note && <div className="noteTooltip">{game.note}</div>}
               </div>
-              {openNote === game.id && game.note && <div className="noteTooltip">{game.note}</div>}
-            </div>
-          ))}
-        </section>
-      )}
-
-      {isLoggedIn && hasLeague && (
-        <div style={{ display: 'flex', gap: '8px', margin: '4px 8px' }}>
-          <button className="h2hBtn" style={{ flex: 1 }} onClick={() => navigate('/h2h')}>ראש בראש ↗</button>
-        </div>
-      )}
-
-      {isLoggedIn && hasLeague && (
-        <section className="section">
-          <h2 className="sectionTitle">הזמן לליגה</h2>
-          <div className="inviteCode">
-            <div>
-              <p className="inviteLabel">קוד הצטרפות</p>
-              <p className="inviteCodeText">{localStorage.getItem('leagueCode')}</p>
-            </div>
-            <button className="inviteCopyBtn" onClick={() => { navigator.clipboard.writeText(localStorage.getItem('leagueCode')); alert('הקוד הועתק!') }}>העתק</button>
+            ))}
           </div>
-          <button className="inviteShareBtn" onClick={() => {
-            const code = localStorage.getItem('leagueCode')
-            if (navigator.share) {
-              navigator.share({ title: 'הצטרף ל-BiliBall', text: `הצטרף לליגה שלנו עם הקוד: ${code}` })
-            } else {
-              navigator.clipboard.writeText(`הצטרף לליגה שלנו עם הקוד: ${code}`)
-              alert('הועתק!')
-            }
-          }}>🔗 שתף הזמנה</button>
-        </section>
-      )}
 
-      {isLoggedIn && hasLeague && (
-        <section className="section">
-          <h2 className="sectionTitle">התקן כאפליקציה</h2>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button className="installBtn" onClick={() => setShowInstall('ios')}>
-              <span style={{ fontSize: 28 }}></span>
-              <span className="installBtnLabel">iPhone</span>
-              <span className="installBtnSub">Safari</span>
-            </button>
-            <button className="installBtn" onClick={() => setShowInstall('android')}>
-              <span style={{ fontSize: 28 }}>🤖</span>
-              <span className="installBtnLabel">Android</span>
-              <span className="installBtnSub">Chrome</span>
-            </button>
+          {/* ── INVITE ── */}
+          <div className="section">
+            <h2 className="sectionTitle">הזמן לליגה</h2>
+            <div className="inviteCode">
+              <div>
+                <p className="inviteLabel">קוד הצטרפות</p>
+                <p className="inviteCodeText">{localStorage.getItem('leagueCode')}</p>
+              </div>
+              <button className="inviteCopyBtn" onClick={() => { navigator.clipboard.writeText(localStorage.getItem('leagueCode')); alert('הקוד הועתק!') }}>העתק</button>
+            </div>
+            <button className="inviteShareBtn" onClick={() => {
+              const code = localStorage.getItem('leagueCode')
+              if (navigator.share) {
+                navigator.share({ title: 'הצטרף ל-BiliBall', text: `הצטרף לליגה שלנו עם הקוד: ${code}` })
+              } else {
+                navigator.clipboard.writeText(`הצטרף לליגה שלנו עם הקוד: ${code}`)
+                alert('הועתק!')
+              }
+            }}>🔗 שתף הזמנה</button>
           </div>
-        </section>
-      )}
 
-      {isLoggedIn && hasLeague && (
-        <div style={{ padding: '12px 16px', marginBottom: '30px' }}>
-          {userRole === 'admin' ? (
+          {/* ── INSTALL ── */}
+          <div className="section">
+            <h2 className="sectionTitle">התקן כאפליקציה</h2>
             <div style={{ display: 'flex', gap: '8px' }}>
-              <button className="leaveBtn" onClick={() => setShowConfirm('leave')}>↩ עזוב ליגה</button>
-              <button className="deleteBtn" onClick={() => setShowConfirm('delete')}>✕ מחק ליגה</button>
+              <button className="installBtn" onClick={() => setShowInstall('ios')}>
+                <span style={{ fontSize: 28 }}></span>
+                <span className="installBtnLabel">iPhone</span>
+                <span className="installBtnSub">Safari</span>
+              </button>
+              <button className="installBtn" onClick={() => setShowInstall('android')}>
+                <span style={{ fontSize: 28 }}>🤖</span>
+                <span className="installBtnLabel">Android</span>
+                <span className="installBtnSub">Chrome</span>
+              </button>
             </div>
-          ) : (
-            <button className="deleteBtnFull" onClick={() => setShowConfirm('leave')}>↩ עזוב ליגה</button>
-          )}
+          </div>
+
+          {/* ── LEAVE / DELETE ── */}
+          <div style={{ padding: '4px 16px 24px' }}>
+            {userRole === 'admin' ? (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button className="leaveBtn" onClick={() => setShowConfirm('leave')}>↩ עזוב ליגה</button>
+                <button className="deleteBtn" onClick={() => setShowConfirm('delete')}>✕ מחק ליגה</button>
+              </div>
+            ) : (
+              <button className="deleteBtnFull" onClick={() => setShowConfirm('leave')}>↩ עזוב ליגה</button>
+            )}
+          </div>
+
         </div>
       )}
 
+      {/* ── BOTTOM NAV ── */}
+      {isLoggedIn && hasLeague && <BottomNav active="home" />}
+
+      {/* ── CONFIRM MODAL ── */}
       {showConfirm && (
         <div className="confirmOverlay" onClick={() => setShowConfirm(null)}>
           <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
@@ -383,13 +396,18 @@ function Home() {
         </div>
       )}
 
+      {/* ── PENDING MODAL ── */}
       {showPending && (
         <div className="confirmOverlay" onClick={() => setShowPending(false)}>
           <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
             <p className="confirmTitle">משחקים ממתינים לאישור</p>
             {pendingGames.map((game) => (
               <div key={game.id} className="pendingGameCard">
-                <p className="pendingGameInfo">{game.winner_name} טוען שניצח אותך</p>
+                <p className="pendingGameInfo">
+                  {game.winner_score === game.loser_score
+                    ? `${game.winner_name} סוען שהמשחק נגמר תיקו`
+                    : `${game.winner_name} טוען שניצח אותך`}
+                </p>
                 {(game.winner_score > 0 || game.loser_score > 0) && (
                   <p className="pendingGameScore">{game.winner_score} : {game.loser_score}</p>
                 )}
@@ -404,6 +422,7 @@ function Home() {
         </div>
       )}
 
+      {/* ── iOS INSTALL ── */}
       {showInstall === 'ios' && (
         <div className="confirmOverlay" onClick={() => setShowInstall(null)}>
           <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
@@ -421,6 +440,7 @@ function Home() {
         </div>
       )}
 
+      {/* ── Android INSTALL ── */}
       {showInstall === 'android' && (
         <div className="confirmOverlay" onClick={() => setShowInstall(null)}>
           <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
@@ -437,22 +457,6 @@ function Home() {
         </div>
       )}
 
-      {isLoggedIn && hasLeague && (
-        <nav className="bottomNav">
-          <button className="navTab" onClick={() => navigate('/bulletin')}>
-            <span className="navTabIcon">📢</span>
-            מודעות
-          </button>
-          <button className="navCenter" onClick={() => navigate('/add-game')}>
-            <span className="navCenterIcon">+</span>
-            הוספת משחק
-          </button>
-          <button className="navTab active" onClick={() => navigate('/profile')}>
-            <span className="navTabIcon">👤</span>
-            פרופיל
-          </button>
-        </nav>
-      )}
     </div>
   )
 }

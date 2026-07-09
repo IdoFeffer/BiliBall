@@ -1,593 +1,114 @@
 @use 'variables' as *;
 
+// ============ PAGE ============
 .page {
   display: flex;
   flex-direction: column;
-  padding-bottom: $bottom-nav-height;
-  background: #e8f5ee;
+  padding-bottom: 80px;
+  background: #f1f5f9;
   min-height: 100vh;
 
-  body.dark & {
-    background: $dark-bg;
-  }
+  body.dark & { background: $dark-bg; }
 }
 
 // ============ NAV ============
 .nav {
   display: grid;
-  grid-template-columns: 32px 1fr 32px;
+  grid-template-columns: 38px 1fr 38px;
   align-items: center;
-  padding: 12px 16px;
-  gap: 16px;
-  background: #2660a4;
+  padding: 10px 14px;
+  gap: 8px;
+  background: #1b4fd8;
   position: sticky;
   top: 0;
   z-index: 10;
   width: 100%;
-  border-bottom: none;
 
-  body.dark & {
-    background: $dark-bg;
-    border-color: $dark-border;
-  }
+  body.dark & { background: $dark-bg; }
+}
+
+.navCenter { text-align: center; }
+
+.navMenuBtn {
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: white;
+  padding: 0;
+  line-height: 1;
+}
+
+.navBall8 {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navDarkBtn {
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
+}
+
+.ball8Avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-full;
+  background: radial-gradient(circle at 35% 35%, #555, #111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.4), inset 1px 1px 3px rgba(255,255,255,0.2);
+}
+
+.ball8Inner {
+  width: 55%;
+  height: 55%;
+  border-radius: $radius-full;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111;
 }
 
 .navLogo {
   font-size: $font-lg;
   font-weight: 700;
-  color: #edf7f6;
+  color: white;
 
-  body.dark & {
-    color: $color-tea;
-  }
-}
-
-.navLeague {
-  font-size: $font-xs;
-  color: rgba(237, 247, 246, 0.7);
-  margin-top: 2px;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-.navAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: $radius-full;
-  background: rgba(255, 255, 255, 0.18);
-  color: #edf7f6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-sm;
-  font-weight: 700;
-
-  body.dark & {
-    background: $color-grape;
-    color: $color-tea;
-  }
-}
-
-.loginBtn {
-  font-size: $font-sm;
-  padding: 6px 14px;
-  border-radius: $radius-md;
-  border: 1px solid $light-border;
-  color: $light-text-primary;
-  background: transparent;
-
-  body.dark & {
-    border-color: $color-dusty;
-    color: $color-tea;
-  }
-
-  &:hover {
-    background: $light-bg-secondary;
-
-    body.dark & {
-      background: $dark-bg-secondary;
-    }
-  }
-}
-
-// ============ SECTION ============
-.section {
-  margin: 8px;
-  padding: 14px 16px;
-  border-radius: $radius-md;
-  background: rgba(255, 255, 255, 0.75);
-  border: 0.5px solid rgba(196, 115, 53, 0.15);
-
-  body.dark & {
-    background: $dark-bg-secondary;
-    border-color: $dark-border;
-  }
-}
-
-.sectionTitle {
-  font-size: $font-xs;
-  font-weight: 700;
-  color: #c47335;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 12px;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-// ============ LEADERBOARD ============
-.playerRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 0.5px solid rgba(196, 115, 53, 0.15);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  body.dark & {
-    border-color: $dark-border-secondary;
-  }
-}
-
-.rank {
-  font-size: $font-xs;
-  color: #c47335;
-  width: 16px;
-  font-weight: 700;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-.avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: $radius-full;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-xs;
-  font-weight: 700;
-  flex-shrink: 0;
-
-  &.blue {
-    background: #2660a4;
-    color: #edf7f6;
-  }
-  &.green {
-    background: #16a34a;
-    color: #edf7f6;
-  }
-  &.amber {
-    background: #f19953;
-    color: #56351e;
-  }
-  &.steel {
-    background: #c47335;
-    color: #edf7f6;
-  }
-
-  body.dark &.blue {
-    background: $color-grape;
-    color: $color-tea;
-  }
-  body.dark &.green {
-    background: $color-dusty;
-    color: $color-tea;
-  }
-  body.dark &.amber {
-    background: $color-celadon;
-    color: $dark-bg;
-  }
-  body.dark &.steel {
-    background: $dark-border;
-    color: $color-steel;
-  }
-}
-
-.playerName {
-  font-size: $font-sm;
-  color: #56351e;
-  flex: 1;
-  font-weight: 500;
-
-  body.dark & {
-    color: $dark-text-primary;
-  }
-}
-
-.youBadge {
-  font-size: 9px;
-  padding: 1px 6px;
-  border-radius: $radius-full;
-  background: rgba(38, 96, 164, 0.15);
-  color: #2660a4;
-  font-weight: 700;
-  margin-left: 6px;
-
-  body.dark & {
-    background: $color-celadon;
-    color: $dark-bg;
-  }
-}
-
-.stats {
-  display: flex;
-  min-width: 20px;
-}
-
-.stat {
-  text-align: center;
-  min-width: 24px;
-}
-
-.statVal {
-  font-size: $font-sm;
-  font-weight: 700;
-
-  &.pos {
-    color: #16a34a;
-  }
-  &.neg {
-    color: #e74c3c;
-  }
-  &.neutral {
-    color: #56351e;
-  }
-
-  body.dark &.pos {
-    color: $success-dark;
-  }
-  body.dark &.neg {
-    color: $danger-dark;
-  }
-  body.dark &.neutral {
-    color: $color-tea;
-  }
-}
-
-.statLabel {
-  font-size: 9px;
-  color: #c47335;
-  margin-top: 1px;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-// ============ LOCKED ============
-.lockedSection {
-  position: relative;
-  min-height: 160px;
-}
-
-.lockedOverlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80%;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(232, 245, 238, 0.97)
-  );
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  padding-bottom: 20px;
-  gap: 8px;
-
-  body.dark & {
-    background: linear-gradient(to bottom, transparent, rgba(45, 38, 64, 0.97));
-  }
-}
-
-.lockedTitle {
-  font-size: $font-sm;
-  font-weight: 700;
-  color: #56351e;
-
-  body.dark & {
-    color: $color-tea;
-  }
-}
-
-// ============ RECENT GAMES ============
-.recentRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 0;
-  border-bottom: 0.5px solid rgba(196, 115, 53, 0.12);
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  body.dark & {
-    border-color: $dark-border-secondary;
-  }
-}
-
-.recentText {
-  font-size: $font-xs;
-  color: #56351e;
-  flex: 1;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-.recentDate {
-  font-size: 9px;
-  color: #c47335;
-
-  body.dark & {
-    color: $color-dusty;
-  }
-}
-
-// ============ BOTTOM NAV ============
-.bottomNav {
-  display: flex;
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: $max-width-mobile;
-  border-top: 0.5px solid rgba(196, 115, 53, 0.2);
-  background: rgba(255, 255, 255, 0.92);
-  height: $bottom-nav-height;
-  z-index: 10;
-
-  @media (min-width: 768px) {
-    max-width: $max-width-tablet;
-  }
-
-  @media (min-width: 1024px) {
-    max-width: $max-width-desktop;
-  }
-
-  body.dark & {
-    background: $dark-bg;
-    border-color: $dark-border;
-  }
-}
-
-.navTab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  font-size: 9px;
-  color: #c47335;
-  padding: 8px 0;
-
-  &.active {
-    color: #56351e;
-    font-weight: 700;
-  }
-
-  body.dark & {
-    color: $color-steel;
-
-    &.active {
-      color: $color-tea;
-    }
-  }
-}
-
-.navTabIcon {
-  font-size: 18px;
-}
-
-.navCenter {
-  flex: 1.4;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  font-size: 9px;
-  font-weight: 700;
-  color: #edf7f6;
-  background: #2660a4;
-  border-right: none;
-  border-left: none;
-
-  body.dark & {
-    background: $color-celadon;
-    color: $dark-bg;
-  }
-}
-
-.navCenterIcon {
-  font-size: 20px;
-}
-
-.noLeague {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 60px 24px;
-  text-align: center;
-}
-
-.noLeagueIcon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.noLeagueTitle {
-  font-size: $font-xl;
-  font-weight: 700;
-  color: #56351e;
-  margin-bottom: 8px;
-
-  body.dark & {
-    color: $dark-text-primary;
-  }
-}
-
-.noLeagueSub {
-  font-size: $font-sm;
-  color: #c47335;
-  margin-bottom: 28px;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-.noLeagueBtn {
-  width: 100%;
-  padding: 13px;
-  border-radius: $radius-md;
-  font-size: $font-md;
-  font-weight: 700;
-  background: #2660a4;
-  color: #edf7f6;
-  border: none;
-  margin-bottom: 10px;
-
-  body.dark & {
-    background: $color-celadon;
-    color: $dark-bg;
-  }
-}
-
-.noLeagueBtnSecondary {
-  width: 100%;
-  padding: 13px;
-  border-radius: $radius-md;
-  font-size: $font-md;
-  font-weight: 700;
-  background: transparent;
-  color: #56351e;
-  border: 1px solid rgba(196, 115, 53, 0.3);
-
-  body.dark & {
-    color: $dark-text-primary;
-    border-color: $dark-border;
-  }
-}
-
-.noteTooltip {
-  margin: 0 0 6px 0;
-  background: #56351e;
-  color: #edf7f6;
-  font-size: $font-xs;
-  padding: 5px 10px;
-  border-radius: $radius-md;
-  display: inline-block;
-
-  body.dark & {
-    background: $dark-text-primary;
-    color: $dark-bg;
-  }
-}
-
-// ============ INVITE ============
-.inviteCode {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(38, 96, 164, 0.06);
-  border-radius: $radius-md;
-  padding: 14px 16px;
-  margin-bottom: 8px;
-  border: 0.5px solid rgba(38, 96, 164, 0.15);
-
-  body.dark & {
-    background: $dark-bg-secondary;
-  }
-}
-
-.inviteLabel {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #c47335;
-  margin-bottom: 4px;
-
-  body.dark & {
-    color: $color-steel;
-  }
-}
-
-.inviteCodeText {
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: #2660a4;
-
-  body.dark & {
-    color: $dark-text-primary;
-  }
-}
-
-.inviteCopyBtn {
-  font-size: $font-xs;
-  padding: 7px 14px;
-  border-radius: $radius-md;
-  border: 1px solid rgba(38, 96, 164, 0.3);
-  color: #2660a4;
-  background: transparent;
-  font-weight: 600;
-
-  body.dark & {
-    border-color: $dark-border;
-    color: $color-steel;
-    background: $dark-bg;
-  }
-}
-
-.inviteShareBtn {
-  width: 100%;
-  padding: 11px;
-  border-radius: $radius-md;
-  font-size: $font-sm;
-  font-weight: 700;
-  border: 1px solid rgba(38, 96, 164, 0.3);
-  color: #2660a4;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  body.dark & {
-    border-color: $dark-border;
-    color: $dark-text-primary;
-  }
+  body.dark & { color: $color-tea; }
 }
 
 .leagueChip {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: rgba(237, 247, 246, 0.18);
-  border: 0.5px solid rgba(237, 247, 246, 0.3);
+  background: rgba(255, 255, 255, 0.18);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
   border-radius: $radius-full;
   padding: 2px 10px;
   font-size: $font-xs;
-  color: #edf7f6;
+  color: white;
   cursor: pointer;
   margin-top: 2px;
 
@@ -600,19 +121,17 @@
 
 .leagueChevron {
   font-size: 9px;
-  color: rgba(237, 247, 246, 0.7);
-
-  body.dark & {
-    color: $color-steel;
-  }
+  color: rgba(255, 255, 255, 0.7);
 }
 
+// ============ LEAGUE DROPDOWN ============
 .leagueDropdown {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 0.5px solid rgba(196, 115, 53, 0.2);
+  background: white;
+  border-bottom: 0.5px solid #e5e7eb;
   padding: 8px;
   margin: 0 8px;
   border-radius: 0 0 $radius-md $radius-md;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 
   body.dark & {
     background: $dark-bg;
@@ -628,96 +147,657 @@
   border-radius: $radius-md;
   cursor: pointer;
   font-size: $font-sm;
-  color: #56351e;
+  color: #374151;
 
-  &.active {
-    background: rgba(38, 96, 164, 0.06);
+  &.active { background: rgba(27, 79, 216, 0.06); }
 
-    body.dark & {
-      background: $dark-bg-secondary;
-    }
-  }
-
-  body.dark & {
-    color: $dark-text-primary;
-  }
+  body.dark & { color: $dark-text-primary; }
 }
 
 .leagueDot {
   width: 8px;
   height: 8px;
   border-radius: $radius-full;
-  background: rgba(196, 115, 53, 0.3);
+  background: #d1d5db;
   flex-shrink: 0;
 
-  &.active {
-    background: #2660a4;
-  }
-
-  body.dark & {
-    background: $dark-border;
-
-    &.active {
-      background: $color-celadon;
-    }
-  }
+  &.active { background: #1b4fd8; }
 }
 
-.leagueOptionName {
-  flex: 1;
-}
+.leagueOptionName { flex: 1; }
 
 .leagueCheck {
   font-size: $font-xs;
-  color: #2660a4;
-
-  body.dark & {
-    color: $color-celadon;
-  }
+  color: #1b4fd8;
 }
 
 .leagueDivider {
   height: 0.5px;
-  background: rgba(196, 115, 53, 0.2);
+  background: #e5e7eb;
   margin: 4px 0;
-
-  body.dark & {
-    background: $dark-border;
-  }
-}
-
-.leagueOptionNew {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 8px;
-  border-radius: $radius-md;
-  cursor: pointer;
-  font-size: $font-sm;
-  color: #c47335;
-
-  body.dark & {
-    color: $color-steel;
-  }
 }
 
 .leaguePlus {
   width: 24px;
   height: 24px;
   border-radius: $radius-full;
-  border: 1.5px dashed rgba(196, 115, 53, 0.4);
+  border: 1.5px dashed #d1d5db;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: $font-md;
-  color: #c47335;
+  color: #9ca3af;
+}
+
+// ============ PENDING BANNER ============
+.pendingBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 12px 0;
+  padding: 12px 16px;
+  border-radius: $radius-md;
+  background: #1b4fd8;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(27, 79, 216, 0.3);
+}
+
+.pendingBannerIcon { font-size: 22px; }
+.pendingBannerText { flex: 1; }
+
+.pendingBannerTitle {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: white;
+}
+
+.pendingBannerSub {
+  font-size: $font-xs;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+}
+
+.pendingBannerArrow {
+  font-size: 22px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+// ============ NO LEAGUE ============
+.noLeague {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.noLeagueIcon { font-size: 48px; margin-bottom: 16px; }
+
+.noLeagueTitle {
+  font-size: $font-xl;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+
+  body.dark & { color: $dark-text-primary; }
+}
+
+.noLeagueSub {
+  font-size: $font-sm;
+  color: #6b7280;
+  margin-bottom: 28px;
+}
+
+.noLeagueBtn {
+  width: 100%;
+  padding: 13px;
+  border-radius: $radius-md;
+  font-size: $font-md;
+  font-weight: 700;
+  background: #1b4fd8;
+  color: white;
+  border: none;
+  margin-bottom: 10px;
+}
+
+// ============ HOME CONTENT ============
+.homeContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+// ============ DOTS ============
+.dotsRating {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.dotFilled {
+  color: #22c55e;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.dotEmpty {
+  color: #d1d5db;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.heroCard .dotEmpty { color: rgba(255, 255, 255, 0.35); }
+
+// ============ HERO CARD ============
+.heroCard {
+  position: relative;
+  background: #1b4fd8;
+  border-radius: $radius-lg;
+  padding: 16px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.heroCrown {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  font-size: 18px;
+}
+
+.heroCardBody {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  direction: rtl;
+}
+
+.heroLeft { flex-shrink: 0; }
+
+.heroRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.heroLetterAvatar {
+  width: 54px;
+  height: 54px;
+  border-radius: $radius-full;
+  background: rgba(0, 0, 60, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  overflow: hidden;
+}
+
+.heroAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: $radius-full;
+}
+
+.heroName {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.youBadgeHero {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: $radius-full;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 700;
+}
+
+.heroLabel {
+  font-size: $font-xs;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+}
+
+.heroStats {
+  display: flex;
+  gap: 8px;
+  direction: rtl;
+}
+
+.heroStatBox {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-md;
+  padding: 8px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heroStatVal {
+  font-size: $font-lg;
+  font-weight: 700;
+  color: white;
+}
+
+.heroStatPos { color: #4ade80; }
+.heroStatNeg { color: #fca5a5; }
+
+.heroStatLabel {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+// ============ LEADERBOARD CARD ============
+.leaderCard {
+  background: white;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  body.dark & { background: $dark-bg-secondary; }
+}
+
+.leaderHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-bottom: 0.5px solid #e5e7eb;
+  direction: rtl;
 
   body.dark & {
+    background: $dark-bg;
     border-color: $dark-border;
-    color: $color-steel;
   }
 }
 
+.leaderHeadName {
+  flex: 1;
+  font-size: 9px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.leaderHeadStat {
+  width: 32px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.leaderRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 0.5px solid #f3f4f6;
+  direction: rtl;
+  cursor: pointer;
+  transition: background 0.12s;
+
+  &:last-child { border-bottom: none; }
+  &:active { background: #f8fafc; }
+
+  body.dark & {
+    border-color: $dark-border-secondary;
+    &:active { background: rgba(255,255,255,0.03); }
+  }
+}
+
+.leaderBall {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.25), inset 1px 1px 2px rgba(255,255,255,0.3);
+}
+
+.leaderBallNum {
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.leaderInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.leaderName {
+  font-size: $font-sm;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  body.dark & { color: $dark-text-primary; }
+}
+
+.youBadge {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: $radius-full;
+  background: rgba(27, 79, 216, 0.1);
+  color: #1b4fd8;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.leaderStat {
+  width: 32px;
+  text-align: center;
+  font-size: $font-sm;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.statPos { color: #16a34a; body.dark & { color: $success-dark; } }
+.statNeg { color: #dc2626; body.dark & { color: $danger-dark; } }
+
+// ============ RECENT GAMES CARD ============
+.recentCard {
+  background: white;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  body.dark & { background: $dark-bg-secondary; }
+}
+
+.recentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-bottom: 0.5px solid #e5e7eb;
+  direction: rtl;
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.recentTitle {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: #111827;
+
+  body.dark & { color: $dark-text-primary; }
+}
+
+.recentTotal {
+  font-size: $font-xs;
+  color: #9ca3af;
+}
+
+.recentRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-bottom: 0.5px solid #f3f4f6;
+  direction: rtl;
+
+  &:last-child { border-bottom: none; }
+
+  body.dark & { border-color: $dark-border-secondary; }
+}
+
+.recentAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  background: #1b4fd8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-xs;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.recentText {
+  flex: 1;
+  font-size: $font-xs;
+  color: #374151;
+
+  body.dark & { color: $color-steel; }
+}
+
+.recentScore {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.scoreWin { color: #16a34a; body.dark & { color: $success-dark; } }
+.scoreSep { color: #9ca3af; }
+.scoreLoss { color: #dc2626; body.dark & { color: $danger-dark; } }
+
+.recentDate {
+  font-size: 10px;
+  color: #9ca3af;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  body.dark & { color: $color-dusty; }
+}
+
+.recentNote {
+  font-size: 13px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.recentEmpty {
+  font-size: $font-xs;
+  color: #9ca3af;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.noteTooltip {
+  margin: 0 14px 8px;
+  background: #1b4fd8;
+  color: white;
+  font-size: $font-xs;
+  padding: 6px 10px;
+  border-radius: $radius-md;
+}
+
+// ============ BOTTOM NAV ============
+.bottomNav {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 0.5px solid #e5e7eb;
+  background: white;
+  height: $bottom-nav-height;
+  z-index: 1000;
+  overflow: visible;
+  align-items: stretch;
+
+  body.dark & {
+    background: $dark-bg;
+    border-color: $dark-border;
+  }
+}
+
+.navTab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 9px;
+  color: #9ca3af;
+  padding: 8px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &.active {
+    color: #1b4fd8;
+    font-weight: 700;
+  }
+
+  body.dark & {
+    color: $color-steel;
+    &.active { color: $color-tea; }
+  }
+}
+
+.navTabIcon { font-size: 18px; }
+
+.navFabWrap {
+  flex: 1.2;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 9px;
+  font-weight: 600;
+  overflow: visible;
+}
+
+.navFab {
+  position: absolute;
+  top: -22px;
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-full;
+  background: #1b4fd8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 300;
+  box-shadow: 0 4px 14px rgba(27, 79, 216, 0.45);
+}
+
+.navFabLabel {
+  // anchored to bottom by justify-content: flex-end on parent
+}
+
+// ============ SECTION (invite / install) ============
+.section {
+  background: white;
+  border-radius: $radius-lg;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+  body.dark & { background: $dark-bg-secondary; }
+}
+
+.sectionTitle {
+  font-size: $font-xs;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+
+  body.dark & { color: $color-steel; }
+}
+
+.inviteCode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(27, 79, 216, 0.05);
+  border-radius: $radius-md;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border: 0.5px solid rgba(27, 79, 216, 0.12);
+
+  body.dark & { background: $dark-bg-secondary; }
+}
+
+.inviteLabel {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.inviteCodeText {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #1b4fd8;
+}
+
+.inviteCopyBtn {
+  font-size: $font-xs;
+  padding: 7px 14px;
+  border-radius: $radius-md;
+  border: 1px solid rgba(27, 79, 216, 0.25);
+  color: #1b4fd8;
+  background: transparent;
+  font-weight: 600;
+}
+
+.inviteShareBtn {
+  width: 100%;
+  padding: 11px;
+  border-radius: $radius-md;
+  font-size: $font-sm;
+  font-weight: 700;
+  border: 1px solid rgba(27, 79, 216, 0.25);
+  color: #1b4fd8;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+// ============ LEAVE / DELETE ============
 .leaveBtn {
   flex: 1;
   padding: 11px;
@@ -727,11 +807,6 @@
   border: 1px solid $warning-light;
   color: $warning-light;
   background: transparent;
-
-  body.dark & {
-    border-color: $warning-dark;
-    color: $warning-dark;
-  }
 }
 
 .deleteBtn {
@@ -743,11 +818,6 @@
   border: 1px solid $danger-light;
   color: $danger-light;
   background: transparent;
-
-  body.dark & {
-    border-color: $danger-dark;
-    color: $danger-dark;
-  }
 }
 
 .deleteBtnFull {
@@ -759,19 +829,12 @@
   border: 1px solid $danger-light;
   color: $danger-light;
   background: transparent;
-
-  body.dark & {
-    border-color: $danger-dark;
-    color: $danger-dark;
-  }
 }
 
+// ============ CONFIRM MODAL ============
 .confirmOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: flex-end;
@@ -780,39 +843,31 @@
 }
 
 .confirmSheet {
-  background: #edf7f6;
+  background: white;
   border-radius: $radius-md $radius-md 0 0;
   padding: 20px 16px;
   width: 100%;
   max-width: $max-width-mobile;
 
-  body.dark & {
-    background: $dark-bg;
-  }
+  body.dark & { background: $dark-bg; }
 }
 
 .confirmTitle {
   font-size: $font-md;
   font-weight: 700;
-  color: #56351e;
+  color: #111827;
   text-align: center;
   margin-bottom: 6px;
 
-  body.dark & {
-    color: $dark-text-primary;
-  }
+  body.dark & { color: $dark-text-primary; }
 }
 
 .confirmSub {
   font-size: $font-xs;
-  color: #c47335;
+  color: #6b7280;
   text-align: center;
   margin-bottom: 20px;
   line-height: 1.5;
-
-  body.dark & {
-    color: $color-steel;
-  }
 }
 
 .confirmBtnWarn {
@@ -826,11 +881,6 @@
   background: $warning-light-bg;
   color: $warning-light;
   cursor: pointer;
-
-  body.dark & {
-    background: rgba(255, 193, 7, 0.15);
-    color: $warning-dark;
-  }
 }
 
 .confirmBtnDanger {
@@ -844,11 +894,6 @@
   background: $danger-light-bg;
   color: $danger-light;
   cursor: pointer;
-
-  body.dark & {
-    background: rgba(224, 112, 112, 0.15);
-    color: $danger-dark;
-  }
 }
 
 .confirmBtnCancel {
@@ -858,164 +903,15 @@
   font-size: $font-sm;
   font-weight: 700;
   border: none;
-  background: rgba(196, 115, 53, 0.1);
-  color: #c47335;
+  background: #f3f4f6;
+  color: #6b7280;
   cursor: pointer;
-
-  body.dark & {
-    background: $dark-bg-secondary;
-    color: $color-steel;
-  }
-}
-
-// ============ FIRST PLACE ROW ============
-.playerRowFirst {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: $radius-md;
-  background: #2660a4;
-  margin-bottom: 8px;
-  cursor: pointer;
-}
-
-.rankFirst {
-  font-size: 22px;
-  font-weight: 700;
-  color: #f19953;
-  width: 24px;
-  flex-shrink: 0;
-}
-
-.avatarFirst {
-  width: 38px;
-  height: 38px;
-  border-radius: $radius-full;
-  background: rgba(237, 247, 246, 0.2);
-  color: #edf7f6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-md;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.playerNameFirst {
-  font-size: $font-md;
-  font-weight: 700;
-  color: #edf7f6;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.youBadgeFirst {
-  font-size: 9px;
-  padding: 1px 6px;
-  border-radius: $radius-full;
-  background: rgba(237, 247, 246, 0.2);
-  color: #edf7f6;
-  font-weight: 700;
-}
-
-.statsFirst {
-  display: flex;
-  gap: 10px;
-}
-
-.statValFirst {
-  font-size: $font-lg;
-  font-weight: 700;
-
-  &.pos {
-    color: #4ade80;
-  }
-  &.neg {
-    color: #f87171;
-  }
-}
-
-.statLabelFirst {
-  font-size: 9px;
-  color: rgba(237, 247, 246, 0.6);
-  margin-top: 1px;
-  text-align: center;
-}
-
-.h2hBtn {
-  width: calc(100% - 16px);
-  margin: 4px 8px;
-  padding: 12px;
-  border-radius: $radius-md;
-  font-size: $font-md;
-  font-weight: 700;
-  border: 1px solid rgba(38, 96, 164, 0.3);
-  color: #2660a4;
-  background: rgba(255, 255, 255, 0.75);
-  display: block;
-
-  body.dark & {
-    border-color: $dark-border;
-    color: $dark-text-primary;
-    background: $dark-bg-secondary;
-  }
-}
-
-.recentScore {
-  font-size: 12px;
-  font-weight: 700;
-  color: #2660a4;
-  background: #edf7f6;
-  padding: 2px 7px;
-  border-radius: 6px;
-  white-space: nowrap;
-}
-
-// ============ PENDING BANNER ============
-.pendingBanner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 8px;
-  padding: 14px 16px;
-  border-radius: $radius-md;
-  background: #2660a4;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(38, 96, 164, 0.25);
-}
-
-.pendingBannerIcon {
-  font-size: 22px;
-}
-
-.pendingBannerText {
-  flex: 1;
-}
-
-.pendingBannerTitle {
-  font-size: $font-sm;
-  font-weight: 700;
-  color: #edf7f6;
-}
-
-.pendingBannerSub {
-  font-size: $font-xs;
-  color: rgba(237, 247, 246, 0.7);
-  margin-top: 2px;
-}
-
-.pendingBannerArrow {
-  font-size: 22px;
-  color: rgba(237, 247, 246, 0.7);
 }
 
 // ============ PENDING MODAL ============
 .pendingGameCard {
-  background: rgba(38, 96, 164, 0.06);
-  border: 0.5px solid rgba(38, 96, 164, 0.15);
+  background: rgba(27, 79, 216, 0.05);
+  border: 0.5px solid rgba(27, 79, 216, 0.12);
   border-radius: $radius-md;
   padding: 14px;
   margin-bottom: 10px;
@@ -1024,18 +920,14 @@
 .pendingGameInfo {
   font-size: $font-sm;
   font-weight: 700;
-  color: #56351e;
+  color: #111827;
   margin-bottom: 2px;
-
-  body.dark & {
-    color: $dark-text-primary;
-  }
 }
 
 .pendingGameScore {
   font-size: 22px;
   font-weight: 700;
-  color: #2660a4;
+  color: #1b4fd8;
   text-align: center;
   margin: 8px 0;
   letter-spacing: 0.05em;
@@ -1043,18 +935,11 @@
 
 .pendingGameSub {
   font-size: $font-xs;
-  color: #c47335;
+  color: #9ca3af;
   margin-bottom: 12px;
-
-  body.dark & {
-    color: $color-steel;
-  }
 }
 
-.pendingGameActions {
-  display: flex;
-  gap: 8px;
-}
+.pendingGameActions { display: flex; gap: 8px; }
 
 .pendingConfirmBtn {
   flex: 1;
@@ -1063,8 +948,8 @@
   font-size: $font-sm;
   font-weight: 700;
   border: none;
-  background: #2660a4;
-  color: #edf7f6;
+  background: #1b4fd8;
+  color: white;
   cursor: pointer;
 }
 
@@ -1075,17 +960,18 @@
   font-size: $font-sm;
   font-weight: 700;
   border: none;
-  background: rgba(231, 76, 60, 0.1);
-  color: #e74c3c;
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
   cursor: pointer;
 }
 
+// ============ INSTALL ============
 .installBtn {
   flex: 1;
   padding: 14px 8px;
   border-radius: 12px;
-  border: 1px solid rgba(38, 96, 164, 0.2);
-  background: rgba(38, 96, 164, 0.04);
+  border: 1px solid rgba(27, 79, 216, 0.15);
+  background: rgba(27, 79, 216, 0.04);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -1096,18 +982,17 @@
 .installBtnLabel {
   font-size: 13px;
   font-weight: 700;
-  color: #2660a4;
+  color: #1b4fd8;
 }
 
 .installBtnSub {
   font-size: 11px;
-  color: #c47335;
+  color: #9ca3af;
 }
 
 .installSteps {
   display: flex;
   flex-direction: column;
-  gap: 0;
   margin-bottom: 12px;
 }
 
@@ -1116,18 +1001,16 @@
   align-items: flex-start;
   gap: 12px;
   padding: 11px 0;
-  border-bottom: 0.5px solid rgba(196, 115, 53, 0.12);
+  border-bottom: 0.5px solid #f3f4f6;
 
-  &:last-child {
-    border-bottom: none;
-  }
+  &:last-child { border-bottom: none; }
 }
 
 .installStepNum {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #2660a4;
+  background: #1b4fd8;
   color: white;
   font-size: 11px;
   font-weight: 700;
@@ -1140,75 +1023,57 @@
 
 .installStepText {
   font-size: 13px;
-  color: #56351e;
+  color: #374151;
   line-height: 1.5;
 }
 
 .installNote {
   font-size: 11px;
-  color: #c47335;
+  color: #9ca3af;
   text-align: center;
   padding-top: 12px;
-  border-top: 0.5px solid rgba(196, 115, 53, 0.12);
+  border-top: 0.5px solid #f3f4f6;
 }
 
 .sheetHandle {
   width: 36px;
   height: 4px;
-  background: rgba(196, 115, 53, 0.3);
+  background: #e5e7eb;
   border-radius: 2px;
   margin: 0 auto 16px;
 }
 
-.ballWrap {
+// ============ LOCKED ============
+.lockedSection {
   position: relative;
-  display: inline-flex;
-  flex-shrink: 0;
+  min-height: 160px;
 }
 
-.ballAvatar {
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    inset -2px -2px 5px rgba(0, 0, 0, 0.3),
-    inset 1px 1px 3px rgba(255, 255, 255, 0.3);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 5px;
-    left: 7px;
-    width: 10px;
-    height: 6px;
-    background: rgba(255, 255, 255, 0.35);
-    border-radius: 50%;
-    transform: rotate(-30deg);
-  }
-}
-
-.ballInner {
-  width: 55%;
-  height: 55%;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  font-weight: 700;
-  color: #333;
-  position: relative;
-  z-index: 1;
-}
-
-.medalBadge {
+.lockedOverlay {
   position: absolute;
-  bottom: -4px;
-  right: -4px;
-  font-size: 13px;
-  line-height: 1;
+  bottom: 0; left: 0; right: 0;
+  height: 80%;
+  background: linear-gradient(to bottom, transparent, rgba(241, 245, 249, 0.97));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+  gap: 8px;
+}
+
+.lockedTitle {
+  font-size: $font-sm;
+  font-weight: 700;
+  color: #111827;
+}
+
+.loginBtn {
+  font-size: $font-sm;
+  padding: 8px 20px;
+  border-radius: $radius-md;
+  border: 1px solid rgba(27, 79, 216, 0.3);
+  color: #1b4fd8;
+  background: white;
+  font-weight: 600;
 }

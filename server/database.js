@@ -75,7 +75,28 @@ CREATE TABLE IF NOT EXISTS user_avatars (
   avatar_url TEXT NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
-    
+
+CREATE TABLE IF NOT EXISTS announcement_reactions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  announcement_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  emoji TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(announcement_id, user_id, emoji),
+  FOREIGN KEY (announcement_id) REFERENCES announcements(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+  
+
+CREATE TABLE IF NOT EXISTS announcement_replies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  announcement_id INTEGER NOT NULL,
+  user_id INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (announcement_id) REFERENCES announcements(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
   `)
 }
 

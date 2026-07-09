@@ -60,11 +60,18 @@ export const announcements = {
   put: (id, content) => api.put(`/announcements/${id}`, { content }),
   delete: (id) => api.delete(`/announcements/${id}`),
   like: (id) => api.post(`/announcements/${id}/like`),
+  react: (id, emoji) => api.post(`/announcements/${id}/react`, { emoji }),
+  addReply: (id, content) =>
+    api.post(`/announcements/${id}/replies`, { content }),
+  deleteReply: (postId, replyId) =>
+    api.delete(`/announcements/${postId}/replies/${replyId}`),
+  getReplies: (id) => api.get(`/announcements/${id}/replies`),
 }
 
 export const upload = {
   getAvatar: (userId) => api.get(`/upload/avatar/${userId}`),
-  uploadAvatar: (formData) => api.post('/upload/avatar', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  }),
+  uploadAvatar: (formData) =>
+    api.post('/upload/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
 }

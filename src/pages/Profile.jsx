@@ -1,17 +1,28 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import '../styles/Profile.scss'
-import { players, games } from '../api'
-import { auth } from '../api'
+import { players, games, upload } from '../api'
 import ProfileSkeleton from '../components/ProfileSkeleton'
+import BottomNav from '../components/BottomNav'
 import axios from 'axios'
-import { upload } from '../api'
 
-const BASE_URL =
-  import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://biliball.onrender.com/api'
 
-function Profile() {
-  const navigate = useNavigate()
+function computeStreak(gameList) {
+  if (!gameList || gameList.length === 0) return { type: null, count: 0 }
+  const first = gameList[0]
+  if (first.winner_score === first.loser_score) return { type: null, count: 0 }
+  const streakType = first.result
+  let count = 0
+  for (const g of gameList) {
+    if (g.winner_score === g.loser_score) break
+    if (g.result === streakType) count++
+    else break
+  }
+  return { type: streakType, count }
+}
+
+function Profile({ toggleDark }) {
   const { userId } = useParams()
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -19,51 +30,65 @@ function Profile() {
   const [showEditName, setShowEditName] = useState(false)
   const [newName, setNewName] = useState('')
   const [savingName, setSavingName] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState(null)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  const [displayPct, setDisplayPct] = useState(0)
+
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
   const targetUserId = userId || currentUser.id
   const isOwnProfile = !userId || parseInt(userId) === currentUser.id
-  const [avatarUrl, setAvatarUrl] = useState(null)
-  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   useEffect(() => {
-    const fetchStats = async () => {
+    if (!document.getElementById('profile-fonts')) {
+      const link = document.createElement('link')
+      link.id = 'profile-fonts'
+      link.rel = 'stylesheet'
+      link.href =
+        'https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;800;900&family=Assistant:wght@400;600;700&family=Sora:wght@800;900&display=swap'
+      document.head.appendChild(link)
+    }
+  }, [])
+
+  useEffect(() => {
+    const fetchData = async () => {
       try {
-        const res = await players.getStats(targetUserId, leagueId)
-        setStats(res.data)
+        const [statsRes, avatarRes] = await Promise.all([
+          players.getStats(targetUserId, leagueId),
+          upload.getAvatar(targetUserId).catch(() => ({ data: {} })),
+        ])
+        setStats(statsRes.data)
+        if (avatarRes.data.avatar_url) setAvatarUrl(avatarRes.data.avatar_url)
       } catch (err) {
         console.error(err)
       } finally {
         setLoading(false)
       }
     }
-    fetchStats()
+    fetchData()
   }, [targetUserId])
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await players.getStats(targetUserId, leagueId)
-        setStats(res.data)
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setLoading(false)
-      }
+    if (!stats) return
+    const winPct =
+      stats.wins + stats.losses > 0
+        ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
+        : 0
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplayPct(winPct)
+      return
     }
-
-    const fetchAvatar = async () => {
-      try {
-        const res = await upload.getAvatar(targetUserId)
-        if (res.data.avatar_url) setAvatarUrl(res.data.avatar_url)
-      } catch (err) {
-        console.error(err)
-      }
+    let raf
+    const start = performance.now()
+    const duration = 900
+    const tick = (now) => {
+      const t = Math.min((now - start) / duration, 1)
+      setDisplayPct(Math.round(t * winPct))
+      if (t < 1) raf = requestAnimationFrame(tick)
     }
-
-    fetchStats()
-    fetchAvatar()
-  }, [targetUserId])
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [stats])
 
   const handleAvatarChange = async (e) => {
     const file = e.target.files[0]
@@ -74,7 +99,7 @@ function Profile() {
       formData.append('avatar', file)
       const res = await upload.uploadAvatar(formData)
       setAvatarUrl(res.data.avatar_url)
-    } catch (err) {
+    } catch {
       alert('שגיאה בהעלאת התמונה')
     } finally {
       setUploadingAvatar(false)
@@ -98,7 +123,7 @@ function Profile() {
         user: { ...prev.user, full_name: newName.trim() },
       }))
       setShowEditName(false)
-    } catch (err) {
+    } catch {
       alert('שגיאה בעדכון השם')
     } finally {
       setSavingName(false)
@@ -108,313 +133,251 @@ function Profile() {
   if (loading) return <ProfileSkeleton />
   if (!stats) return <div style={{ padding: 20 }}>שגיאה בטעינה</div>
 
-  const winRate =
-    stats.wins + stats.losses > 0
-      ? Math.round((stats.wins / (stats.wins + stats.losses)) * 100)
-      : 0
-  const score = stats.wins - stats.losses
+  const frameDiff = stats.games.reduce((acc, g) => {
+    if (g.winner_score === g.loser_score) return acc
+    return (
+      acc +
+      (g.result === 'win'
+        ? g.winner_score - g.loser_score
+        : g.loser_score - g.winner_score)
+    )
+  }, 0)
+
+  const streak = computeStreak(stats.games)
+  const streakLabel =
+    streak.count >= 1
+      ? streak.type === 'win'
+        ? `🔥 ${streak.count}`
+        : `❄️ ${streak.count}`
+      : '–'
 
   return (
-    <div className="page">
-      <header className="header">
-        <h2 className="headerTitle">
-          {isOwnProfile ? 'פרופיל' : stats.user.full_name}
-        </h2>
-        <div style={{ width: 60 }} />
+    <div className="profilePage">
+      <div className="profileDarkBg" />
+
+      <header className="profileTopBar">
+        {toggleDark && (
+          <button
+            className="profileDarkToggle"
+            onClick={toggleDark}
+            aria-label="מצב לילה"
+          >
+            🌙
+          </button>
+        )}
       </header>
 
-      <div className="section">
-        <div className="playerInfo">
-          <div style={{ position: 'relative', display: 'inline-block' }}>
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt="avatar"
-                style={{
-                  width: 60,
-                  height: 60,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
+      <div className="profileHeaderZone">
+        <div className="profileAvatarWrap">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt="avatar" className="profileAvatarImg" />
+          ) : (
+            <div className="profileAvatarInitial">
+              {stats.user.full_name?.[0]}
+            </div>
+          )}
+          {isOwnProfile && (
+            <label className="profileAvatarEdit" title="שנה תמונה">
+              ✏️
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleAvatarChange}
+                disabled={uploadingAvatar}
               />
-            ) : (
-              <div className="avatarLg">{stats.user.full_name?.[0]}</div>
-            )}
-            {isOwnProfile && (
-              <label
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  width: 20,
-                  height: 20,
-                  background: '#a77954',
-                  borderRadius: '50%',
-                  border: '2px solid white',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  fontSize: 10,
-                }}
-              >
-                ✏️
-                <input
-                  type="file"
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={handleAvatarChange}
-                  disabled={uploadingAvatar}
-                />
-              </label>
-            )}
-          </div>{' '}
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <p className="playerName">{stats.user.full_name}</p>
-              {isOwnProfile && (
-                <button
-                  onClick={() => {
-                    setNewName(stats.user.full_name)
-                    setShowEditName(true)
-                  }}
-                  style={{
-                    background: 'none',
-                    border: '1px solid rgba(196,115,53,0.3)',
-                    borderRadius: 6,
-                    padding: '1px 7px',
-                    fontSize: 10,
-                    color: '#C47335',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ✏ ערוך
-                </button>
-              )}
-            </div>
-            <p className="memberSince">@{stats.user.username}</p>
-          </div>
+            </label>
+          )}
         </div>
-      </div>
 
-      <div className="section">
-        <p className="sectionTitle">סטטיסטיקות</p>
-        <div className="metricsGrid">
-          <div className="metricCard">
-            <div className="metricVal pos">{stats.wins}</div>
-            <div className="metricLabel">נצחונות</div>
-          </div>
-          <div className="metricCard">
-            <div className="metricVal neg">{stats.losses}</div>
-            <div className="metricLabel">הפסדים</div>
-          </div>
-          <div className="metricCard">
-            <div className="metricVal">{winRate}%</div>
-            <div className="metricLabel">אחוז נצחון</div>
-          </div>
-          <div className="metricCard">
-            <div className="metricVal">{stats.wins + stats.losses}</div>
-            <div className="metricLabel">סה"כ סיבובים</div>
-          </div>
-          <div className="metricCard">
-            <div className={`metricVal ${score >= 0 ? 'pos' : 'neg'}`}>
-              {score > 0 ? '+' : ''}
-              {score}
-            </div>
-            <div className="metricLabel">מדד</div>
-          </div>
-        </div>
-      </div>
-
-      {stats.rivals.length > 0 && (
-        <div className="section">
-          <p className="sectionTitle">נגד כל שחקן</p>
-          {stats.rivals.map((rival) => (
-            <div key={rival.opponent_id} className="rivalRow">
-              <div className="avatarSm">{rival.opponent_name?.[0]}</div>
-              <span className="rivalName">{rival.opponent_name}</span>
-              <div className="rivalBar">
-                <div
-                  className="rivalBarFill"
-                  style={{
-                    width: `${Math.round((rival.wins / rival.total) * 100)}%`,
-                  }}
-                />
-              </div>
-              <span className="rivalScore">
-                {rival.wins}/{rival.total}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="section">
-        <p className="sectionTitle">היסטוריית משחקים</p>
-        {stats.games.length === 0 && (
-          <p
-            style={{
-              fontSize: '13px',
-              color: '#999',
-              textAlign: 'center',
-              padding: '16px 0',
-            }}
-          >
-            אין משחקים עדיין
-          </p>
-        )}
-        {stats.games.map((game) => (
-          <div key={game.id}>
-            <div className="historyRow">
-              <span className={`resultBadge ${game.result}`}>
-                {game.result === 'win' ? 'נצחון' : 'הפסד'}
-              </span>
-              <span className="historyOpponent">נגד {game.opponent_name}</span>
-              {(game.winner_score > 0 || game.loser_score > 0) && (
-                <span className="recentScore" style={{ marginRight: 6 }}>
-                  {game.result === 'win'
-                    ? `${game.winner_score} : ${game.loser_score}`
-                    : `${game.loser_score} : ${game.winner_score}`}
-                </span>
-              )}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  marginRight: 'auto',
-                }}
-              >
-                {game.note && (
-                  <span
-                    style={{ cursor: 'pointer', fontSize: '14px' }}
-                    onClick={() =>
-                      setOpenNote(openNote === game.id ? null : game.id)
-                    }
-                  >
-                    💬
-                  </span>
-                )}
-                <span className="historyDate">
-                  {new Date(game.played_at).toLocaleDateString('he-IL')}
-                </span>
-                {isOwnProfile && (
-                  <span
-                    style={{
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      color: '#ccc',
-                    }}
-                    onClick={async () => {
-                      if (!window.confirm('למחוק את המשחק?')) return
-                      try {
-                        await games.delete(game.id)
-                        setStats((prev) => ({
-                          ...prev,
-                          games: prev.games.filter((g) => g.id !== game.id),
-                        }))
-                      } catch (err) {
-                        alert('שגיאה במחיקה')
-                      }
-                    }}
-                  >
-                    🗑
-                  </span>
-                )}
-              </div>
-            </div>
-            {openNote === game.id && game.note && (
-              <div
-                className="noteTooltip"
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
-                <span>{game.note}</span>
-                {isOwnProfile && (
-                  <span
-                    style={{
-                      cursor: 'pointer',
-                      color: '#aaa',
-                      fontSize: '12px',
-                    }}
-                    onClick={async () => {
-                      try {
-                        await games.deleteNote(game.id)
-                        setStats((prev) => ({
-                          ...prev,
-                          games: prev.games.map((g) =>
-                            g.id === game.id ? { ...g, note: null } : g,
-                          ),
-                        }))
-                        setOpenNote(null)
-                      } catch (err) {
-                        alert('שגיאה במחיקה')
-                      }
-                    }}
-                  >
-                    ✕
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {showEditName && (
-        <div className="confirmOverlay" onClick={() => setShowEditName(false)}>
-          <div className="confirmSheet" onClick={(e) => e.stopPropagation()}>
-            <div className="sheetHandle" />
-            <p className="confirmTitle">שנה שם</p>
-            <p className="confirmSub">השם יעודכן בכל הליגות</p>
-            <input
-              style={{
-                width: '100%',
-                padding: '13px 14px',
-                borderRadius: 10,
-                border: '1.5px solid rgba(38,96,164,0.3)',
-                fontSize: 15,
-                color: '#56351E',
-                background: 'white',
-                boxSizing: 'border-box',
-                textAlign: 'right',
-                marginBottom: 12,
-                outline: 'none',
+        <div className="profileNameRow">
+          <h1 className="profileName">{stats.user.full_name}</h1>
+          {isOwnProfile && (
+            <button
+              className="profileEditNameBtn"
+              onClick={() => {
+                setNewName(stats.user.full_name)
+                setShowEditName(true)
               }}
+            >
+              ✏ ערוך
+            </button>
+          )}
+        </div>
+        <p className="profileHandle">@{stats.user.username}</p>
+      </div>
+
+      <div className="profileBody">
+        {/* Win-rate hero card */}
+        <div className="pheroCard">
+          <div className="pheroRingSection">
+            <div className="pRingOuter" style={{ '--pct': `${displayPct}%` }}>
+              <div className="pRingInner">
+                <span className="pRingPct">{displayPct}%</span>
+              </div>
+            </div>
+            <p className="pRingLabel">אחוז ניצחון</p>
+          </div>
+
+          <div className="pheroDivider" />
+
+          <div className="pheroFrameSection">
+            <span
+              className={`pFrameVal ${frameDiff > 0 ? 'pos' : frameDiff < 0 ? 'neg' : 'zero'}`}
+            >
+              {frameDiff > 0 ? '+' : ''}
+              {frameDiff}
+            </span>
+            <span className="pFrameLabel">מד'</span>
+          </div>
+        </div>
+
+        {/* Three-stat row */}
+        <div className="pStatRow">
+          <div className="pStatCell">
+            <span className="pStatVal win">{stats.wins}</span>
+            <span className="pStatLabel">נצחונות</span>
+          </div>
+          <div className="pStatCell">
+            <span className="pStatVal lose">{stats.losses}</span>
+            <span className="pStatLabel">הפסדים</span>
+          </div>
+          <div className="pStatCell">
+            <span className="pStatVal">{streakLabel}</span>
+            <span className="pStatLabel">רצף</span>
+          </div>
+        </div>
+
+        {/* Match history */}
+        <div className="pHistoryCard">
+          <h3 className="pHistoryTitle">היסטוריית משחקים</h3>
+          {stats.games.length === 0 && (
+            <p className="pHistoryEmpty">אין משחקים עדיין</p>
+          )}
+          {stats.games.map((game) => {
+            const isDraw = game.winner_score === game.loser_score
+            const badgeClass = isDraw ? 'draw' : game.result
+            const label = isDraw
+              ? 'תיקו'
+              : game.result === 'win'
+                ? 'נצחון'
+                : 'הפסד'
+            const text = isDraw
+              ? `תיקו מול ${game.opponent_name}`
+              : game.result === 'win'
+                ? `ניצחת את ${game.opponent_name}`
+                : `הפסדת ל${game.opponent_name}`
+            const hasScore = game.winner_score > 0 || game.loser_score > 0
+            const scoreText = hasScore
+              ? isDraw
+                ? `${game.winner_score}:${game.loser_score}`
+                : game.result === 'win'
+                  ? `${game.winner_score}:${game.loser_score}`
+                  : `${game.loser_score}:${game.winner_score}`
+              : null
+
+            return (
+              <div key={game.id}>
+                <div className="pHistoryRow">
+                  <span className={`pHBadge ${badgeClass}`}>{label}</span>
+                  <span className="pHText">{text}</span>
+                  {scoreText && (
+                    <span className="pHScore">{scoreText}</span>
+                  )}
+                  <div className="pHActions">
+                    {game.note && (
+                      <span
+                        className="pHIcon"
+                        onClick={() =>
+                          setOpenNote(openNote === game.id ? null : game.id)
+                        }
+                      >
+                        💬
+                      </span>
+                    )}
+                    <span className="pHDate">
+                      {new Date(game.played_at).toLocaleDateString('he-IL')}
+                    </span>
+                    {isOwnProfile && (
+                      <span
+                        className="pHIcon"
+                        style={{ opacity: 0.4 }}
+                        onClick={async () => {
+                          if (!window.confirm('למחוק את המשחק?')) return
+                          try {
+                            await games.delete(game.id)
+                            setStats((prev) => ({
+                              ...prev,
+                              games: prev.games.filter((g) => g.id !== game.id),
+                            }))
+                          } catch {
+                            alert('שגיאה במחיקה')
+                          }
+                        }}
+                      >
+                        🗑
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {openNote === game.id && game.note && (
+                  <div className="pNoteTooltip">
+                    <span>{game.note}</span>
+                    {isOwnProfile && (
+                      <span
+                        className="pNoteDelete"
+                        onClick={async () => {
+                          try {
+                            await games.deleteNote(game.id)
+                            setStats((prev) => ({
+                              ...prev,
+                              games: prev.games.map((g) =>
+                                g.id === game.id ? { ...g, note: null } : g,
+                              ),
+                            }))
+                            setOpenNote(null)
+                          } catch {
+                            alert('שגיאה במחיקה')
+                          }
+                        }}
+                      >
+                        ✕
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      <BottomNav active="profile" />
+
+      {/* Edit name modal */}
+      {showEditName && (
+        <div className="pOverlay" onClick={() => setShowEditName(false)}>
+          <div className="pSheet" onClick={(e) => e.stopPropagation()}>
+            <div className="pSheetHandle" />
+            <p className="pSheetTitle">שנה שם</p>
+            <p className="pSheetSub">השם יעודכן בכל הליגות</p>
+            <input
+              className="pSheetInput"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="הכנס שם חדש"
               autoFocus
             />
             <button
-              style={{
-                width: '100%',
-                padding: 13,
-                borderRadius: 10,
-                background: newName.trim() ? '#2660A4' : '#ccc',
-                color: 'white',
-                border: 'none',
-                fontSize: 14,
-                fontWeight: 700,
-                marginBottom: 8,
-                cursor: newName.trim() ? 'pointer' : 'not-allowed',
-              }}
+              className="pSheetBtn pSheetBtnPrimary"
+              style={{ background: newName.trim() ? '#2563EB' : '#ccc' }}
               disabled={!newName.trim() || savingName}
               onClick={handleSaveName}
             >
               {savingName ? 'שומר...' : 'שמור'}
             </button>
             <button
-              style={{
-                width: '100%',
-                padding: 12,
-                borderRadius: 10,
-                background: 'rgba(196,115,53,0.1)',
-                color: '#C47335',
-                border: 'none',
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
+              className="pSheetBtn pSheetBtnSecondary"
               onClick={() => setShowEditName(false)}
             >
               ביטול

@@ -2,19 +2,32 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/AddGame.scss'
 import { games, leagues } from '../api'
+import BottomNav from '../components/BottomNav'
 
 function AddGame() {
   const navigate = useNavigate()
-  const [opponent, setOpponent] = useState('')
+  const [opponent, setOpponent] = useState(null)
   const [myScore, setMyScore] = useState(0)
   const [oppScore, setOppScore] = useState(0)
   const [note, setNote] = useState('')
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const leagueId = localStorage.getItem('leagueId')
+
+  useEffect(() => {
+    if (!document.getElementById('addgame-fonts')) {
+      const link = document.createElement('link')
+      link.id = 'addgame-fonts'
+      link.rel = 'stylesheet'
+      link.href =
+        'https://fonts.googleapis.com/css2?family=Heebo:wght@700;800;900&family=Assistant:wght@400;600;700&family=Sora:wght@900&display=swap'
+      document.head.appendChild(link)
+    }
+  }, [])
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -22,7 +35,7 @@ function AddGame() {
         const res = await leagues.getMembers(leagueId)
         const others = res.data.filter((m) => m.id !== user.id)
         setMembers(others)
-        if (others.length > 0) setOpponent(others[0].id)
+        if (others.length > 0) setOpponent(others[0])
       } catch (err) {
         console.error(err)
       }
@@ -32,25 +45,14 @@ function AddGame() {
 
   const handleSubmit = async () => {
     if (!opponent) return
-    if (myScore === oppScore) {
-      setError('לא יכול להיות תיקו — מישהו חייב לנצח')
-      return
-    }
     setLoading(true)
     setError('')
     try {
       const iWon = myScore > oppScore
-      const winnerId = iWon ? user.id : parseInt(opponent)
-      const loserId = iWon ? parseInt(opponent) : user.id
+      const winnerId = iWon ? user.id : opponent.id
+      const loserId = iWon ? opponent.id : user.id
       const winnerScore = iWon ? myScore : oppScore
       const loserScore = iWon ? oppScore : myScore
-
-      console.log('sending:', {
-        winner_id: winnerId,
-        loser_id: loserId,
-        winner_score: winnerScore,
-        loser_score: loserScore,
-      }) 
 
       await games.add({
         league_id: parseInt(leagueId),
@@ -58,7 +60,7 @@ function AddGame() {
         loser_id: loserId,
         winner_score: winnerScore,
         loser_score: loserScore,
-        note,
+        note: note || undefined,
       })
       navigate('/home')
     } catch (err) {
@@ -68,151 +70,146 @@ function AddGame() {
     }
   }
 
-  const oppName =
-    members.find((m) => m.id == opponent)?.full_name ||
-    members.find((m) => m.id == opponent)?.username ||
-    'יריב'
+  const initial = (name) => name?.[0]?.toUpperCase() || '?'
+  const myName = user.full_name || user.username || 'אני'
+  const oppName = opponent?.full_name || opponent?.username || 'בחר יריב'
 
   return (
-    <div className="page">
-      <header className="header">
-        <h2 className="headerTitle">הוספת משחק</h2>
-        <div style={{ width: 60 }} />
+    <div className="agPage">
+      {/* Sub-header */}
+      <header className="agHeader">
+        <button className="agHeaderBtn" onClick={() => navigate(-1)}>←</button>
+        <h2 className="agHeaderTitle">הוספת משחק</h2>
+        <button className="agHeaderBtn" onClick={() => navigate('/home')}>✕</button>
       </header>
 
-      <div className="section">
-        <p className="label">נגד מי?</p>
-        {members.length === 0 ? (
-          <p style={{ fontSize: '13px', color: '#999' }}>
-            אין חברים בליגה עדיין
-          </p>
-        ) : (
-          <select
-            className="select"
-            value={opponent}
-            onChange={(e) => setOpponent(e.target.value)}
-          >
-            {members.map((member) => (
-              <option key={member.id} value={member.id}>
-                {member.full_name || member.username}
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-
-      <div className="section">
-        <p className="label">סקור סיבובים</p>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: 4,
-          }}
-        >
-          <div style={{ flex: 1, textAlign: 'center' }}>
-            <p style={{ fontSize: 12, color: '#888', marginBottom: 10 }}>אני</p>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-              }}
-            >
-              <button
-                className="scoreBtn minus"
-                onClick={() => setMyScore((s) => Math.max(0, s - 1))}
-              >
-                −
-              </button>
-              <span
-                style={{
-                  fontSize: 32,
-                  fontWeight: 700,
-                  minWidth: 40,
-                  textAlign: 'center',
-                }}
-              >
-                {myScore}
-              </span>
-              <button
-                className="scoreBtn plus"
-                onClick={() => setMyScore((s) => Math.min(10, s + 1))}
-              >
-                +
-              </button>
-            </div>
+      <div className="agBody">
+        {/* VS matchup card */}
+        <div className="agMatchCard">
+          {/* Me — DOM first = visual right in RTL */}
+          <div className="agPlayer">
+            <div className="agAvatar agAvatarMe">{initial(myName)}</div>
+            <span className="agPlayerName">
+              {myName}
+              <span className="agYouTag"> (את/ה)</span>
+            </span>
           </div>
-          <span style={{ fontSize: 28, color: '#ccc', padding: '0 8px' }}>
-            :
-          </span>
-          <div style={{ flex: 1, textAlign: 'center' }}>
-            <p style={{ fontSize: 12, color: '#888', marginBottom: 10 }}>
+
+          <span className="agVs">VS</span>
+
+          {/* Opponent — DOM last = visual left in RTL, tappable */}
+          <button
+            className={`agPlayer agPlayerOpp${pickerOpen ? ' agPlayerOppOpen' : ''}`}
+            onClick={() => setPickerOpen((v) => !v)}
+          >
+            <div className="agAvatar agAvatarOpp">{initial(oppName)}</div>
+            <span className="agPlayerName">
               {oppName}
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 12,
-              }}
-            >
-              <button
-                className="scoreBtn minus"
-                onClick={() => setOppScore((s) => Math.max(0, s - 1))}
-              >
-                −
-              </button>
-              <span
-                style={{
-                  fontSize: 32,
-                  fontWeight: 700,
-                  minWidth: 40,
-                  textAlign: 'center',
-                }}
-              >
-                {oppScore}
-              </span>
-              <button
-                className="scoreBtn plus"
-                onClick={() => setOppScore((s) => Math.min(10, s + 1))}
-              >
-                +
-              </button>
+              <span className="agChevron">{pickerOpen ? ' ▴' : ' ▾'}</span>
+            </span>
+          </button>
+        </div>
+
+        {/* Opponent picker panel */}
+        <div className={`agPickerWrap${pickerOpen ? ' agPickerOpen' : ''}`}>
+          <div className="agPickerInner">
+            {members.map((m) => {
+              const name = m.full_name || m.username
+              const isSelected = opponent?.id === m.id
+              return (
+                <button
+                  key={m.id}
+                  className={`agPickerRow${isSelected ? ' agPickerRowSel' : ''}`}
+                  onClick={() => {
+                    setOpponent(m)
+                    setPickerOpen(false)
+                  }}
+                >
+                  <div className="agPickerAvatar">{initial(name)}</div>
+                  <span className="agPickerName">{name}</span>
+                  {isSelected && <span className="agPickerCheck">✓</span>}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Score card */}
+        <div className="agScoreCard">
+          <p className="agScoreTitle">סיבובים שנוצחו</p>
+          <div className="agScoreGrid">
+            {/* Names */}
+            <div className="agScoreNamesRow">
+              <span className="agStepName">{myName}</span>
+              <span />
+              <span className="agStepName">{oppName}</span>
+            </div>
+            {/* Numbers */}
+            <div className="agScoreNumsRow">
+              <span className="agStepNum">{myScore}</span>
+              <span className="agDash">–</span>
+              <span className="agStepNum">{oppScore}</span>
+            </div>
+            {/* Buttons */}
+            <div className="agScoreBtnsRow">
+              <div className="agStepBtns">
+                <button
+                  className="agStepBtn agMinus"
+                  onClick={() => setMyScore((s) => Math.max(0, s - 1))}
+                >
+                  −
+                </button>
+                <button
+                  className="agStepBtn agPlus"
+                  onClick={() => setMyScore((s) => Math.min(20, s + 1))}
+                >
+                  +
+                </button>
+              </div>
+              <span />
+              <div className="agStepBtns">
+                <button
+                  className="agStepBtn agMinus"
+                  onClick={() => setOppScore((s) => Math.max(0, s - 1))}
+                >
+                  −
+                </button>
+                <button
+                  className="agStepBtn agPlus"
+                  onClick={() => setOppScore((s) => Math.min(20, s + 1))}
+                >
+                  +
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Note */}
+        <div className="agNoteCard">
+          <label className="agNoteLabel">הערה (אופציונלי)</label>
+          <input
+            className="agNoteInput"
+            type="text"
+            placeholder="משחק מטורף…"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </div>
+
+        {error && <p className="agError">{error}</p>}
+
+        {/* Save button */}
+        <button
+          className="agSaveBtn"
+          onClick={handleSubmit}
+          disabled={loading || !opponent}
+        >
+          {loading ? 'שומר...' : 'שמור תוצאה 🎱'}
+        </button>
       </div>
 
-      <div className="section">
-        <p className="label">הערה (אופציונלי)</p>
-        <input
-          className="input"
-          type="text"
-          placeholder="משחק מטורף..."
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        />
-      </div>
-
-      {error && (
-        <p style={{ color: 'red', fontSize: '13px', padding: '0 16px' }}>
-          {error}
-        </p>
-      )}
-
-      <p className="notice">ⓘ מי שיש לו יותר סיבובים נרשם כמנצח</p>
-
-      <button
-        className="submitBtn"
-        onClick={handleSubmit}
-        disabled={loading || members.length === 0}
-      >
-        {loading ? 'שומר...' : 'שמור תוצאה'}
-      </button>
+      <BottomNav active="game" />
     </div>
   )
 }
