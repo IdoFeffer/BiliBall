@@ -78,7 +78,8 @@
 .agPlayerOpp {
   cursor: pointer;
 
-  &.agPlayerOppOpen .agAvatar {
+  &.agPlayerOppOpen .agAvatar,
+  &.agPlayerOppOpen .agAvatarImg {
     outline: 3px solid rgba(255, 255, 255, 0.55);
     outline-offset: 2px;
   }
@@ -106,6 +107,15 @@
 .agAvatarOpp {
   background: rgba(255, 255, 255, 0.14);
   border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.agAvatarImg {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.45);
 }
 
 .agPlayerName {
@@ -189,6 +199,14 @@
   font-family: 'Heebo', system-ui, sans-serif;
   font-size: 14px;
   font-weight: 800;
+  flex-shrink: 0;
+}
+
+.agPickerAvatarImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
   flex-shrink: 0;
 }
 

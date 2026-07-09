@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/AddGame.scss'
-import { games, leagues } from '../api'
+import { games, leagues, players } from '../api'
 import BottomNav from '../components/BottomNav'
 
 function AddGame() {
@@ -15,7 +15,9 @@ function AddGame() {
   const [error, setError] = useState('')
   const [pickerOpen, setPickerOpen] = useState(false)
 
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const [currentUser, setCurrentUser] = useState(
+    JSON.parse(localStorage.getItem('user') || '{}'),
+  )
   const leagueId = localStorage.getItem('leagueId')
 
   useEffect(() => {
@@ -31,9 +33,25 @@ function AddGame() {
 
   useEffect(() => {
     const fetchMembers = async () => {
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}')
       try {
-        const res = await leagues.getMembers(leagueId)
-        const others = res.data.filter((m) => m.id !== user.id)
+        const [membersRes, playersRes] = await Promise.all([
+          leagues.getMembers(leagueId),
+          players.getLeaguePlayers(leagueId),
+        ])
+        // Build avatar lookup from the players endpoint (guaranteed to have avatar_url)
+        const avatarMap = {}
+        for (const p of playersRes.data) avatarMap[p.id] = p.avatar_url || null
+
+        const allMembers = membersRes.data.map((m) => ({
+          ...m,
+          avatar_url: avatarMap[m.id] ?? m.avatar_url ?? null,
+        }))
+
+        const me = allMembers.find((m) => m.id === storedUser.id)
+        if (me) setCurrentUser((u) => ({ ...u, avatar_url: me.avatar_url }))
+
+        const others = allMembers.filter((m) => m.id !== storedUser.id)
         setMembers(others)
         if (others.length > 0) setOpponent(others[0])
       } catch (err) {
@@ -41,7 +59,7 @@ function AddGame() {
       }
     }
     fetchMembers()
-  }, [])
+  }, [leagueId])
 
   const handleSubmit = async () => {
     if (!opponent) return
@@ -49,8 +67,8 @@ function AddGame() {
     setError('')
     try {
       const iWon = myScore > oppScore
-      const winnerId = iWon ? user.id : opponent.id
-      const loserId = iWon ? opponent.id : user.id
+      const winnerId = iWon ? currentUser.id : opponent.id
+      const loserId = iWon ? opponent.id : currentUser.id
       const winnerScore = iWon ? myScore : oppScore
       const loserScore = iWon ? oppScore : myScore
 
@@ -71,16 +89,20 @@ function AddGame() {
   }
 
   const initial = (name) => name?.[0]?.toUpperCase() || '?'
-  const myName = user.full_name || user.username || 'אני'
+  const myName = currentUser.full_name || currentUser.username || 'אני'
   const oppName = opponent?.full_name || opponent?.username || 'בחר יריב'
 
   return (
     <div className="agPage">
       {/* Sub-header */}
       <header className="agHeader">
-        <button className="agHeaderBtn" onClick={() => navigate(-1)}>←</button>
+        <button className="agHeaderBtn" onClick={() => navigate(-1)}>
+          ←
+        </button>
         <h2 className="agHeaderTitle">הוספת משחק</h2>
-        <button className="agHeaderBtn" onClick={() => navigate('/home')}>✕</button>
+        <button className="agHeaderBtn" onClick={() => navigate('/home')}>
+          ✕
+        </button>
       </header>
 
       <div className="agBody">
@@ -88,7 +110,11 @@ function AddGame() {
         <div className="agMatchCard">
           {/* Me — DOM first = visual right in RTL */}
           <div className="agPlayer">
-            <div className="agAvatar agAvatarMe">{initial(myName)}</div>
+            {currentUser.avatar_url ? (
+              <img src={currentUser.avatar_url} alt="" className="agAvatarImg" />
+            ) : (
+              <div className="agAvatar agAvatarMe">{initial(myName)}</div>
+            )}
             <span className="agPlayerName">
               {myName}
               <span className="agYouTag"> (את/ה)</span>
@@ -102,7 +128,11 @@ function AddGame() {
             className={`agPlayer agPlayerOpp${pickerOpen ? ' agPlayerOppOpen' : ''}`}
             onClick={() => setPickerOpen((v) => !v)}
           >
-            <div className="agAvatar agAvatarOpp">{initial(oppName)}</div>
+            {opponent?.avatar_url ? (
+              <img src={opponent.avatar_url} alt="" className="agAvatarImg" />
+            ) : (
+              <div className="agAvatar agAvatarOpp">{initial(oppName)}</div>
+            )}
             <span className="agPlayerName">
               {oppName}
               <span className="agChevron">{pickerOpen ? ' ▴' : ' ▾'}</span>
@@ -125,7 +155,15 @@ function AddGame() {
                     setPickerOpen(false)
                   }}
                 >
-                  <div className="agPickerAvatar">{initial(name)}</div>
+                  {m.avatar_url ? (
+                    <img
+                      src={m.avatar_url}
+                      alt=""
+                      className="agPickerAvatarImg"
+                    />
+                  ) : (
+                    <div className="agPickerAvatar">{initial(name)}</div>
+                  )}
                   <span className="agPickerName">{name}</span>
                   {isSelected && <span className="agPickerCheck">✓</span>}
                 </button>
