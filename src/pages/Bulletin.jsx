@@ -57,39 +57,7 @@ function normalizeReply(reply) {
   }
 }
 
-function getUniqueReactors(reactions) {
-  const seen = new Set()
-  const result = []
-  for (const users of Object.values(reactions || {})) {
-    for (const u of users) {
-      const uid = String(u.id)
-      if (!seen.has(uid) && !uid.startsWith('__legacy')) {
-        seen.add(uid)
-        result.push(u)
-      }
-    }
-  }
-  return result
-}
 
-function ReactionCluster({ reactions }) {
-  const reactors = getUniqueReactors(reactions).slice(0, 3)
-  if (reactors.length === 0) return null
-  return (
-    <div className="reaction-cluster">
-      {reactors.map((u, i) => (
-        <div
-          key={u.id}
-          className="cluster-avatar"
-          style={{ background: ballColors[Math.abs(parseInt(u.id, 10) || i) % ballColors.length] }}
-          title={u.full_name || u.username}
-        >
-          {u.full_name?.[0] || u.username?.[0] || '?'}
-        </div>
-      ))}
-    </div>
-  )
-}
 
 function Bulletin({ toggleDark }) {
   const navigate = useNavigate()
@@ -362,7 +330,6 @@ const handleAddReply = async (postId) => {
                     )}
                   </div>
 
-                  <ReactionCluster reactions={post.reactions} />
                 </div>
               </div>
 
@@ -392,12 +359,6 @@ const handleAddReply = async (postId) => {
                 ))}
 
                 <div className="reply-compose">
-                  <div
-                    className="reply-compose-avatar"
-                    style={{ background: ballColors[0] }}
-                  >
-                    {user.full_name?.[0] || user.username?.[0] || '?'}
-                  </div>
                   <input
                     type="text"
                     className="reply-input"
